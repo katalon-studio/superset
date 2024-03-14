@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: Set environment base on branch
         id: set_env
-        uses: katalon-studio/katalon-base-actions/actions/get-env@v1
+        uses: ./.github/actions/katalon-base-action/get-env
         with:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           qa_branch: feat-build-pipeline
@@ -87,7 +87,7 @@ jobs:
 
           echo "result=$result" >> $GITHUB_OUTPUT
       - name: Send Notification to Slack
-        uses: katalon-studio/katalon-base-actions/actions/slack-notify@v1
+        uses: ./.github/actions/katalon-base-action/slack-notify
         with:
           slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
           job_status: ${{ steps.get_status.outputs.result }}

@@ -190,7 +190,7 @@ jobs:
       ### Build and push image
       - name: Build and Push
         if: ${{ !inputs.BUILD_MULTI_ARCH }}
-        uses:  katalon-studio/katalon-base-actions/actions/docker-build-push@main
+        uses:  ./.github/actions/katalon-base-action/docker-build-push
         with:
           aws_account_id: ${{ inputs.AWS_ACCOUNT_ID || vars.AWS_ACCOUNT_ID }}
           build_context: ${{ inputs.DOCKER_CONTEXT }}
@@ -207,7 +207,7 @@ jobs:
           snyk_continue_on_error: ${{ inputs.SNYK_CONTINUE_ON_ERROR }}
           snyk_args: ${{ inputs.SNYK_ARGS }}
       - name: Build and Push ARM64
-        uses: katalon-studio/katalon-base-actions/actions/docker-build-push@main
+        uses: ./.github/actions/katalon-base-action/docker-build-push
         if: ${{ inputs.BUILD_MULTI_ARCH }}
         with:
           aws_account_id: ${{ inputs.AWS_ACCOUNT_ID || vars.AWS_ACCOUNT_ID }}
@@ -228,7 +228,7 @@ jobs:
         run: |
           docker context rm builders
       - name: Build and push AMD64
-        uses: katalon-studio/katalon-base-actions/actions/docker-build-push@main
+        uses: ./.github/actions/katalon-base-action/docker-build-push
         if: ${{ inputs.BUILD_MULTI_ARCH }}
         with:
           aws_account_id: ${{ inputs.AWS_ACCOUNT_ID || vars.AWS_ACCOUNT_ID }}
@@ -281,7 +281,7 @@ jobs:
     steps:
       - name: GitOps update using Image Version
         if: ${{ !inputs.BUILD_MULTI_ARCH }}
-        uses:  katalon-studio/katalon-base-actions/actions/gitops-updater@main
+        uses:  ./.github/actions/katalon-base-action/gitops-updater
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           github_commit_msg: ArgoCD - Update image for ${{ needs.build.outputs.IMAGE_REPO }}
@@ -291,7 +291,7 @@ jobs:
           gitops_update_value: ${{ needs.build.outputs.IMAGE_VERSION }}
       - name: GitOps update using Image Version
         if: ${{ inputs.BUILD_MULTI_ARCH }}
-        uses:  katalon-studio/katalon-base-actions/actions/gitops-updater@main
+        uses:  ./.github/actions/katalon-base-action/gitops-updater
         with:
           github_token: ${{ secrets.GH_TOKEN }}
           github_commit_msg: ArgoCD - Update image for ${{ needs.build.outputs.IMAGE_REPO }}
