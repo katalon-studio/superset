@@ -17,12 +17,13 @@
  * under the License.
  */
 import { getExtensionsRegistry } from "@superset-ui/core";
+import KatalonSliceHeaderControls from "src/katalon/KatalonSliceHeaderControls";
 import RaSyncDashboardState from "./raSyncDashboardState";
 
 // For individual deployments to add custom overrides
 export default function setupPluginsExtra() {
-  console.log("setup plugins");
   const extensionRegistry = getExtensionsRegistry();
 
   extensionRegistry.set('root.context.provider', RaSyncDashboardState);
+  extensionRegistry.set('dashboard.slice.header', KatalonSliceHeaderControls);
 }
