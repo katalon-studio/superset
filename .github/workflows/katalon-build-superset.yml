@@ -27,6 +27,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Set Environment
     steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+          token: ${{ secrets.GH_TOKEN }}
       - name: Set environment base on branch
         id: set_env
         uses: ./.github/actions/katalon-base-action/actions/get-env
@@ -75,6 +79,10 @@ jobs:
     name: Slack Notify
     if: always()
     steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+          token: ${{ secrets.GH_TOKEN }}
       - name: Get overrall status
         id: get_status
         run: |
