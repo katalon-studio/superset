@@ -1,0 +1,301 @@
+name: CICD using Dockerfile and GitOps
+
+on:
+  workflow_call:
+    inputs:
+      ENV:
+        required: true
+        description: 'Github environment that this workflow will run on. Eg: qa, staging, prod'
+        type: string
+      AWS_ACCOUNT_ID:
+        required: false
+        description: 'AWS account ID to push image to. If not provided, will use the current AWS account ID'
+        type: string
+      IMAGE_NAME_PREFIX:
+        required: true
+        description: 'Prefix for the container image. Eg: testmgmt/repo-scanner'
+        type: string
+      DOCKER_CONTEXT:
+        required: false
+        description: 'The context to pass into the Docker Build machine'
+        default: '.'
+        type: string
+      DOCKERFILE_LOCATION:
+        required: false
+        default: Dockerfile
+        type: string
+      IMAGE_APPEND_ENV:
+        default: true
+        description: 'Should append env to image repo or image name'
+        type: boolean
+      IMAGE_ARCH:
+        required: false
+        default: arm64
+        type: string
+      BUILD_ARGS:
+        required: false
+        description: Args to pass into the Build action
+        default: ''
+        type: string
+      USE_KATALON_GH_PKG:
+        required: false
+        description: Authen with Katalon Github Package or not
+        default: true
+        type: boolean
+      BUILD_MULTI_ARCH:
+        required: false
+        default: false
+        type: boolean
+      ### GitOps Deploy
+      GITOPS_DEPLOY:
+        required: false
+        description: Deploy using GitOps or not
+        type: boolean
+        default: true
+      GITOPS_REPO:
+        required: false
+        description: GitOps repo URL
+        type: string
+        default: 'katalon-studio/platform-deployment-v2'
+      GITOPS_FILE_PATH:
+        required: true
+        description: Values.yaml file path in the Gitops Repo to update the value
+        type: string
+      GITOPS_YAML_PATH:
+        required: false
+        description: Path inside values.yaml for the Yq to update the value
+        default: .image.tag
+        type: string
+      ### Setup Dependencies
+      INSTALL_JAVA:
+        required: false
+        default: false
+        type: boolean
+      JAVA_VERSION:
+        required: false
+        default: '17'
+        type: string
+      JAVA_DIST:
+        required: false
+        default: corretto
+        type: string
+      ### Build Artifacts
+      MAVEN_BUILD:
+        required: false
+        default: false
+        type: boolean
+      MAVEN_SERVICE_PATH:
+        required: false
+        default: '.'
+        type: string
+      ### Runner settings
+      RUNS_BUILD_ON:
+        required: false
+        default: ubuntu-latest
+        type: string
+      ### Snyk
+      SNYK_CONTINUE_ON_ERROR:
+        required: false
+        default: true
+        type: boolean
+      SNYK_ARGS:
+        required: false
+        default: --severity-threshold=high
+        type: string
+      ### Regression test
+      AUTOMATION_TEST_KS_TSC:
+        required: false
+        description: 'Relative path of the test suite collection. Eg. Test Suites/Admin/Staging Regression Test - Admin'
+        type: string
+        default: ''
+    secrets:
+      GH_TOKEN:
+        required: true
+      PKG_TOKEN:
+        required: false
+      SNYK_TOKEN:
+        required: false
+      AUTOMATION_TEST_KS_API_KEY:
+        required: false
+      AUTOMATION_TEST_KS_EMAIL:
+        required: false
+      AUTOMATION_TEST_KS_ORG_ID:
+        required: false
+      AUTOMATION_TEST_KS_PROJECT_ID:
+        required: false
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
+jobs:
+  build:
+    runs-on: ${{ inputs.RUNS_BUILD_ON }}
+    name: Build Backend
+    environment: ${{ inputs.ENV }}
+    steps:
+      ### Set additional vars
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
+          token: ${{ secrets.GH_TOKEN }}
+      - name: Set additional vars
+        id: set_outputs
+        run: |
+          SHA_SHORT=$(git rev-parse --short HEAD)
+          IMAGE_REGISTRY="${{ inputs.AWS_ACCOUNT_ID || vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com"
+          IMAGE_REPO="${{ inputs.IMAGE_NAME_PREFIX }}"
+          if [ ${{ inputs.IMAGE_APPEND_ENV }} == true ]; then
+              IMAGE_REPO="${{ inputs.IMAGE_NAME_PREFIX }}-${{ inputs.ENV }}"
+          fi
+
+          IMAGE_VERSION="${{ github.ref_name }}-${SHA_SHORT}-${{ inputs.IMAGE_ARCH }}"
+          IMAGE_VERSION_MULTI="${{ github.ref_name }}-${SHA_SHORT}"
+
+          IMAGE_TAG="${IMAGE_REGISTRY}/${IMAGE_REPO}:${IMAGE_VERSION}"
+          IMAGE_TAG_LT="${IMAGE_REGISTRY}/${IMAGE_REPO}:latest"
+          IMAGE_TAG_LT_ARCH="${IMAGE_REGISTRY}/${IMAGE_REPO}:latest-${{ inputs.IMAGE_ARCH }}"
+          IMAGE_TAG_MULTI="${IMAGE_REGISTRY}/${IMAGE_REPO}:${IMAGE_VERSION_MULTI}"
+          
+          PKG_TOKEN_ARG=''
+          if [ ${{ inputs.USE_KATALON_GH_PKG }} == true ]; then
+            PKG_TOKEN_ARG+="PKG_TOKEN=${{ secrets.PKG_TOKEN }}"
+          fi
+          echo "PKG_TOKEN_ARG=${PKG_TOKEN_ARG}" >> $GITHUB_OUTPUT
+
+          echo "IMAGE_REGISTRY=${IMAGE_REGISTRY}" >> $GITHUB_OUTPUT
+          echo "IMAGE_REPO=${IMAGE_REPO}" >> $GITHUB_OUTPUT
+
+          echo "IMAGE_VERSION=${IMAGE_VERSION}" >> $GITHUB_OUTPUT
+          echo "IMAGE_VERSION_MULTI=${IMAGE_VERSION_MULTI}" >> $GITHUB_OUTPUT
+          
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG_LT=${IMAGE_TAG_LT}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG_LT_ARCH=${IMAGE_TAG_LT_ARCH}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG_MULTI=${IMAGE_TAG_MULTI}" >> $GITHUB_OUTPUT
+      ### Setup required packages / addons
+      - name: Set up JDK ${{ inputs.JAVA_VERSION }}
+        if: ${{ inputs.INSTALL_JAVA }}
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ inputs.JAVA_VERSION }}
+          distribution: ${{ inputs.JAVA_DIST }}
+      ### Build Artifacts
+      - name: Maven Build
+        if: ${{ inputs.MAVEN_BUILD }}
+        run: |
+          set -x
+          cd ${{ inputs.MAVEN_SERVICE_PATH }}
+          ./mvnw -DskipTests=true clean package
+      ### Build and push image
+      - name: Build and Push
+        if: ${{ !inputs.BUILD_MULTI_ARCH }}
+        uses:  katalon-studio/katalon-base-actions/actions/docker-build-push@main
+        with:
+          aws_account_id: ${{ inputs.AWS_ACCOUNT_ID || vars.AWS_ACCOUNT_ID }}
+          build_context: ${{ inputs.DOCKER_CONTEXT }}
+          build_dockerfile: ${{ inputs.DOCKERFILE_LOCATION }}
+          build_tags: |
+            ${{ steps.set_outputs.outputs.IMAGE_TAG }},
+            ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }},
+            ${{ steps.set_outputs.outputs.IMAGE_TAG_LT_ARCH }}
+          build_platform: ${{ inputs.IMAGE_ARCH }}
+          build_args: |
+            ${{ steps.set_outputs.outputs.PKG_TOKEN_ARG }}
+            ${{ inputs.BUILD_ARGS }}
+          snyk_token: ${{ secrets.SNYK_TOKEN }}
+          snyk_continue_on_error: ${{ inputs.SNYK_CONTINUE_ON_ERROR }}
+          snyk_args: ${{ inputs.SNYK_ARGS }}
+      - name: Build and Push ARM64
+        uses: katalon-studio/katalon-base-actions/actions/docker-build-push@main
+        if: ${{ inputs.BUILD_MULTI_ARCH }}
+        with:
+          aws_account_id: ${{ inputs.AWS_ACCOUNT_ID || vars.AWS_ACCOUNT_ID }}
+          build_context: ${{ inputs.DOCKER_CONTEXT }}
+          build_dockerfile: ${{ inputs.DOCKERFILE_LOCATION }}
+          build_tags: |
+            ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }}-arm64,
+            ${{ steps.set_outputs.outputs.IMAGE_TAG_MULTI }}-arm64
+          build_platform: arm64
+          build_args: |
+            ${{ steps.set_outputs.outputs.PKG_TOKEN_ARG }}
+            ${{ inputs.BUILD_ARGS }}
+          snyk_token: ${{ secrets.SNYK_TOKEN }}
+          snyk_continue_on_error: ${{ inputs.SNYK_CONTINUE_ON_ERROR }}
+          snyk_args: ${{ inputs.SNYK_ARGS }}
+      - name: Remove Context
+        if: ${{ inputs.BUILD_MULTI_ARCH }}
+        run: |
+          docker context rm builders
+      - name: Build and push AMD64
+        uses: katalon-studio/katalon-base-actions/actions/docker-build-push@main
+        if: ${{ inputs.BUILD_MULTI_ARCH }}
+        with:
+          aws_account_id: ${{ inputs.AWS_ACCOUNT_ID || vars.AWS_ACCOUNT_ID }}
+          build_context: ${{ inputs.DOCKER_CONTEXT }}
+          build_dockerfile: ${{ inputs.DOCKERFILE_LOCATION }}
+          build_tags: |
+            ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }}-amd64,
+            ${{ steps.set_outputs.outputs.IMAGE_TAG_MULTI }}-amd64
+          build_platform: amd64
+          build_args: |
+            ${{ steps.set_outputs.outputs.PKG_TOKEN_ARG }}
+            ${{ inputs.BUILD_ARGS }}
+          snyk_token: ${{ secrets.SNYK_TOKEN }}
+      - name: Push Docker Images Mutiple Arch
+        if: ${{ inputs.BUILD_MULTI_ARCH }}
+        run: |
+          ## Multi-architecture container images
+          docker manifest create \
+          ${{ steps.set_outputs.outputs.IMAGE_TAG_MULTI }} \
+          ${{ steps.set_outputs.outputs.IMAGE_TAG_MULTI }}-arm64 \
+          ${{ steps.set_outputs.outputs.IMAGE_TAG_MULTI }}-amd64 \
+          --amend
+
+          docker manifest inspect ${{ steps.set_outputs.outputs.IMAGE_TAG_MULTI }}
+          docker manifest push ${{ steps.set_outputs.outputs.IMAGE_TAG_MULTI }}
+      - name: Push Docker Images Latest Mutiple Arch
+        if: ${{ inputs.BUILD_MULTI_ARCH }}
+        run: |
+          ## Multi-architecture container images
+          docker manifest create \
+          ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }} \
+          ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }}-arm64 \
+          ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }}-amd64 \
+          --amend
+
+          docker manifest inspect ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }}
+          docker manifest push ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }}
+    outputs:
+      IMAGE_REPO: ${{ steps.set_outputs.outputs.IMAGE_REPO }}
+      IMAGE_VERSION: ${{ steps.set_outputs.outputs.IMAGE_VERSION }}
+      IMAGE_VERSION_MULTI: ${{ steps.set_outputs.outputs.IMAGE_VERSION_MULTI }}
+      IMAGE_TAG: ${{ steps.set_outputs.outputs.IMAGE_TAG }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: ${{ inputs.GITOPS_DEPLOY }}
+    name: Deploy to ${{ inputs.ENV }} GitOps
+    environment: ${{ inputs.ENV }}
+    steps:
+      - name: GitOps update using Image Version
+        if: ${{ !inputs.BUILD_MULTI_ARCH }}
+        uses:  katalon-studio/katalon-base-actions/actions/gitops-updater@main
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          github_commit_msg: ArgoCD - Update image for ${{ needs.build.outputs.IMAGE_REPO }}
+          gitops_repo: ${{ inputs.GITOPS_REPO }}
+          gitops_file_path: ${{ inputs.GITOPS_FILE_PATH }}
+          gitops_yaml_path: ${{ inputs.GITOPS_YAML_PATH }}
+          gitops_update_value: ${{ needs.build.outputs.IMAGE_VERSION }}
+      - name: GitOps update using Image Version
+        if: ${{ inputs.BUILD_MULTI_ARCH }}
+        uses:  katalon-studio/katalon-base-actions/actions/gitops-updater@main
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          github_commit_msg: ArgoCD - Update image for ${{ needs.build.outputs.IMAGE_REPO }}
+          gitops_repo: ${{ inputs.GITOPS_REPO }}
+          gitops_file_path: ${{ inputs.GITOPS_FILE_PATH }}
+          gitops_yaml_path: ${{ inputs.GITOPS_YAML_PATH }}
+          gitops_update_value: ${{ needs.build.outputs.IMAGE_VERSION_MULTI }}

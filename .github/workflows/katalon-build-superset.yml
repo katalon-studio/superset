@@ -52,7 +52,7 @@ jobs:
       GITOPS_YAML_PATH: ${{ vars.GITOPS_YAML_PATH }}
 
   reusable_cicd_pipelines:
-    uses: katalon-studio/katalon-base-actions/.github/workflows/cicd-dockerfile-gitops-v2.yaml@main
+    uses: ./.github/workflows/katalon-cicd-dockerfile-gitops-v2.yml
     needs: [set_env, set_vars]
     name: Continuous Integration and Continuous Delivery
     with:
