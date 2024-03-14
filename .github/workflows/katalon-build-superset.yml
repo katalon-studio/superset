@@ -54,13 +54,9 @@ jobs:
           IMAGE_REPO="${{ env.SERVICE_NAME }}"
           IMAGE_VERSION="${{ github.ref_name }}-${SHA_SHORT}-${{ vars.IMAGE_ARCH }}"
           IMAGE_TAG="${IMAGE_REGISTRY}/${IMAGE_REPO}:${IMAGE_VERSION}"
-          IMAGE_TAG_LT="${IMAGE_REGISTRY}/${IMAGE_REPO}:latest"
-          IMAGE_TAG_LT_ARCH="${IMAGE_REGISTRY}/${IMAGE_REPO}:latest-${{ vars.IMAGE_ARCH }}"
 
           echo "IMAGE_VERSION=${IMAGE_VERSION}" >> $GITHUB_OUTPUT
           echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_OUTPUT
-          echo "IMAGE_TAG_LT=${IMAGE_TAG_LT}" >> $GITHUB_OUTPUT
-          echo "IMAGE_TAG_LT_ARCH=${IMAGE_TAG_LT_ARCH}" >> $GITHUB_OUTPUT
       - name: Set up QEMU dependency
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Context for Buildx
@@ -88,11 +84,35 @@ jobs:
           context: ${{ env.SERVICE_PATH }}
           file: Dockerfile
           push: true
-          tags: |
-            ${{ steps.set_outputs.outputs.IMAGE_TAG }},
-            ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }},
-            ${{ steps.set_outputs.outputs.IMAGE_TAG_LT_ARCH }}
+          tags: ${{ steps.set_outputs.outputs.IMAGE_TAG }}
           provenance: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/${{ vars.IMAGE_ARCH }}
+    outputs:
+      IMAGE_VERSION: ${{ steps.set_outputs.outputs.IMAGE_VERSION }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [set_env, build_image]
+    name: Deploy to ${{ needs.set_env.outputs.ENV }} GitOps
+    environment: ${{ needs.set_env.outputs.ENV }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          repository: ${{ vars.GITOPS_REPO }}
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Update Image using YQ
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '${{ vars.GITOPS_YAML_PATH }} = "${{ needs.build_image.outputs.IMAGE_VERSION }}"' ${{ vars.GITOPS_FILE_PATH }}
+
+      - name: Deploy to GitOps 
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: ArgoCD - Update image for ${{ env.SERVICE_NAME }}
+          # Optional commit user and author settings
+          commit_user_name: github-cloudops-bot # defaults to "github-actions[bot]"
+          commit_user_email: github-cloudops-bot@katalon.com # defaults to "41898282+github-actions[bot]@users.noreply.github.com"
+          commit_author: Author <github-cloudops-bot@katalon.com> # defaults to author of the commit that triggered the run 
