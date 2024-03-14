@@ -38,10 +38,10 @@ jobs:
     outputs:
       ENV: ${{ inputs.environment || steps.set_env.outputs.ENV }}
 
-  build_backend:
-    runs-on: ubuntu-latest
+  build_image:
+    runs-on: self-hosted-superset
     needs: [set_env]
-    name: Build Backend
+    name: Build Image
     environment: ${{ needs.set_env.outputs.ENV }}
     steps:
       - uses: actions/checkout@v3
