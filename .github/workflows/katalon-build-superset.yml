@@ -39,7 +39,7 @@ jobs:
       ENV: ${{ inputs.environment || steps.set_env.outputs.ENV }}
 
   build_backend:
-    runs-on: self-hosted-medium
+    runs-on: ubuntu-latest
     needs: [set_env]
     name: Build Backend
     environment: ${{ needs.set_env.outputs.ENV }}
