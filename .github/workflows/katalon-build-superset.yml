@@ -35,13 +35,6 @@ jobs:
           elif [[ ${{ github.ref_name }} == 'main' || ${{ github.ref_name }} == 'master' ]]; then
             echo "ENV=prod" >> $GITHUB_OUTPUT
           fi
-      - name: Send Notification to Slack
-        if: always()
-        uses: katalon-studio/katalon-base-actions/actions/slack-notify@v1
-        with:
-            slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
-            job_status: started
-            env: ${{ steps.set_env.outputs.ENV }}
     outputs:
       ENV: ${{ inputs.environment || steps.set_env.outputs.ENV }}
 
