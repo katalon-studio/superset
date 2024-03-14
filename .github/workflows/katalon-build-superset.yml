@@ -5,8 +5,11 @@ on:
     inputs:
       environment:
         description: "Manual environment to run (qa | staging | prod)"
-        required: false
+        required: true
         type: string
+      git_ref:
+        required: true
+        description: The git reference to checkout prior to running the docker build
   push:
     branches:
       - main
@@ -44,6 +47,9 @@ jobs:
     environment: ${{ needs.set_env.outputs.ENV }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          ref: ${{ inputs.git_ref || '' }}
       ### Set additional vars
       - name: Set additional vars
         id: set_outputs
