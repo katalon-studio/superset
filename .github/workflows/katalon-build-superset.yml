@@ -27,77 +27,79 @@ jobs:
     runs-on: ubuntu-latest
     name: Set Environment
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: 'true'
-          token: ${{ secrets.GH_TOKEN }}
       - name: Set environment base on branch
         id: set_env
-        uses: ./.github/actions/katalon-base-action/actions/get-env
+        run: |
+          if [[ ${{ github.ref_name }} == 'staging' ]]; then
+            echo "ENV=staging" >> $GITHUB_OUTPUT
+          elif [[ ${{ github.ref_name }} == 'main' || ${{ github.ref_name }} == 'master' ]]; then
+            echo "ENV=prod" >> $GITHUB_OUTPUT
+          fi
+      - name: Send Notification to Slack
+        if: always()
+        uses: katalon-studio/katalon-base-actions/actions/slack-notify@v1
         with:
-          slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
-          qa_branch: feat-build-pipeline
+            slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+            job_status: started
+            env: ${{ steps.set_env.outputs.ENV }}
     outputs:
       ENV: ${{ inputs.environment || steps.set_env.outputs.ENV }}
 
-  set_vars:
-    runs-on: ubuntu-latest
+  build_backend:
+    runs-on: self-hosted-medium
     needs: [set_env]
-    ### https://chamindac.blogspot.com/2023/09/passing-environment-variables-to.html
-    name: Workaround for passing env to reusable workflows 
+    name: Build Backend
     environment: ${{ needs.set_env.outputs.ENV }}
     steps:
-      - run: echo "Exposing environment vars to reusable workflow"
-    outputs:
-      SERVICE_PATH: ${{ env.SERVICE_PATH }}
-      SERVICE_NAME: ${{ env.SERVICE_NAME }}
-      GITOPS_REPO: ${{ vars.GITOPS_REPO }}
-      GITOPS_FILE_PATH: ${{ vars.BE_GITOPS_FILE_PATH }}
-      GITOPS_YAML_PATH: ${{ vars.GITOPS_YAML_PATH }}
-
-  reusable_cicd_pipelines:
-    uses: ./.github/workflows/katalon-cicd-dockerfile-gitops-v2.yml
-    needs: [set_env, set_vars]
-    name: Continuous Integration and Continuous Delivery
-    with:
-      RUNS_BUILD_ON: self-hosted-large
-      ENV: ${{ needs.set_env.outputs.ENV }}
-      BUILD_MULTI_ARCH: true
-      IMAGE_APPEND_ENV: false
-      IMAGE_NAME_PREFIX: ${{ needs.set_vars.outputs.SERVICE_NAME }}
-      DOCKER_CONTEXT: ${{ needs.set_vars.outputs.SERVICE_PATH }}
-      DOCKERFILE_LOCATION: 'Dockerfile'
-      GITOPS_REPO: ${{ needs.set_vars.outputs.GITOPS_REPO }}
-      GITOPS_FILE_PATH: ${{ needs.set_vars.outputs.GITOPS_FILE_PATH }}
-      GITOPS_YAML_PATH: ${{ needs.set_vars.outputs.GITOPS_YAML_PATH }}
-    secrets:
-      GH_TOKEN: ${{ secrets.GH_TOKEN }}
-
-  notify:
-    runs-on: ubuntu-latest
-    needs: [set_env, reusable_cicd_pipelines]
-    name: Slack Notify
-    if: always()
-    steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: 'true'
-          token: ${{ secrets.GH_TOKEN }}
-      - name: Get overrall status
-        id: get_status
+      ### Set additional vars
+      - name: Set additional vars
+        id: set_outputs
         run: |
-          result="success"
-          if [[ ${{ contains(needs.*.result, 'failure') }} == 'true' ]]; then
-            result="failure"
-          elif [[ ${{ contains(needs.*.result, 'cancelled') }} == 'true' ]]; then
-            result="cancelled"
-          fi
+          SHA_SHORT=$(git rev-parse --short HEAD)
+          IMAGE_REGISTRY="${{ vars.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com"
+          IMAGE_REPO="${{ env.SERVICE_NAME }}"
+          IMAGE_VERSION="${{ github.ref_name }}-${SHA_SHORT}-${{ vars.IMAGE_ARCH }}"
+          IMAGE_TAG="${IMAGE_REGISTRY}/${IMAGE_REPO}:${IMAGE_VERSION}"
+          IMAGE_TAG_LT="${IMAGE_REGISTRY}/${IMAGE_REPO}:latest"
+          IMAGE_TAG_LT_ARCH="${IMAGE_REGISTRY}/${IMAGE_REPO}:latest-${{ vars.IMAGE_ARCH }}"
 
-          echo "result=$result" >> $GITHUB_OUTPUT
-      - name: Send Notification to Slack
-        uses: ./.github/actions/katalon-base-action/actions/slack-notify
+          echo "IMAGE_VERSION=${IMAGE_VERSION}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG_LT=${IMAGE_TAG_LT}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG_LT_ARCH=${IMAGE_TAG_LT_ARCH}" >> $GITHUB_OUTPUT
+      - name: Set up QEMU dependency
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Context for Buildx
+        shell: bash
+        run: |
+          docker context create builders
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
         with:
-          slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
-          job_status: ${{ steps.get_status.outputs.result }}
-          user_id: "<@U046QGK3BT5>" # anh.quach
-          env: ${{ needs.set_env.outputs.ENV }}
+          version: latest
+          endpoint: builders
+      ### AWS Config
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/katalon-github-oidc-federation
+          role-session-name: github-actions
+          aws-region: ${{ vars.AWS_REGION }}
+          mask-aws-account-id: 'no'
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Push Image
+        uses: docker/build-push-action@v4
+        with:
+          context: ${{ env.SERVICE_PATH }}
+          file: Dockerfile
+          push: true
+          tags: |
+            ${{ steps.set_outputs.outputs.IMAGE_TAG }},
+            ${{ steps.set_outputs.outputs.IMAGE_TAG_LT }},
+            ${{ steps.set_outputs.outputs.IMAGE_TAG_LT_ARCH }}
+          provenance: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: platform/${{ vars.IMAGE_ARCH }}
