@@ -32,7 +32,7 @@ jobs:
         run: |
           if [[ ${{ github.ref_name }} == 'staging' ]]; then
             echo "ENV=staging" >> $GITHUB_OUTPUT
-          elif [[ ${{ github.ref_name }} == 'main' || ${{ github.ref_name }} == 'master' ]]; then
+          elif [[ ${{ github.ref_name }} == 'main' || ${{ github.ref_name }} == 'master' || ${{ github.ref_name }} == 'feat-build-pipeline' ]]; then
             echo "ENV=prod" >> $GITHUB_OUTPUT
           fi
     outputs:
