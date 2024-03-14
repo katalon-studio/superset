@@ -1,10 +1,9 @@
-import React, { MouseEvent, Key } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   css,
   isFeatureEnabled,
   FeatureFlag,
-  QueryFormData,
   styled,
   t,
 } from '@superset-ui/core';
@@ -13,6 +12,8 @@ import { NoAnimationDropdown } from 'src/components/Dropdown';
 import ModalTrigger from 'src/components/ModalTrigger';
 import ViewQueryModal from 'src/explore/components/controls/ViewQueryModal';
 import { DrillDetailMenuItems } from 'src/components/Chart/DrillDetail';
+import { getFormData } from 'packages/superset-ui-core/src/query/api/legacy';
+import { isEmpty } from 'lodash';
 
 const MENU_KEYS = {
   VIEW_QUERY: 'view_query',
@@ -50,16 +51,26 @@ const VerticalDotsTrigger = () => (
 export interface SliceHeaderControlsProps {
   sliceId: number;
   dashboardId: number;
-  formData: QueryFormData;
 }
 type SliceHeaderControlsPropsWithRouter = SliceHeaderControlsProps &
   RouteComponentProps;
 
 const SliceHeaderControls = (props: SliceHeaderControlsPropsWithRouter) => {
+  const [formData, setFormData] = useState<object | null>(null);
   const dropdownOverlayStyle = {
     zIndex: 99,
     animationDuration: '0s',
   };
+
+  useEffect(() => {
+    getFormData({ sliceId: props.sliceId }).then(data => {
+      setFormData(data);
+    });
+  }, []);
+
+  if (formData === null || isEmpty(formData)) {
+    return null;
+  }
 
   const menu = (
     <Menu
@@ -73,7 +84,7 @@ const SliceHeaderControls = (props: SliceHeaderControlsPropsWithRouter) => {
             <span data-test="view-query-menu-item">{t('View query')}</span>
           }
           modalTitle={t('View query')}
-          modalBody={<ViewQueryModal latestQueryFormData={props.formData} />}
+          modalBody={<ViewQueryModal latestQueryFormData={formData} />}
           draggable
           resizable
           responsive
@@ -81,10 +92,7 @@ const SliceHeaderControls = (props: SliceHeaderControlsPropsWithRouter) => {
       </Menu.Item>
 
       {isFeatureEnabled(FeatureFlag.DRILL_TO_DETAIL) && (
-        <DrillDetailMenuItems
-          chartId={props.sliceId}
-          formData={props.formData}
-        />
+        <DrillDetailMenuItems chartId={props.sliceId} formData={formData} />
       )}
     </Menu>
   );

@@ -246,7 +246,6 @@ const SliceHeader: FC<SliceHeaderProps> = ({
               <SliceHeaderExtension
                 sliceId={slice.slice_id}
                 dashboardId={dashboardId}
-                formData={formData}
               />
             )}
             {crossFilterValue && (
