@@ -18,12 +18,12 @@
  */
 import { getExtensionsRegistry } from '@superset-ui/core';
 import KatalonSliceHeaderControls from 'src/katalon/KatalonSliceHeaderControls';
-import KatalonURLFilters from '../katalon/KatalonURLFilters';
+import KatalonSyncDashboardState from '../katalon/KatalonSyncDashboardState';
 
 // For individual deployments to add custom overrides
 export default function setupPluginsExtra() {
   const extensionRegistry = getExtensionsRegistry();
 
-  extensionRegistry.set('root.context.provider', KatalonURLFilters);
+  extensionRegistry.set('root.context.provider', KatalonSyncDashboardState);
   extensionRegistry.set('dashboard.slice.header', KatalonSliceHeaderControls);
 }

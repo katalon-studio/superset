@@ -7,7 +7,7 @@ import {
   useNativeFiltersDataMask,
 } from '../dashboard/components/nativeFilters/FilterBar/state';
 
-function KatalonURLFilters({ children }) {
+function KatalonSyncDashboardState({ children }: any) {
   const dispatch = useDispatch();
 
   const currentFilters: DataMaskStateWithId = useNativeFiltersDataMask();
@@ -46,4 +46,4 @@ function KatalonURLFilters({ children }) {
   return <div>{children}</div>;
 }
 
-export default KatalonURLFilters;
+export default KatalonSyncDashboardState;
