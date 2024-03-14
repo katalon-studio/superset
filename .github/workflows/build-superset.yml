@@ -1,0 +1,95 @@
+name: "[CICD] Superset"
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Manual environment to run (qa | staging | prod)"
+        required: false
+        type: string
+  push:
+    branches:
+      - main
+      - master
+      - release
+      - feat-build-pipeline
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+
+env:
+  SERVICE_NAME: superset
+  SERVICE_PATH: '.'
+
+jobs:
+  set_env:
+    runs-on: ubuntu-latest
+    name: Set Environment
+    steps:
+      - name: Set environment base on branch
+        id: set_env
+        uses: katalon-studio/katalon-base-actions/actions/get-env@v1
+        with:
+          slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+          qa_branch: feat-build-pipeline
+    outputs:
+      ENV: ${{ inputs.environment || steps.set_env.outputs.ENV }}
+
+  set_vars:
+    runs-on: ubuntu-latest
+    needs: [set_env]
+    ### https://chamindac.blogspot.com/2023/09/passing-environment-variables-to.html
+    name: Workaround for passing env to reusable workflows 
+    environment: ${{ needs.set_env.outputs.ENV }}
+    steps:
+      - run: echo "Exposing environment vars to reusable workflow"
+    outputs:
+      SERVICE_PATH: ${{ env.SERVICE_PATH }}
+      SERVICE_NAME: ${{ env.SERVICE_NAME }}
+      GITOPS_REPO: ${{ vars.GITOPS_REPO }}
+      GITOPS_FILE_PATH: ${{ vars.BE_GITOPS_FILE_PATH }}
+      GITOPS_YAML_PATH: ${{ vars.GITOPS_YAML_PATH }}
+
+  reusable_cicd_pipelines:
+    uses: katalon-studio/katalon-base-actions/.github/workflows/cicd-dockerfile-gitops-v2.yaml@v1
+    needs: [set_env, set_vars]
+    name: Continuous Integration and Continuous Delivery
+    with:
+      RUNS_BUILD_ON: self-hosted-large
+      ENV: ${{ needs.set_env.outputs.ENV }}
+      BUILD_MULTI_ARCH: true
+      IMAGE_APPEND_ENV: false
+      IMAGE_NAME_PREFIX: ${{ needs.set_vars.outputs.SERVICE_NAME }}
+      DOCKER_CONTEXT: ${{ needs.set_vars.outputs.SERVICE_PATH }}
+      DOCKERFILE_LOCATION: 'Dockerfile'
+      GITOPS_REPO: ${{ needs.set_vars.outputs.GITOPS_REPO }}
+      GITOPS_FILE_PATH: ${{ needs.set_vars.outputs.GITOPS_FILE_PATH }}
+      GITOPS_YAML_PATH: ${{ needs.set_vars.outputs.GITOPS_YAML_PATH }}
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
+  notify:
+    runs-on: ubuntu-latest
+    needs: [set_env, reusable_cicd_pipelines]
+    name: Slack Notify
+    if: always()
+    steps:
+      - name: Get overrall status
+        id: get_status
+        run: |
+          result="success"
+          if [[ ${{ contains(needs.*.result, 'failure') }} == 'true' ]]; then
+            result="failure"
+          elif [[ ${{ contains(needs.*.result, 'cancelled') }} == 'true' ]]; then
+            result="cancelled"
+          fi
+
+          echo "result=$result" >> $GITHUB_OUTPUT
+      - name: Send Notification to Slack
+        uses: katalon-studio/katalon-base-actions/actions/slack-notify@v1
+        with:
+          slack_webhook: ${{ secrets.SLACK_WEBHOOK }}
+          job_status: ${{ steps.get_status.outputs.result }}
+          user_id: "<@U046QGK3BT5>" # anh.quach
+          env: ${{ needs.set_env.outputs.ENV }}
