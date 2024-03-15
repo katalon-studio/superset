@@ -17,10 +17,10 @@
  * under the License.
  */
 import { getExtensionsRegistry } from '@superset-ui/core';
-import KatalonSliceHeaderControls from 'src/katalon/KatalonSliceHeaderControls';
+// import KatalonSliceHeaderControls from 'src/katalon/KatalonSliceHeaderControls';
 
 // For individual deployments to add custom overrides
 export default function setupPluginsExtra() {
-  const extensionRegistry = getExtensionsRegistry();
+  // const extensionRegistry = getExtensionsRegistry();
   // extensionRegistry.set('dashboard.slice.header', KatalonSliceHeaderControls);
 }
