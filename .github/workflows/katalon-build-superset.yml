@@ -15,6 +15,7 @@ on:
       - main
       - master
       - release
+      - 3.1.0.katalon
 
 permissions:
   id-token: write # This is required for requesting the JWT
