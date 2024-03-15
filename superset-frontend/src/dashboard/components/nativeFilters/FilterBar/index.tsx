@@ -235,7 +235,6 @@ const FilterBar: React.FC<FiltersBarProps> = ({
   const handleApply = useCallback(() => {
     dispatch(logEvent(LOG_ACTIONS_CHANGE_DASHBOARD_FILTER, {}));
     const filterIds = Object.keys(dataMaskSelected);
-
     setUpdateKey(1);
     filterIds.forEach(filterId => {
       if (dataMaskSelected[filterId]) {
