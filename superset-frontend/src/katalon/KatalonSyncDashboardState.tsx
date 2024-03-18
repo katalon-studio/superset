@@ -9,6 +9,8 @@ import { hydrateDashboard } from '../dashboard/actions/hydrate';
 import { useDashboard, useDashboardCharts } from '../hooks/apiResources';
 
 function KatalonSyncDashboardState({ children }: any) {
+  console.log('Init');
+
   const dispatch = useDispatch();
   const history = useHistory();
   const dashboardId = useSelector<any, number>(
