@@ -51,15 +51,17 @@ function KatalonSyncDashboardState({ children }: any) {
   // Hydrate dashboard with received filters
   useEffect(() => {
     if (isInitialized && filtersFromParent && dashboardId) {
-      dispatch(
-        hydrateDashboard({
-          history,
-          dashboard,
-          charts,
-          activeTabs: undefined,
-          dataMask: filtersFromParent,
-        }),
-      );
+      setTimeout(() => {
+        dispatch(
+          hydrateDashboard({
+            history,
+            dashboard,
+            charts,
+            activeTabs: undefined,
+            dataMask: filtersFromParent,
+          }),
+        );
+      }, 3000);
     }
   }, [filtersFromParent]);
 
