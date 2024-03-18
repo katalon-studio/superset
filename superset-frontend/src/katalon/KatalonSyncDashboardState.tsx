@@ -8,17 +8,17 @@ import {
 import { hydrateDashboard } from '../dashboard/actions/hydrate';
 import { useDashboard, useDashboardCharts } from '../hooks/apiResources';
 
-function KatalonSyncDashboardState({ children }: any) {
+function KatalonSyncDashboardState({children}: any) {
   console.log('Init');
 
   const dispatch = useDispatch();
   const history = useHistory();
   const dashboardId = useSelector<any, number>(
-    ({ dashboardInfo }) => dashboardInfo?.id,
+    ({dashboardInfo}) => dashboardInfo?.id,
   );
   const isInitialized = useInitialization();
-  const { result: dashboard } = useDashboard(dashboardId);
-  const { result: charts } = useDashboardCharts(dashboardId);
+  const {result: dashboard} = useDashboard(dashboardId);
+  const {result: charts} = useDashboardCharts(dashboardId);
   const currentFilters = useNativeFiltersDataMask();
   const [previousFilters, setPreviousFilters] = useState(currentFilters);
   const [filtersFromParent, setFiltersFromParent] = useState(null);
@@ -57,18 +57,20 @@ function KatalonSyncDashboardState({ children }: any) {
   // Hydrate dashboard with received filters
   useEffect(() => {
     console.log('useEffect');
-    if (isInitialized && filtersFromParent) {
-      console.log('dispatch');
-      dispatch(
-        hydrateDashboard({
-          history,
-          dashboard,
-          charts,
-          activeTabs: undefined,
-          dataMask: filtersFromParent,
-        }),
-      );
-    }
+    setTimeout(() => {
+      if (isInitialized && filtersFromParent) {
+        console.log('dispatch');
+        dispatch(
+          hydrateDashboard({
+            history,
+            dashboard,
+            charts,
+            activeTabs: undefined,
+            dataMask: filtersFromParent,
+          }),
+        );
+      }
+    }, 3000);
   }, [isInitialized, filtersFromParent]);
 
   return <>{children}</>;
