@@ -19,12 +19,15 @@ function KatalonSyncDashboardState({ children }: any) {
   const { result: charts } = useDashboardCharts(dashboardId);
   const currentFilters = useNativeFiltersDataMask();
   const [previousFilters, setPreviousFilters] = useState(currentFilters);
-  const [filtersFromParent, setFiltersFromParent] = useState();
+  const [filtersFromParent, setFiltersFromParent] = useState(null);
 
   // Send filters to parent
   useEffect(() => {
     const isApplyFiltersClicked =
       isInitialized && !shallowEqual(previousFilters, currentFilters);
+
+    console.log('isApplyFiltersClicked', isApplyFiltersClicked);
+
     if (isApplyFiltersClicked) {
       window.parent.postMessage(JSON.stringify(currentFilters), '*');
     }
@@ -35,6 +38,7 @@ function KatalonSyncDashboardState({ children }: any) {
   useEffect(() => {
     window.addEventListener('message', event => {
       if (event.data.raFilter) {
+        console.log('received filters');
         const receivedFilters = JSON.parse(event.data.raFilter);
         setFiltersFromParent(receivedFilters);
       }
@@ -50,20 +54,20 @@ function KatalonSyncDashboardState({ children }: any) {
 
   // Hydrate dashboard with received filters
   useEffect(() => {
-    if (isInitialized && filtersFromParent && dashboardId) {
-      setTimeout(() => {
-        dispatch(
-          hydrateDashboard({
-            history,
-            dashboard,
-            charts,
-            activeTabs: undefined,
-            dataMask: filtersFromParent,
-          }),
-        );
-      }, 3000);
+    console.log('useEffect');
+    if (isInitialized && filtersFromParent) {
+      console.log('dispatch');
+      dispatch(
+        hydrateDashboard({
+          history,
+          dashboard,
+          charts,
+          activeTabs: undefined,
+          dataMask: filtersFromParent,
+        }),
+      );
     }
-  }, [filtersFromParent]);
+  }, [isInitialized, filtersFromParent]);
 
   return <>{children}</>;
 }
