@@ -50,7 +50,7 @@ function KatalonSyncDashboardState({ children }: any) {
 
   // Hydrate dashboard with received filters
   useEffect(() => {
-    if (isInitialized && filtersFromParent) {
+    if (isInitialized && filtersFromParent && dashboard && charts) {
       dispatch(
         hydrateDashboard({
           history,
