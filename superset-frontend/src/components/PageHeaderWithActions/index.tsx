@@ -137,7 +137,7 @@ export const PageHeaderWithActions = ({
   return (
     <div css={headerStyles} className="header-with-actions">
       <div className="title-panel">
-        <DynamicEditableTitle {...editableTitleProps} />
+        {/* <DynamicEditableTitle {...editableTitleProps} />
         {showTitlePanelItems && (
           <div css={buttonsStyles}>
             {certificatiedBadgeProps?.certifiedBy && (
@@ -146,12 +146,12 @@ export const PageHeaderWithActions = ({
             {showFaveStar && <FaveStar {...faveStarProps} />}
             {titlePanelAdditionalItems}
           </div>
-        )}
+        )} */}
       </div>
       <div className="right-button-panel">
         {rightPanelAdditionalItems}
         <div css={additionalActionsContainerStyles}>
-          {showMenuDropdown && (
+          {/* {showMenuDropdown && (
             <AntdDropdown
               trigger={['click']}
               overlay={additionalActionsMenu}
@@ -171,7 +171,7 @@ export const PageHeaderWithActions = ({
                 />
               </Button>
             </AntdDropdown>
-          )}
+          )} */}
         </div>
       </div>
     </div>
