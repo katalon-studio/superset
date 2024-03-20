@@ -15,6 +15,7 @@ on:
       - main
       - master
       - release
+      - 3.1.0.katalon
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -32,7 +33,7 @@ jobs:
       - name: Set environment base on branch
         id: set_env
         run: |
-          if [[ ${{ github.ref_name }} == 'main' ]]; then
+          if [[ ${{ github.ref_name }} == 'main' || ${{ github.ref_name }} == '3.1.0.katalon' ]]; then
             echo "ENV=qa" >> $GITHUB_OUTPUT
           elif [[ ${{ github.ref_name }} == 'release' ]]; then
             echo "ENV=staging" >> $GITHUB_OUTPUT

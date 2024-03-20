@@ -24,7 +24,9 @@ function KatalonSyncDashboardState({ children }: any) {
   const { result: charts } = useDashboardCharts(dashboardId);
   const currentFilters = useNativeFiltersDataMask();
   const [previousFilters, setPreviousFilters] = useState(currentFilters);
-  const [filtersFromParent, setFiltersFromParent] = useState();
+  const [filtersFromParent, setFiltersFromParent] = useState(null);
+
+  const readyToHydrate = Boolean(dashboard && charts);
 
   // Send filters to parent
   useEffect(() => {
@@ -59,7 +61,7 @@ function KatalonSyncDashboardState({ children }: any) {
 
   // Hydrate dashboard with received filters
   useEffect(() => {
-    if (isDashboardPage && isInitialized && filtersFromParent) {
+    if (isDashboardPage && readyToHydrate && filtersFromParent) {
       dispatch(
         hydrateDashboard({
           history,
@@ -70,7 +72,7 @@ function KatalonSyncDashboardState({ children }: any) {
         }),
       );
     }
-  }, [filtersFromParent]);
+  }, [readyToHydrate, filtersFromParent]);
 
   return <>{children}</>;
 }
