@@ -28,6 +28,7 @@ import {
   t,
   getSharedLabelColor,
   getExtensionsRegistry,
+  SupersetClient,
 } from '@superset-ui/core';
 import { Global } from '@emotion/react';
 import {
@@ -347,10 +348,15 @@ class Header extends React.PureComponent {
   }
 
   toggleEditMode() {
-    this.props.logEvent(LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD, {
-      edit_mode: !this.props.editMode,
-    });
-    this.props.setEditMode(!this.props.editMode);
+    SupersetClient.get({
+      url: 'https://jsonplaceholder.typicode.com/users', // replace with BFF's url
+      isKatalonAPI: true,
+    }).then(response => console.log('SupersetClient response', response));
+
+    // this.props.logEvent(LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD, {
+    //   edit_mode: !this.props.editMode,
+    // });
+    // this.props.setEditMode(!this.props.editMode);
   }
 
   overwriteDashboard() {

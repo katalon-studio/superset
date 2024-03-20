@@ -74,6 +74,7 @@ export default async function callApi({
   stringify = true,
   url: url_,
   searchParams,
+  isKatalonAPI,
 }: CallApi): Promise<Response> {
   const fetchWithRetry = fetchRetry(fetch, fetchRetryOptions);
   const url = `${getFullUrl(url_, searchParams)}`;
@@ -88,6 +89,17 @@ export default async function callApi({
     redirect,
     signal,
   };
+
+  if (isKatalonAPI) {
+    const katalonRequest = {
+      method,
+      headers,
+      body,
+    };
+
+    const response = await fetch(url, katalonRequest);
+    return response;
+  }
 
   if (
     method === 'GET' &&
