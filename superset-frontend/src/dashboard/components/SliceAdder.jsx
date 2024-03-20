@@ -338,7 +338,7 @@ class SliceAdder extends React.Component {
             }
           >
             <Icons.PlusSmall />
-            {t('Create new chartttt')}
+            {t('Create new chart')}
           </NewChartButton>
         </NewChartButtonContainer>
         <Controls>

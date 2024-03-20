@@ -277,7 +277,9 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
 
       // Go to new dashboard url
       if (gotodash && dashboard) {
-        this.props.history.push(`${dashboard.url}?standalone=1`);
+        this.props.history.push(
+          `${dashboard.url}?standalone=1&isKatalonEmbeddedMode=true`,
+        );
         return;
       }
 
