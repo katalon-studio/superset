@@ -739,38 +739,16 @@ export const ControlPanelsContainer = (props: ControlPanelsContainerProps) => {
     return <Loading />;
   }
 
-  const showCustomizeTab = customizeSections.length > 0;
-
   return (
     <Styles ref={containerRef}>
-      <ControlPanelsTabs
-        id="controlSections"
-        data-test="control-tabs"
-        fullWidth={showCustomizeTab}
-        allowOverflow={false}
+      <Collapse
+        defaultActiveKey={expandedQuerySections}
+        expandIconPosition="right"
+        ghost
       >
-        <Tabs.TabPane key="query" tab={dataTabTitle}>
-          <Collapse
-            defaultActiveKey={expandedQuerySections}
-            expandIconPosition="right"
-            ghost
-          >
-            {showDatasourceAlert && <DatasourceAlert />}
-            {querySections.map(renderControlPanelSection)}
-          </Collapse>
-        </Tabs.TabPane>
-        {showCustomizeTab && (
-          <Tabs.TabPane key="display" tab={t('Customize')}>
-            <Collapse
-              defaultActiveKey={expandedCustomizeSections}
-              expandIconPosition="right"
-              ghost
-            >
-              {customizeSections.map(renderControlPanelSection)}
-            </Collapse>
-          </Tabs.TabPane>
-        )}
-      </ControlPanelsTabs>
+        {querySections.map(renderControlPanelSection)}
+      </Collapse>
+
       <div css={actionButtonsContainerStyles}>
         <RunQueryButton
           onQuery={props.onQuery}

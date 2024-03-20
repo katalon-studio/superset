@@ -277,7 +277,7 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
 
       // Go to new dashboard url
       if (gotodash && dashboard) {
-        this.props.history.push(dashboard.url);
+        this.props.history.push(`${dashboard.url}?standalone=1`);
         return;
       }
 
@@ -383,32 +383,6 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
             />
           </FormItem>
         )}
-        {!(
-          isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) &&
-          this.state.vizType === 'filter_box'
-        ) && (
-          <FormItem
-            label={t('Add to dashboard')}
-            data-test="save-chart-modal-select-dashboard-form"
-          >
-            <AsyncSelect
-              allowClear
-              allowNewOptions
-              ariaLabel={t('Select a dashboard')}
-              options={this.loadDashboards}
-              onChange={this.onDashboardChange}
-              value={this.state.dashboard}
-              placeholder={
-                <div>
-                  <b>{t('Select')}</b>
-                  {t(' a dashboard OR ')}
-                  <b>{t('create')}</b>
-                  {t(' a new one')}
-                </div>
-              }
-            />
-          </FormItem>
-        )}
         {info && <Alert type="info" message={info} closable={false} />}
         {this.props.alert && (
           <Alert
@@ -460,21 +434,6 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
             this.state.vizType === 'filter_box')
         }
         onClick={() => this.saveOrOverwrite(true)}
-      >
-        {t('Save & go to dashboard')}
-      </Button>
-      <Button
-        id="btn_modal_save"
-        buttonSize="small"
-        buttonStyle="primary"
-        onClick={() => this.saveOrOverwrite(false)}
-        disabled={
-          this.state.isLoading ||
-          !this.state.newSliceName ||
-          (this.props.datasource?.type !== DatasourceType.Table &&
-            !this.state.datasetName)
-        }
-        data-test="btn-modal-save"
       >
         {t('Save')}
       </Button>

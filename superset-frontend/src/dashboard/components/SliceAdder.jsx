@@ -332,15 +332,13 @@ class SliceAdder extends React.Component {
             buttonStyle="link"
             buttonSize="xsmall"
             onClick={() =>
-              window.open(
-                `/chart/add?dashboard_id=${this.props.dashboardId}`,
-                '_blank',
-                'noopener noreferrer',
+              window.location.assign(
+                `/explore/?dashboard_id=${this.props.dashboardId}&isKatalonEmbeddedMode=true`,
               )
             }
           >
             <Icons.PlusSmall />
-            {t('Create new chart')}
+            {t('Create new chartttt')}
           </NewChartButton>
         </NewChartButtonContainer>
         <Controls>

@@ -393,7 +393,7 @@ class DatasourceControl extends React.PureComponent {
     }
 
     const titleText = isMissingDatasource
-      ? t('Missing dataset')
+      ? t('Select a dataset')
       : getDatasourceTitle(datasource);
 
     const tooltip = titleText;
@@ -426,25 +426,6 @@ class DatasourceControl extends React.PureComponent {
             />
           </AntdDropdown>
         </div>
-        {/* missing dataset */}
-        {isMissingDatasource && isMissingParams && (
-          <div className="error-alert">
-            <ErrorAlert
-              level="warning"
-              title={t('Missing URL parameters')}
-              source="explore"
-              subtitle={
-                <>
-                  <p>
-                    {t(
-                      'The URL is missing the dataset_id or slice_id parameters.',
-                    )}
-                  </p>
-                </>
-              }
-            />
-          </div>
-        )}
         {isMissingDatasource && !isMissingParams && (
           <div className="error-alert">
             <ErrorAlert

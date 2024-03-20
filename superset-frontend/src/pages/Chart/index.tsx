@@ -146,7 +146,6 @@ export default function ExplorePage() {
         })
         .catch(err => {
           dispatch(hydrateExplore(fallbackExploreInitialData));
-          dispatch(addDangerToast(err.message));
         })
         .finally(() => {
           setIsLoaded(true);

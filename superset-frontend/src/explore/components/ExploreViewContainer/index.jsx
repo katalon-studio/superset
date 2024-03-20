@@ -699,7 +699,7 @@ function ExploreViewContainer(props) {
           actions={props.actions}
           form_data={props.form_data}
           sliceName={props.sliceName}
-          dashboardId={props.dashboardId}
+          dashboardId={getUrlParam(URL_PARAMS.dashboardId)}
         />
       )}
     </ExploreContainer>
