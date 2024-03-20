@@ -349,9 +349,14 @@ class Header extends React.PureComponent {
 
   toggleEditMode() {
     SupersetClient.get({
-      url: 'https://jsonplaceholder.typicode.com/users', // replace with BFF's url
+      url: 'http://localhost:8080/v2/ra/web/dashboards',
       isKatalonAPI: true,
-    }).then(response => console.log('SupersetClient response', response));
+      headers: {
+        'X-Project-Id': 18441,
+        Authorization:
+          'Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJqWVpYSzBWUHROcDRpaVJzcUlfT3Q4LW56NURCRXNlM0VFd2RHSEZfUjZVIn0.eyJleHAiOjE3MTExMTk4NjQsImlhdCI6MTcxMDk0NzA2NCwiYXV0aF90aW1lIjoxNzEwOTIxNTU3LCJqdGkiOiI5MzAwMjMwOC01MGJmLTQ1OGUtYmIxOS0xZjU5MGQzZGFjMGEiLCJpc3MiOiJodHRwczovL2xvZ2luLnFhLmthdGFsb24uY29tL3JlYWxtcy9rYXRhbG9uIiwiYXVkIjoiYWNjb3VudCIsInN1YiI6IjMzMzAyYWU3LWIxMWItNDBkOS1iMWQ1LWM3YTJkYzkyZTYyMCIsInR5cCI6IkJlYXJlciIsImF6cCI6ImthdGFsb24tdGVzdG9wcy1nZW4zIiwic2Vzc2lvbl9zdGF0ZSI6IjBmNTEwZGQ1LTgwM2ItNGFmOC05Nzc1LTljOTU2M2U1M2U4ZiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cHM6Ly9wbGF0Zm9ybS5xYS5rYXRhbG9uLmNvbSIsImh0dHA6Ly9sb2NhbGhvc3Q6NTE3MyIsImh0dHA6Ly9lYzItMzQtMTkzLTEwOC0yMDIuY29tcHV0ZS0xLmFtYXpvbmF3cy5jb206ODA4MCJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsidW1hX2F1dGhvcml6YXRpb24iLCJkZWZhdWx0LXJvbGVzLWthdGFsb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGVtYWlsIiwic2lkIjoiMGY1MTBkZDUtODAzYi00YWY4LTk3NzUtOWM5NTYzZTUzZThmIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImxhc3RfbG9naW4iOjE3MTA5MjE1NTc0NTksIm5hbWUiOiJUcmkgUXVhbiIsImNyZWF0ZWRfdGltZXN0YW1wIjoxNzA0OTQ2NDU1OTE5LCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJxdWFudHJpbWluaEBnbWFpbC5jb20iLCJnaXZlbl9uYW1lIjoiVHJpIiwiZmFtaWx5X25hbWUiOiJRdWFuIiwiZW1haWwiOiJxdWFudHJpbWluaEBnbWFpbC5jb20ifQ.Dwc_ukHatXddPlEFgLxlhApY0fsubrFyxNCgZ5Y_ag7hR_fOj8ydOWdM4hZdsi59oPybCagzws4aBC03M0o7jTxS8lG524-3UH0DatnQEL_PC_m92DA8hCVaa4q584nXCCE1znVE6UPLOSfJxWAZkFVweUU4GTGZJmX5t7whiRf-CdulWSw10KE6jZxhterj8wtMda2UZCH8fG2BzbCp0LbvBizOESqUYI6otr4Gf-ftKwc7Tii8Wc45tqt4pYkPfz5BiFvEqX2qVtiWaZu_xBfl11uUMkagZS0kBLaCDZ_mwjXedi5sCGrpwTBz2FE80gEdndlDX9UqnHK3WVppnQ',
+      },
+    }).then(response => console.log('SupersetClient response', response.json));
 
     // this.props.logEvent(LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD, {
     //   edit_mode: !this.props.editMode,
