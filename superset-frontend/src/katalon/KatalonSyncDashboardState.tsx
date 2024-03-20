@@ -9,6 +9,11 @@ import { hydrateDashboard } from '../dashboard/actions/hydrate';
 import { useDashboard, useDashboardCharts } from '../hooks/apiResources';
 
 function KatalonSyncDashboardState({ children }: any) {
+  const dashboardState = useSelector<any, any>(
+    ({ dashboardState }) => dashboardState,
+  );
+  const isDashboardPage = Object.keys(dashboardState).length > 0;
+
   const dispatch = useDispatch();
   const history = useHistory();
   const dashboardId = useSelector<any, number>(
@@ -23,34 +28,38 @@ function KatalonSyncDashboardState({ children }: any) {
 
   // Send filters to parent
   useEffect(() => {
-    const isApplyFiltersClicked =
-      isInitialized && !shallowEqual(previousFilters, currentFilters);
-    if (isApplyFiltersClicked) {
-      window.parent.postMessage(JSON.stringify(currentFilters), '*');
+    if (isDashboardPage) {
+      const isApplyFiltersClicked =
+        isInitialized && !shallowEqual(previousFilters, currentFilters);
+      if (isApplyFiltersClicked) {
+        window.parent.postMessage(JSON.stringify(currentFilters), '*');
+      }
+      setPreviousFilters(currentFilters);
     }
-    setPreviousFilters(currentFilters);
   }, [currentFilters]);
 
   // Receive filters from parent
   useEffect(() => {
-    window.addEventListener('message', event => {
-      if (event.data.raFilter) {
-        const receivedFilters = JSON.parse(event.data.raFilter);
-        setFiltersFromParent(receivedFilters);
-      }
-    });
+    if (isDashboardPage) {
+      window.addEventListener('message', event => {
+        if (event.data.raFilter) {
+          const receivedFilters = JSON.parse(event.data.raFilter);
+          setFiltersFromParent(receivedFilters);
+        }
+      });
+    }
   }, []);
 
   // Send ready message to parent, so it can start sending filters
   useEffect(() => {
-    if (isInitialized) {
+    if (isDashboardPage && isInitialized) {
       window.parent.postMessage('iframe ready', '*');
     }
   }, [isInitialized]);
 
   // Hydrate dashboard with received filters
   useEffect(() => {
-    if (isInitialized && filtersFromParent) {
+    if (isDashboardPage && isInitialized && filtersFromParent) {
       dispatch(
         hydrateDashboard({
           history,
