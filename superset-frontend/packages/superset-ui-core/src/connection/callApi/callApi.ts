@@ -85,21 +85,10 @@ export default async function callApi({
     credentials,
     headers,
     method,
-    mode,
+    mode: isKatalonAPI ? 'cors' : mode,
     redirect,
     signal,
   };
-
-  if (isKatalonAPI) {
-    const katalonRequest = {
-      method,
-      headers,
-      body,
-    };
-
-    const response = await fetch(url, katalonRequest);
-    return response;
-  }
 
   if (
     method === 'GET' &&
