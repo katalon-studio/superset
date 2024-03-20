@@ -238,6 +238,9 @@ export function Menu({
 
   const standalone = getUrlParam(URL_PARAMS.standalone);
   if (standalone || uiConfig.hideNav) return <></>;
+  if (getUrlParam(URL_PARAMS.isKatalonEmbeddedMode)) {
+    return <></>;
+  }
 
   const renderSubMenu = ({
     label,
