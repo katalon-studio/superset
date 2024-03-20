@@ -46,6 +46,8 @@ import { setSaveChartModalVisibility } from 'src/explore/actions/saveModalAction
 import { SaveActionType } from 'src/explore/types';
 import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
 import { Dashboard } from 'src/types/Dashboard';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 
 // Session storage key for recent dashboard
 const SK_DASHBOARD_ID = 'save_chart_recent_dashboard';
@@ -337,28 +339,33 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
 
   renderSaveChartModal = () => {
     const info = this.info();
+    const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
     return (
       <Form data-test="save-modal-body" layout="vertical">
-        <FormItem data-test="radio-group">
-          <Radio
-            id="overwrite-radio"
-            disabled={!this.canOverwriteSlice()}
-            checked={this.state.action === 'overwrite'}
-            onChange={() => this.changeAction('overwrite')}
-            data-test="save-overwrite-radio"
-          >
-            {t('Save (Overwrite)')}
-          </Radio>
-          <Radio
-            id="saveas-radio"
-            data-test="saveas-radio"
-            checked={this.state.action === 'saveas'}
-            onChange={() => this.changeAction('saveas')}
-          >
-            {t('Save as...')}
-          </Radio>
-        </FormItem>
-        <hr />
+        {!isKatalonEmbeddedMode && (
+          <>
+            <FormItem data-test="radio-group">
+              <Radio
+                id="overwrite-radio"
+                disabled={!this.canOverwriteSlice()}
+                checked={this.state.action === 'overwrite'}
+                onChange={() => this.changeAction('overwrite')}
+                data-test="save-overwrite-radio"
+              >
+                {t('Save (Overwrite)')}
+              </Radio>
+              <Radio
+                id="saveas-radio"
+                data-test="saveas-radio"
+                checked={this.state.action === 'saveas'}
+                onChange={() => this.changeAction('saveas')}
+              >
+                {t('Save as...')}
+              </Radio>
+            </FormItem>
+            <hr />
+          </>
+        )}
         <FormItem label={t('Chart name')} required>
           <Input
             name="new_slice_name"
