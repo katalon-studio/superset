@@ -20,10 +20,10 @@ import rison from 'rison';
 import { SupersetClient, t } from '@superset-ui/core';
 import { addSuccessToast } from 'src/components/MessageToasts/actions';
 import { isEmpty } from 'lodash';
-import { buildV1ChartDataPayload } from '../exploreUtils';
-import { Operators } from '../constants';
 import { getUrlParam } from 'src/utils/urlUtils';
 import { URL_PARAMS } from 'src/constants';
+import { buildV1ChartDataPayload } from '../exploreUtils';
+import { Operators } from '../constants';
 
 const ADHOC_FILTER_REGEX = /^adhoc_filters/;
 
@@ -215,16 +215,9 @@ export const createSlice =
       },
     } = getState();
     try {
-      // const response = await SupersetClient.post({
-      //   endpoint: `/api/v1/chart/`,
-      //   jsonPayload: getSlicePayload(sliceName, formData, dashboards),
-      // });
-
       const projectId = getUrlParam(URL_PARAMS.projectId);
       const accessToken = getUrlParam(URL_PARAMS.accessToken);
-
-      const cookies = document.cookie;
-      console.log('cookies', cookies);
+      const xCookie = document.cookie;
 
       const response = await SupersetClient.post({
         url: 'http://localhost:8080/v2/ra/web/superset/chart',
@@ -232,12 +225,10 @@ export const createSlice =
         headers: {
           'X-Project-Id': projectId,
           Authorization: `Bearer ${accessToken}`,
-          'x-cookie': cookies,
+          'X-Cookie': xCookie,
         },
         jsonPayload: getSlicePayload(sliceName, formData, dashboards),
       });
-
-      console.log('response', response.json);
 
       dispatch(saveSliceSuccess());
       addToasts(true, sliceName, addedToDashboard).map(dispatch);
