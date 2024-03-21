@@ -392,8 +392,12 @@ class DatasourceControl extends React.PureComponent {
       }
     }
 
+    const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+    const text = !isKatalonEmbeddedMode
+      ? t('Missing dataset')
+      : 'Select a dataset';
     const titleText = isMissingDatasource
-      ? t('Select a dataset')
+      ? t(text)
       : getDatasourceTitle(datasource);
 
     const tooltip = titleText;
@@ -426,6 +430,25 @@ class DatasourceControl extends React.PureComponent {
             />
           </AntdDropdown>
         </div>
+        {/* missing dataset */}
+        {!isKatalonEmbeddedMode && isMissingDatasource && isMissingParams && (
+          <div className="error-alert">
+            <ErrorAlert
+              level="warning"
+              title={t('Missing URL parameters')}
+              source="explore"
+              subtitle={
+                <>
+                  <p>
+                    {t(
+                      'The URL is missing the dataset_id or slice_id parameters.',
+                    )}
+                  </p>
+                </>
+              }
+            />
+          </div>
+        )}
         {isMissingDatasource && !isMissingParams && (
           <div className="error-alert">
             <ErrorAlert

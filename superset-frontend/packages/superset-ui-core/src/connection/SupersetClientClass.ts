@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+import { omit } from 'lodash';
 import callApiAndParseWithTimeout from './callApi/callApiAndParseWithTimeout';
 import {
   ClientConfig,
@@ -196,15 +197,21 @@ export default class SupersetClientClass {
     timeout,
     fetchRetryOptions,
     ignoreUnauthorized = false,
+    isKatalonAPI,
     ...rest
   }: RequestConfig & { parseMethod?: T }) {
     await this.ensureAuth();
+
+    const combinedHeaders = { ...this.headers, ...headers };
     return callApiAndParseWithTimeout({
       ...rest,
+      isKatalonAPI,
       credentials: credentials ?? this.credentials,
       mode: mode ?? this.mode,
       url: this.getUrl({ endpoint, host, url }),
-      headers: { ...this.headers, ...headers },
+      headers: isKatalonAPI
+        ? omit(combinedHeaders, ['X-CSRFToken']) // Header field X-CSRFToken is not allowed by Access-Control-Allow-Headers (CORS policy)
+        : combinedHeaders,
       timeout: timeout ?? this.timeout,
       fetchRetryOptions: fetchRetryOptions ?? this.fetchRetryOptions,
     }).catch(res => {

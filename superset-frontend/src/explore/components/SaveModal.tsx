@@ -279,9 +279,15 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
 
       // Go to new dashboard url
       if (gotodash && dashboard) {
-        this.props.history.push(
-          `${dashboard.url}?standalone=1&isKatalonEmbeddedMode=true`,
+        const isKatalonEmbeddedMode = getUrlParam(
+          URL_PARAMS.isKatalonEmbeddedMode,
         );
+        let { url } = dashboard;
+        if (isKatalonEmbeddedMode) {
+          url += '?standalone=1&isKatalonEmbeddedMode=true';
+        }
+
+        this.props.history.push(url);
         return;
       }
 
@@ -392,6 +398,33 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
             />
           </FormItem>
         )}
+        {!(
+          isKatalonEmbeddedMode &&
+          isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) &&
+          this.state.vizType === 'filter_box'
+        ) && (
+          <FormItem
+            label={t('Add to dashboard')}
+            data-test="save-chart-modal-select-dashboard-form"
+          >
+            <AsyncSelect
+              allowClear
+              allowNewOptions
+              ariaLabel={t('Select a dashboard')}
+              options={this.loadDashboards}
+              onChange={this.onDashboardChange}
+              value={this.state.dashboard}
+              placeholder={
+                <div>
+                  <b>{t('Select')}</b>
+                  {t(' a dashboard OR ')}
+                  <b>{t('create')}</b>
+                  {t(' a new one')}
+                </div>
+              }
+            />
+          </FormItem>
+        )}
         {info && <Alert type="info" message={info} closable={false} />}
         {this.props.alert && (
           <Alert
@@ -426,28 +459,49 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
     return null;
   };
 
-  renderFooter = () => (
-    <div data-test="save-modal-footer">
-      <Button id="btn_cancel" buttonSize="small" onClick={this.onHide}>
-        {t('Cancel')}
-      </Button>
-      <Button
-        id="btn_modal_save_goto_dash"
-        buttonSize="small"
-        disabled={
-          !this.state.newSliceName ||
-          !this.state.dashboard ||
-          (this.props.datasource?.type !== DatasourceType.Table &&
-            !this.state.datasetName) ||
-          (isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) &&
-            this.state.vizType === 'filter_box')
-        }
-        onClick={() => this.saveOrOverwrite(true)}
-      >
-        {t('Save')}
-      </Button>
-    </div>
-  );
+  renderFooter = () => {
+    const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+
+    return (
+      <div data-test="save-modal-footer">
+        <Button id="btn_cancel" buttonSize="small" onClick={this.onHide}>
+          {t('Cancel')}
+        </Button>
+        <Button
+          id="btn_modal_save_goto_dash"
+          buttonSize="small"
+          disabled={
+            !this.state.newSliceName ||
+            !this.state.dashboard ||
+            (this.props.datasource?.type !== DatasourceType.Table &&
+              !this.state.datasetName) ||
+            (isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) &&
+              this.state.vizType === 'filter_box')
+          }
+          onClick={() => this.saveOrOverwrite(true)}
+        >
+          {t('Save & go to dashboard')}
+        </Button>
+        {!isKatalonEmbeddedMode && (
+          <Button
+            id="btn_modal_save"
+            buttonSize="small"
+            buttonStyle="primary"
+            onClick={() => this.saveOrOverwrite(false)}
+            disabled={
+              this.state.isLoading ||
+              !this.state.newSliceName ||
+              (this.props.datasource?.type !== DatasourceType.Table &&
+                !this.state.datasetName)
+            }
+            data-test="btn-modal-save"
+          >
+            {t('Save')}
+          </Button>
+        )}
+      </div>
+    );
+  };
 
   render() {
     return (

@@ -20,6 +20,8 @@ import rison from 'rison';
 import { SupersetClient, t } from '@superset-ui/core';
 import { addSuccessToast } from 'src/components/MessageToasts/actions';
 import { isEmpty } from 'lodash';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 import { buildV1ChartDataPayload } from '../exploreUtils';
 import { Operators } from '../constants';
 
@@ -213,8 +215,18 @@ export const createSlice =
       },
     } = getState();
     try {
+      const projectId = getUrlParam(URL_PARAMS.projectId);
+      const accessToken = getUrlParam(URL_PARAMS.accessToken);
+      const xCookie = document.cookie;
+
       const response = await SupersetClient.post({
-        endpoint: `/api/v1/chart/`,
+        url: 'http://localhost:8080/v2/ra/web/superset/chart',
+        isKatalonAPI: true,
+        headers: {
+          'X-Project-Id': projectId,
+          Authorization: `Bearer ${accessToken}`,
+          'X-Cookie': xCookie,
+        },
         jsonPayload: getSlicePayload(sliceName, formData, dashboards),
       });
 
