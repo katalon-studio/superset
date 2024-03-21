@@ -22,6 +22,8 @@ import { addSuccessToast } from 'src/components/MessageToasts/actions';
 import { isEmpty } from 'lodash';
 import { buildV1ChartDataPayload } from '../exploreUtils';
 import { Operators } from '../constants';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 
 const ADHOC_FILTER_REGEX = /^adhoc_filters/;
 
@@ -213,10 +215,29 @@ export const createSlice =
       },
     } = getState();
     try {
+      // const response = await SupersetClient.post({
+      //   endpoint: `/api/v1/chart/`,
+      //   jsonPayload: getSlicePayload(sliceName, formData, dashboards),
+      // });
+
+      const projectId = getUrlParam(URL_PARAMS.projectId);
+      const accessToken = getUrlParam(URL_PARAMS.accessToken);
+
+      const cookies = document.cookie;
+      console.log('cookies', cookies);
+
       const response = await SupersetClient.post({
-        endpoint: `/api/v1/chart/`,
+        url: 'http://localhost:8080/v2/ra/web/superset/chart',
+        isKatalonAPI: true,
+        headers: {
+          'X-Project-Id': projectId,
+          Authorization: `Bearer ${accessToken}`,
+          Cookie: cookies,
+        },
         jsonPayload: getSlicePayload(sliceName, formData, dashboards),
       });
+
+      console.log('response', response.json);
 
       dispatch(saveSliceSuccess());
       addToasts(true, sliceName, addedToDashboard).map(dispatch);

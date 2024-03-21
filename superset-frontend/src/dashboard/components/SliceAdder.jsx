@@ -337,9 +337,12 @@ class SliceAdder extends React.Component {
               const isKatalonEmbeddedDashboard = getUrlParam(
                 URL_PARAMS.isKatalonEmbeddedMode,
               );
+              const projectId = getUrlParam(URL_PARAMS.projectId);
+              const accessToken = getUrlParam(URL_PARAMS.accessToken);
+
               if (isKatalonEmbeddedDashboard) {
                 window.location.assign(
-                  `/explore/?dashboard_id=${this.props.dashboardId}&isKatalonEmbeddedMode=true`,
+                  `/explore/?dashboard_id=${this.props.dashboardId}&isKatalonEmbeddedMode=true&projectId=${projectId}&accessToken=${accessToken}`,
                 );
               } else {
                 window.open(

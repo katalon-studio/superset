@@ -90,6 +90,8 @@ export default async function callApi({
     signal,
   };
 
+  // console.log('request', request);
+
   if (
     method === 'GET' &&
     cache !== 'no-store' &&
@@ -175,6 +177,8 @@ export default async function callApi({
         ...request.headers,
         'Content-Type': 'application/json',
       };
+
+      console.log('request', request);
     }
   }
 
