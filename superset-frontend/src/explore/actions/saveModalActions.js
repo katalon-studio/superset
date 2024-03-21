@@ -232,7 +232,7 @@ export const createSlice =
         headers: {
           'X-Project-Id': projectId,
           Authorization: `Bearer ${accessToken}`,
-          Cookie: cookies,
+          'x-cookie': cookies,
         },
         jsonPayload: getSlicePayload(sliceName, formData, dashboards),
       });
