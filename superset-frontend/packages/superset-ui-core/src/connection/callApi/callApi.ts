@@ -66,7 +66,7 @@ export default async function callApi({
   fetchRetryOptions,
   headers,
   method = 'GET',
-  mode = 'same-origin',
+  mode = 'cors',
   postPayload,
   jsonPayload,
   redirect = 'follow',
@@ -79,16 +79,26 @@ export default async function callApi({
   const fetchWithRetry = fetchRetry(fetch, fetchRetryOptions);
   const url = `${getFullUrl(url_, searchParams)}`;
 
+  // const combinedHeaders = { ...headers, 'Accept-Encoding': 'application/json' };
+
   const request = {
     body,
     cache,
     credentials,
+    // headers: combinedHeaders,
     headers,
     method,
     mode: isKatalonAPI ? 'cors' : mode,
     redirect,
     signal,
   };
+
+  request.headers = {
+    ...request.headers,
+    'Accept-Encoding': 'application/json',
+  };
+
+  console.log('request', request);
 
   if (
     method === 'GET' &&
