@@ -111,7 +111,8 @@ export function getChartDataUri({ path, qs, allowDomainSharding = false }) {
   let uri = new URI({
     protocol: window.location.protocol.slice(0, -1),
     hostname: getHostName(allowDomainSharding),
-    port: window.location.port ? window.location.port : '',
+    // port: window.location.port ? window.location.port : '',
+    port: '8080',
     path,
   });
   if (qs) {

@@ -198,17 +198,26 @@ export default class SupersetClientClass {
     timeout,
     fetchRetryOptions,
     ignoreUnauthorized = false,
-    isKatalonAPI,
     ...rest
   }: RequestConfig & { parseMethod?: T }) {
     // await this.ensureAuth();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('projectId');
+    const accessToken = urlParams.get('accessToken');
+    const combinedHeaders = {
+      ...this.headers,
+      ...headers,
+      ...(projectId && { 'x-project-id': projectId }),
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    };
+
     return callApiAndParseWithTimeout({
       ...rest,
-      isKatalonAPI,
       credentials: credentials ?? this.credentials,
       mode: mode ?? this.mode,
       url: this.getUrl({ endpoint, host, url }),
-      headers: { ...this.headers, ...headers },
+      headers: combinedHeaders,
       timeout: timeout ?? this.timeout,
       fetchRetryOptions: fetchRetryOptions ?? this.fetchRetryOptions,
     }).catch(res => {

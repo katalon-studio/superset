@@ -215,18 +215,8 @@ export const createSlice =
       },
     } = getState();
     try {
-      const projectId = getUrlParam(URL_PARAMS.projectId);
-      const accessToken = getUrlParam(URL_PARAMS.accessToken);
-      const xCookie = document.cookie;
-
       const response = await SupersetClient.post({
-        url: 'http://localhost:8080/v2/ra/web/superset/chart',
-        isKatalonAPI: true,
-        headers: {
-          'X-Project-Id': projectId,
-          Authorization: `Bearer ${accessToken}`,
-          'X-Cookie': xCookie,
-        },
+        endpoint: `/api/v1/chart/`,
         jsonPayload: getSlicePayload(sliceName, formData, dashboards),
       });
 
