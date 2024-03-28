@@ -54,6 +54,8 @@ import { getActiveFilters } from 'src/dashboard/util/activeDashboardFilters';
 import { safeStringify } from 'src/utils/safeStringify';
 import { logEvent } from 'src/logger/actions';
 import { LOG_ACTIONS_CONFIRM_OVERWRITE_DASHBOARD_METADATA } from 'src/logger/LogUtils';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 import { UPDATE_COMPONENTS_PARENTS_LIST } from './dashboardLayout';
 import {
   saveChartConfiguration,
@@ -342,11 +344,20 @@ export function saveDashboardRequest(data, id, saveType) {
         dispatch(saveDashboardRequestSuccess(lastModifiedTime));
       }
       dispatch(saveDashboardFinished());
+
+      const isKatalonEmbeddedDashboard = getUrlParam(
+        URL_PARAMS.isKatalonEmbeddedMode,
+      );
+      const projectId = getUrlParam(URL_PARAMS.projectId);
+      const accessToken = getUrlParam(URL_PARAMS.accessToken);
+
       // redirect to the new slug or id
       window.history.pushState(
         { event: 'dashboard_properties_changed' },
         '',
-        `/superset/dashboard/${slug || id}/`,
+        `/superset/dashboard/${
+          slug || id
+        }/?isKatalonEmbeddedMode=${isKatalonEmbeddedDashboard}&projectId=${projectId}&accessToken=${accessToken}`,
       );
 
       dispatch(addSuccessToast(t('This dashboard was saved successfully.')));
