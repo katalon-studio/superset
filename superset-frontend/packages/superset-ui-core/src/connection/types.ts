@@ -96,14 +96,12 @@ export interface RequestBase {
   signal?: Signal;
   stringify?: Stringify;
   timeout?: ClientTimeout;
-  isKatalonAPI?: boolean;
 }
 
 export interface CallApi extends RequestBase {
   url: Url;
   cache?: Cache;
   redirect?: Redirect;
-  isKatalonAPI?: boolean;
 }
 
 export interface RequestWithEndpoint extends RequestBase {

@@ -16,7 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { omit } from 'lodash';
 import callApiAndParseWithTimeout from './callApi/callApiAndParseWithTimeout';
 import {
   ClientConfig,
@@ -73,7 +72,7 @@ export default class SupersetClientClass {
     protocol,
     headers = {},
     fetchRetryOptions = {},
-    mode = 'same-origin',
+    mode = 'cors',
     timeout,
     credentials = undefined,
     csrfToken = undefined,
@@ -89,8 +88,10 @@ export default class SupersetClientClass {
       // as the base of baseUrl
       window.location.href,
     );
-    this.baseUrl = url.href.replace(/\/+$/, ''); // always strip trailing slash
-    this.host = url.host;
+    // this.baseUrl = url.href.replace(/\/+$/, ''); // always strip trailing slash
+    this.baseUrl = 'http://localhost:8080/proxy';
+    // this.host = url.host;
+    this.host = 'localhost:8080/proxy';
     this.protocol = url.protocol as Protocol;
     this.headers = { Accept: 'application/json', ...headers }; // defaulting accept to json
     this.mode = mode;
@@ -197,21 +198,26 @@ export default class SupersetClientClass {
     timeout,
     fetchRetryOptions,
     ignoreUnauthorized = false,
-    isKatalonAPI,
     ...rest
   }: RequestConfig & { parseMethod?: T }) {
-    await this.ensureAuth();
+    // await this.ensureAuth();
 
-    const combinedHeaders = { ...this.headers, ...headers };
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectId = urlParams.get('projectId');
+    const accessToken = urlParams.get('accessToken');
+    const combinedHeaders = {
+      ...this.headers,
+      ...headers,
+      ...(projectId && { 'x-project-id': projectId }),
+      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
+    };
+
     return callApiAndParseWithTimeout({
       ...rest,
-      isKatalonAPI,
       credentials: credentials ?? this.credentials,
       mode: mode ?? this.mode,
       url: this.getUrl({ endpoint, host, url }),
-      headers: isKatalonAPI
-        ? omit(combinedHeaders, ['X-CSRFToken']) // Header field X-CSRFToken is not allowed by Access-Control-Allow-Headers (CORS policy)
-        : combinedHeaders,
+      headers: combinedHeaders,
       timeout: timeout ?? this.timeout,
       fetchRetryOptions: fetchRetryOptions ?? this.fetchRetryOptions,
     }).catch(res => {

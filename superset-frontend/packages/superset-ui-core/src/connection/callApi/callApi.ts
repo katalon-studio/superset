@@ -66,7 +66,7 @@ export default async function callApi({
   fetchRetryOptions,
   headers,
   method = 'GET',
-  mode = 'same-origin',
+  mode = 'cors',
   postPayload,
   jsonPayload,
   redirect = 'follow',
@@ -74,7 +74,6 @@ export default async function callApi({
   stringify = true,
   url: url_,
   searchParams,
-  isKatalonAPI,
 }: CallApi): Promise<Response> {
   const fetchWithRetry = fetchRetry(fetch, fetchRetryOptions);
   const url = `${getFullUrl(url_, searchParams)}`;
@@ -85,7 +84,7 @@ export default async function callApi({
     credentials,
     headers,
     method,
-    mode: isKatalonAPI ? 'cors' : mode,
+    mode,
     redirect,
     signal,
   };
