@@ -164,7 +164,7 @@ const HorizontalFilterBar: React.FC<HorizontalBarProps> = ({
                 onFilterSelectionChange={onSelectionChange}
               />
             )}
-            {/* {actionsElement} */}
+            {actionsElement}
           </>
         )}
       </HorizontalBarContent>
