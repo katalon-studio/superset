@@ -160,11 +160,11 @@ const FilterControls: FC<FilterControlsProps> = ({
     () =>
       isCrossFiltersEnabled
         ? crossFiltersSelector({
-          dataMask,
-          chartConfiguration,
-          dashboardLayout,
-          verboseMaps,
-        })
+            dataMask,
+            chartConfiguration,
+            dashboardLayout,
+            verboseMaps,
+          })
         : [],
     [chartConfiguration, dashboardLayout, dataMask, isCrossFiltersEnabled],
   );
@@ -251,7 +251,7 @@ const FilterControls: FC<FilterControlsProps> = ({
         last={
           filtersInScope.length > 0 &&
           `${last.name}${last.emitterId}` ===
-          `${crossFilter.name}${crossFilter.emitterId}`
+            `${crossFilter.name}${crossFilter.emitterId}`
         }
       />
     ),
@@ -367,44 +367,44 @@ const FilterControls: FC<FilterControlsProps> = ({
       `}
     >
       <DropdownContainer
-        items={items.slice(1, 2)}
-        // dropdownTriggerIcon={
-        //   <Icons.FilterSmall
-        //     css={css`
-        //       && {
-        //         margin-right: -4px;
-        //         display: flex;
-        //       }
-        //     `}
-        //   />
-        // }
-        dropdownTriggerText={t('Add more')}
+        items={items}
+        dropdownTriggerIcon={
+          <Icons.FilterSmall
+            css={css`
+              && {
+                margin-right: -4px;
+                display: flex;
+              }
+            `}
+          />
+        }
+        dropdownTriggerText={t('More filters')}
         dropdownTriggerCount={activeOverflowedFiltersInScope.length}
         dropdownTriggerTooltip={
           activeOverflowedFiltersInScope.length === 0
             ? t('No applied filters')
             : t(
-              'Applied filters: %s',
-              activeOverflowedFiltersInScope
-                .map(filter => filter.name)
-                .join(', '),
-            )
+                'Applied filters: %s',
+                activeOverflowedFiltersInScope
+                  .map(filter => filter.name)
+                  .join(', '),
+              )
         }
         dropdownContent={
           overflowedFiltersInScope.length ||
-            overflowedCrossFilters.length ||
-            (filtersOutOfScope.length && showCollapsePanel)
+          overflowedCrossFilters.length ||
+          (filtersOutOfScope.length && showCollapsePanel)
             ? () => (
-              <FiltersDropdownContent
-                overflowedCrossFilters={overflowedCrossFilters}
-                filtersInScope={overflowedFiltersInScope}
-                filtersOutOfScope={filtersOutOfScope}
-                renderer={renderer}
-                rendererCrossFilter={rendererCrossFilter}
-                showCollapsePanel={showCollapsePanel}
-                forceRenderOutOfScope={hasRequiredFirst}
-              />
-            )
+                <FiltersDropdownContent
+                  overflowedCrossFilters={overflowedCrossFilters}
+                  filtersInScope={overflowedFiltersInScope}
+                  filtersOutOfScope={filtersOutOfScope}
+                  renderer={renderer}
+                  rendererCrossFilter={rendererCrossFilter}
+                  showCollapsePanel={showCollapsePanel}
+                  forceRenderOutOfScope={hasRequiredFirst}
+                />
+              )
             : undefined
         }
         forceRender={hasRequiredFirst}
