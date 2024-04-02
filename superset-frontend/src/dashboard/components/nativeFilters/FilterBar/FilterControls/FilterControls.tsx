@@ -55,14 +55,7 @@ import {
 import DropdownContainer, {
   Ref as DropdownContainerRef,
 } from 'src/components/DropdownContainer';
-import { makeStyles } from '@material-ui/core/styles';
-import {
-  Button,
-  ListSubheader,
-  Menu,
-  MenuItem,
-  Checkbox,
-} from '@material-ui/core';
+import Icons from 'src/components/Icons';
 import { FiltersOutOfScopeCollapsible } from '../FiltersOutOfScopeCollapsible';
 import { useFilterControlFactory } from '../useFilterControlFactory';
 import { FiltersDropdownContent } from '../FiltersDropdownContent';
@@ -71,13 +64,6 @@ import CrossFilter from '../CrossFilters/CrossFilter';
 import { useFilterOutlined } from '../useFilterOutlined';
 import { useChartsVerboseMaps } from '../utils';
 import FilterExtension from 'src/katalon/CustomFilter/FilterExtension';
-
-const useStyles = makeStyles({
-  buttonAddMore: {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
-    textTransform: 'none',
-  },
-});
 
 type FilterControlsProps = {
   dataMaskSelected: DataMaskStateWithId;
@@ -88,7 +74,6 @@ const FilterControls: FC<FilterControlsProps> = ({
   dataMaskSelected,
   onFilterSelectionChange,
 }) => {
-  const classes = useStyles();
   const filterBarOrientation = useSelector<RootState, FilterBarOrientation>(
     ({ dashboardInfo }) =>
       isFeatureEnabled(FeatureFlag.HORIZONTAL_FILTER_BAR)
@@ -99,49 +84,7 @@ const FilterControls: FC<FilterControlsProps> = ({
   const { outlinedFilterId, lastUpdated } = useFilterOutlined();
 
   const [overflowedIds, setOverflowedIds] = useState<string[]>([]);
-  const [addFilter, setAddFilter] = useState<Object[]>([]);
   const popoverRef = useRef<DropdownContainerRef>(null);
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleDeleteFilter = (selectedFilter: { id: string }) => {
-    setAddFilter((prevFilters: { id: string }[]) => {
-      // Filter out the selectedFilter based on an 'id' property
-      const filteredFilters = prevFilters.filter(
-        filter => filter.id !== selectedFilter.id,
-      );
-      return filteredFilters;
-    });
-  };
-
-  const handleCloseAdd = (selectedFilter: Object) => {
-    const isFilterExisting = addFilter.find(
-      filterComponent => filterComponent.id === selectedFilter.id,
-    );
-
-    if (!isFilterExisting) {
-      setAddFilter((prevFilters: Object[]) => {
-        const isFilterAdded = prevFilters.find(
-          filter => filter === selectedFilter,
-        );
-        if (!isFilterAdded) {
-          return [...prevFilters, selectedFilter];
-        }
-        return prevFilters;
-      });
-    } else {
-      handleDeleteFilter(selectedFilter);
-    }
-    handleClose();
-  };
 
   const dataMask = useSelector<RootState, DataMaskStateWithId>(
     state => state.dataMask,
@@ -290,77 +233,6 @@ const FilterControls: FC<FilterControlsProps> = ({
     return [...crossFilters];
   }, [filtersInScope, renderer, rendererCrossFilter, selectedCrossFilters]);
 
-  const renderPopperMenu = (invisbleFilter: Object[]) => {
-    console.log('hello world');
-
-    return (
-      <Menu
-        id="simple-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <ListSubheader
-          sx={{
-            color: '#808b9a',
-            fontSize: 12,
-            fontWeight: 'bold',
-            marginTop: 0.8,
-            marginBottom: 1,
-          }}
-        >
-          {t('all filters').toUpperCase()}
-        </ListSubheader>
-
-        {invisbleFilter.length !== 0 &&
-          invisbleFilter.map(item => {
-            const isFilterExisting = addFilter.find(
-              filterComponent => filterComponent?.id === item?.id,
-            );
-            return (
-              <MenuItem onClick={() => handleCloseAdd(item)} key={item?.id}>
-                {item?.nameFilter}
-                <Checkbox color="primary" checked={!!isFilterExisting} />
-              </MenuItem>
-            );
-          })}
-      </Menu>
-    );
-  };
-
-  const rednerDynamicButton = () => {
-    console.log(items);
-
-    return <FilterExtension items={items} />;
-    // const visibleFilter = items.slice(0, 2);
-    // const invisbleFilter = items.slice(3);
-
-    // return (
-    //   <div>
-    //     {visibleFilter.length !== 0 &&
-    //       visibleFilter.map((item, index) => (
-    //         <div key={index}>{item.element}</div>
-    //       ))}
-    //     {addFilter.length !== 0 &&
-    //       addFilter.map((item, index) => <div key={index}>{item.element}</div>)}
-    //     <Button
-    //       aria-controls="simple-menu"
-    //       aria-haspopup="true"
-    //       onClick={handleClick}
-    //       className={classes.buttonAddMore}
-    //     >
-    //       + Add more
-    //     </Button>
-    //     {renderPopperMenu(invisbleFilter)}
-    //   </div>
-    // );
-  };
-
-  console.log(activeOverflowedFiltersInScope);
-  console.log(overflowedFiltersInScope);
-  console.log(filtersOutOfScope);
-
   const renderHorizontalContent = () => (
     <div
       css={(theme: SupersetTheme) => css`
@@ -445,6 +317,8 @@ const FilterControls: FC<FilterControlsProps> = ({
       popoverRef?.current?.open();
     }
   }, [outlinedFilterId, lastUpdated, popoverRef, overflowedIds]);
+
+  const rednerDynamicButton = () => <FilterExtension items={items} />;
 
   return (
     <>
