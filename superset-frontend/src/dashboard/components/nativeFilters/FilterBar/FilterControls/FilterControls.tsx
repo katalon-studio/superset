@@ -70,6 +70,7 @@ import crossFiltersSelector from '../CrossFilters/selectors';
 import CrossFilter from '../CrossFilters/CrossFilter';
 import { useFilterOutlined } from '../useFilterOutlined';
 import { useChartsVerboseMaps } from '../utils';
+import FilterExtension from 'src/katalon/CustomFilter/FilterExtension';
 
 const useStyles = makeStyles({
   buttonAddMore: {
@@ -272,7 +273,7 @@ const FilterControls: FC<FilterControlsProps> = ({
     if (isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS)) {
       const nativeFiltersInScope = filtersInScope.map((filter, index) => ({
         id: filter.id,
-        nameFilter: filter.name,
+        name: filter.name,
         element: (
           <div
             className="filter-item-wrapper"
@@ -330,28 +331,30 @@ const FilterControls: FC<FilterControlsProps> = ({
 
   const rednerDynamicButton = () => {
     console.log(items);
-    const visibleFilter = items.slice(0, 2);
-    const invisbleFilter = items.slice(3);
 
-    return (
-      <div>
-        {visibleFilter.length !== 0 &&
-          visibleFilter.map((item, index) => (
-            <div key={index}>{item.element}</div>
-          ))}
-        {addFilter.length !== 0 &&
-          addFilter.map((item, index) => <div key={index}>{item.element}</div>)}
-        <Button
-          aria-controls="simple-menu"
-          aria-haspopup="true"
-          onClick={handleClick}
-          className={classes.buttonAddMore}
-        >
-          + Add more
-        </Button>
-        {renderPopperMenu(invisbleFilter)}
-      </div>
-    );
+    return <FilterExtension items={items} />;
+    // const visibleFilter = items.slice(0, 2);
+    // const invisbleFilter = items.slice(3);
+
+    // return (
+    //   <div>
+    //     {visibleFilter.length !== 0 &&
+    //       visibleFilter.map((item, index) => (
+    //         <div key={index}>{item.element}</div>
+    //       ))}
+    //     {addFilter.length !== 0 &&
+    //       addFilter.map((item, index) => <div key={index}>{item.element}</div>)}
+    //     <Button
+    //       aria-controls="simple-menu"
+    //       aria-haspopup="true"
+    //       onClick={handleClick}
+    //       className={classes.buttonAddMore}
+    //     >
+    //       + Add more
+    //     </Button>
+    //     {renderPopperMenu(invisbleFilter)}
+    //   </div>
+    // );
   };
 
   console.log(activeOverflowedFiltersInScope);
