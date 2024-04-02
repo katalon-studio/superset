@@ -25,6 +25,12 @@ const useStyles = makeStyles({
     marginTop: '12px',
     marginBottom: '6px',
   },
+  flexContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '3px',
+  },
 });
 
 function FilterExtension(props: FilterProps) {
@@ -93,36 +99,32 @@ function FilterExtension(props: FilterProps) {
 
   const renderPopperMenu = (
     invisbleFilter: Array<{ id: string; name: string; element: JSX.Element }>,
-  ) => {
-    console.log('hello world');
+  ) => (
+    <Menu
+      id="list-advance-filter"
+      anchorEl={anchorEl}
+      keepMounted
+      open={Boolean(anchorEl)}
+      onClose={handleClose}
+    >
+      <ListSubheader className={classes.listSubheader}>
+        {t('all filters').toUpperCase()}
+      </ListSubheader>
 
-    return (
-      <Menu
-        id="list-advance-filter"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <ListSubheader className={classes.listSubheader}>
-          {t('all filters').toUpperCase()}
-        </ListSubheader>
-
-        {invisbleFilter.length !== 0 &&
-          invisbleFilter.map(item => {
-            const isFilterExisting = addFilter.find(
-              filterComponent => filterComponent?.id === item?.id,
-            );
-            return (
-              <MenuItem onClick={() => handleCloseAdd(item)} key={item?.id}>
-                {item?.name}
-                <Checkbox color="primary" checked={!!isFilterExisting} />
-              </MenuItem>
-            );
-          })}
-      </Menu>
-    );
-  };
+      {invisbleFilter.length !== 0 &&
+        invisbleFilter.map(item => {
+          const isFilterExisting = addFilter.find(
+            filterComponent => filterComponent?.id === item?.id,
+          );
+          return (
+            <MenuItem onClick={() => handleCloseAdd(item)} key={item?.id}>
+              {item?.name}
+              <Checkbox color="primary" checked={!!isFilterExisting} />
+            </MenuItem>
+          );
+        })}
+    </Menu>
+  );
 
   const renderDynamicButton = () => {
     // Take the list all filters,
@@ -131,7 +133,7 @@ function FilterExtension(props: FilterProps) {
     const invisbleFilter = items.slice(3);
 
     return (
-      <div>
+      <div className={classes.flexContainer}>
         {visibleFilter.length !== 0 &&
           visibleFilter.map((item, index) => (
             <div key={index}>{item.element}</div>

@@ -56,6 +56,7 @@ import DropdownContainer, {
   Ref as DropdownContainerRef,
 } from 'src/components/DropdownContainer';
 import Icons from 'src/components/Icons';
+import FilterExtension from 'src/katalon/CustomFilter/FilterExtension';
 import { FiltersOutOfScopeCollapsible } from '../FiltersOutOfScopeCollapsible';
 import { useFilterControlFactory } from '../useFilterControlFactory';
 import { FiltersDropdownContent } from '../FiltersDropdownContent';
@@ -63,7 +64,6 @@ import crossFiltersSelector from '../CrossFilters/selectors';
 import CrossFilter from '../CrossFilters/CrossFilter';
 import { useFilterOutlined } from '../useFilterOutlined';
 import { useChartsVerboseMaps } from '../utils';
-import FilterExtension from 'src/katalon/CustomFilter/FilterExtension';
 
 type FilterControlsProps = {
   dataMaskSelected: DataMaskStateWithId;
@@ -318,7 +318,7 @@ const FilterControls: FC<FilterControlsProps> = ({
     }
   }, [outlinedFilterId, lastUpdated, popoverRef, overflowedIds]);
 
-  const rednerDynamicButton = () => <FilterExtension items={items} />;
+  const renderFilterExtension = () => <FilterExtension items={items} />;
 
   return (
     <>
@@ -336,7 +336,7 @@ const FilterControls: FC<FilterControlsProps> = ({
       {filterBarOrientation === FilterBarOrientation.VERTICAL &&
         renderVerticalContent()}
       {filterBarOrientation === FilterBarOrientation.HORIZONTAL &&
-        rednerDynamicButton()}
+        renderFilterExtension()}
       {/* {filterBarOrientation === FilterBarOrientation.HORIZONTAL &&
         renderHorizontalContent()} */}
     </>
