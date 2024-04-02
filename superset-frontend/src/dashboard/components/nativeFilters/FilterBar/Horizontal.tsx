@@ -135,10 +135,6 @@ const HorizontalFilterBar: React.FC<HorizontalBarProps> = ({
     [actions],
   );
 
-  // console.log(filterValues);
-
-  // console.log(selectedCrossFilters);
-
   return (
     <HorizontalBar {...getFilterBarTestId()}>
       <HorizontalBarContent>

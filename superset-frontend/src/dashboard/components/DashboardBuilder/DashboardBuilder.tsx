@@ -528,7 +528,6 @@ const DashboardBuilder: FC<DashboardBuilderProps> = () => {
               orientation={FilterBarOrientation.HORIZONTAL}
               hidden={isReport}
             />
-            // do in somethings
           )}
         {dropIndicatorProps && <div {...dropIndicatorProps} />}
         {!isReport && topLevelTabs && !uiConfig.hideNav && (
