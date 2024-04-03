@@ -30,6 +30,8 @@ import Icons from 'src/components/Icons';
 import Loading from 'src/components/Loading';
 import { DashboardLayout, RootState } from 'src/dashboard/types';
 import { useSelector } from 'react-redux';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 import FilterControls from './FilterControls/FilterControls';
 import { useChartsVerboseMaps, getFilterBarTestId } from './utils';
 import { HorizontalBarProps } from './types';
@@ -135,6 +137,8 @@ const HorizontalFilterBar: React.FC<HorizontalBarProps> = ({
     [actions],
   );
 
+  const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+
   return (
     <HorizontalBar {...getFilterBarTestId()}>
       <HorizontalBarContent>
@@ -142,16 +146,21 @@ const HorizontalFilterBar: React.FC<HorizontalBarProps> = ({
           <Loading position="inline-centered" />
         ) : (
           <>
-            <FilterBarSettings />
-            {canEdit && isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) && (
-              <FiltersLinkContainer hasFilters={hasFilters}>
-                <FilterConfigurationLink
-                  dashboardId={dashboardId}
-                  createNewOnOpen={filterValues.length === 0}
-                >
-                  <Icons.PlusSmall /> {t('Add/Edit Filters')}
-                </FilterConfigurationLink>
-              </FiltersLinkContainer>
+            {!isKatalonEmbeddedMode && (
+              <>
+                <FilterBarSettings />
+                {canEdit &&
+                  isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) && (
+                    <FiltersLinkContainer hasFilters={hasFilters}>
+                      <FilterConfigurationLink
+                        dashboardId={dashboardId}
+                        createNewOnOpen={filterValues.length === 0}
+                      >
+                        <Icons.PlusSmall /> {t('Add/Edit Filters')}
+                      </FilterConfigurationLink>
+                    </FiltersLinkContainer>
+                  )}
+              </>
             )}
             {!hasFilters && (
               <FilterBarEmptyStateContainer data-test="horizontal-filterbar-empty">

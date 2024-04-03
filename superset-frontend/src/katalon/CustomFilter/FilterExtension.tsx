@@ -15,8 +15,10 @@ interface FilterProps {
 
 const useStyles = makeStyles({
   buttonAddMore: {
-    background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+    background: '#FFFFFF',
     textTransform: 'none',
+    fontSize: 16,
+    fontWeight: 600,
   },
   listSubheader: {
     color: '#FF0000',
@@ -126,7 +128,7 @@ function FilterExtension(props: FilterProps) {
     </Menu>
   );
 
-  const renderDynamicButton = () => {
+  const renderAddMoreButton = () => {
     // Take the list all filters,
     // then device them into two parts
     const visibleFilter = items.slice(0, 2);
@@ -153,7 +155,7 @@ function FilterExtension(props: FilterProps) {
     );
   };
 
-  return <div>{renderDynamicButton()}</div>;
+  return <>{renderAddMoreButton()}</>;
 }
 
 export default FilterExtension;
