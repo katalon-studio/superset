@@ -1,0 +1,54 @@
+{
+  "name": "@katalon/time-filter",
+  "version": "0.0.1",
+  "description": "Katalon Filter",
+  "keywords": [
+    "katalon"
+  ],
+  "homepage": "https://github.com/apache/superset/tree/master/superset-frontend/plugins/plugin-chart-table#readme",
+  "bugs": {
+    "url": "https://github.com/apache/superset/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apache/superset.git",
+    "directory": "superset-frontend/plugins/plugin-chart-table"
+  },
+  "license": "Apache-2.0",
+  "author": "Superset",
+  "sideEffects": false,
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "files": [
+    "esm",
+    "lib"
+  ],
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/lab": "^5.0.0-alpha.65",
+    "@mui/material": "^5.15.14",
+    "@mui/x-data-grid": "^7.1.0",
+    "@types/react": "^17.0.80",
+    "classnames": "^2.3.2",
+    "d3-array": "^2.4.0",
+    "lodash": "^4.17.21",
+    "match-sorter": "^6.3.0",
+    "memoize-one": "^5.1.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "regenerator-runtime": "^0.13.7",
+    "xss": "^1.0.10"
+  },
+  "peerDependencies": {
+    "@testing-library/dom": "^7.29.4",
+    "@testing-library/jest-dom": "^5.11.6",
+    "@testing-library/react": "^11.2.0",
+    "@testing-library/react-hooks": "^5.0.3",
+    "@testing-library/user-event": "^12.7.0",
+    "@types/classnames": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
