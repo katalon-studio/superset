@@ -1,7 +1,7 @@
 {
-  "name": "@katalon/time-filter",
+  "name": "@katalon/packages",
   "version": "0.0.1",
-  "description": "Katalon Filter",
+  "description": "Katalon packages",
   "keywords": [
     "katalon"
   ],
@@ -11,11 +11,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/apache/superset.git",
-    "directory": "superset-frontend/plugins/plugin-chart-table"
+    "url": "https://github.com/apache/superset.git"
   },
   "license": "Apache-2.0",
-  "author": "Superset",
+  "author": "Katalon",
   "sideEffects": false,
   "main": "lib/index.js",
   "module": "esm/index.js",
