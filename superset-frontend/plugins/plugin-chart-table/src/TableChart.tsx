@@ -712,6 +712,8 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   const { width: widthFromState, height: heightFromState } = tableSize;
 
+  console.log('SUPERSET');
+
   return (
     <Styles>
       <DataTable<D>

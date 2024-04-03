@@ -336,7 +336,11 @@ const config = {
       {
         test: /\.jsx?$/,
         // include source code for plugins, but exclude node_modules and test files within them
-        exclude: [/superset-ui.*\/node_modules\//, /\.test.jsx?$/],
+        exclude: [
+          /superset-ui.*\/node_modules\//,
+          /\.test.jsx?$/,
+          /plugins\/plugin-chart-table-katalon\/node_modules\//,
+        ],
         include: [
           new RegExp(`${APP_DIR}/(src|.storybook|plugins|packages)`),
           ...['./src', './.storybook', './plugins', './packages'].map(p =>
