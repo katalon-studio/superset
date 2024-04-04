@@ -45,7 +45,7 @@ function FilterExtension(props: FilterExtensionProps) {
 
   const { items } = props;
 
-  const [addFilter, setAddFilter] = useState<FilterExtensionProps | []>([]);
+  const [addFilter, setAddFilter] = useState<FilterItem[]>([]);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -57,42 +57,23 @@ function FilterExtension(props: FilterExtensionProps) {
     setAnchorEl(null);
   };
 
-  const handleDeleteFilter = (selectedFilter: { id: string }) => {
-    setAddFilter(
-      (prevFilters: { id: string; name: string; element: JSX.Element }[]) => {
-        // Filter out the selectedFilter based on the 'id' property
-        const filteredFilters = prevFilters.filter(
-          filter => filter.id !== selectedFilter.id,
-        );
-        return filteredFilters;
-      },
-    );
-  };
+  const handleAddOrRemove = (selectedFilter: FilterItem) => {
+    setAddFilter((prevFilters: FilterItem[]) => {
+      // Check if the filter is already added
+      const isFilterExisting = prevFilters.some(
+        filter => filter.id === selectedFilter.id,
+      );
 
-  const handleCloseAdd = (selectedFilter: FilterItem) => {
-    const isFilterExisting = addFilter.find(
-      filterComponent => filterComponent.id === selectedFilter.id,
-    );
-
-    if (!isFilterExisting) {
-      setAddFilter((prevFilters: FilterExtensionProps) => {
-        const isFilterAdded = prevFilters.find(
-          filter => filter === selectedFilter,
-        );
-        if (!isFilterAdded) {
-          return [...prevFilters, selectedFilter];
-        }
-        return prevFilters;
-      });
-    } else {
-      handleDeleteFilter(selectedFilter);
-    }
+      if (isFilterExisting) {
+        // If the filter exists, remove it from the list
+        return prevFilters.filter(filter => filter.id !== selectedFilter.id);
+      }
+      return [...prevFilters, selectedFilter];
+    });
     handleClose();
   };
 
-  const renderPopperMenu = (
-    invisbleFilter: Array<{ id: string; name: string; element: JSX.Element }>,
-  ) => (
+  const renderPopperMenu = (invisbleFilter: FilterItem[]) => (
     <Menu
       elevation={2}
       getContentAnchorEl={null}
@@ -119,7 +100,7 @@ function FilterExtension(props: FilterExtensionProps) {
             filterComponent => filterComponent?.id === item?.id,
           );
           return (
-            <MenuItem onClick={() => handleCloseAdd(item)} key={item?.id}>
+            <MenuItem onClick={() => handleAddOrRemove(item)} key={item?.id}>
               <Grid
                 container
                 direction="row"
@@ -143,8 +124,8 @@ function FilterExtension(props: FilterExtensionProps) {
   const renderAddMoreButton = () => {
     // Take the list all filters,
     // then device them into two parts
-    const visibleFilter = items.slice(0, 2);
-    const invisbleFilter = items.slice(3);
+    const visibleFilter: FilterItem[] = items.slice(0, 2);
+    const invisbleFilter: FilterItem[] = items.slice(3);
 
     return (
       <div className={classes.flexContainer}>
