@@ -1,16 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, MouseEvent } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { t } from '@superset-ui/core';
 import {
   Button,
   Checkbox,
+  Grid,
   ListSubheader,
   Menu,
   MenuItem,
 } from '@material-ui/core';
 
-interface FilterProps {
-  items: Array<{ id: string; name: string; element: JSX.Element }>;
+interface FilterItem {
+  id: string;
+  name: string;
+  element: JSX.Element;
+}
+
+interface FilterExtensionProps {
+  items: FilterItem[];
 }
 
 const useStyles = makeStyles({
@@ -20,12 +27,10 @@ const useStyles = makeStyles({
     fontSize: 16,
     fontWeight: 600,
   },
-  listSubheader: {
-    color: '#FF0000',
-    fontSize: 12,
-    fontWeight: 'bold',
-    marginTop: '12px',
-    marginBottom: '6px',
+  filterTitle: {
+    color: '#797B7F',
+    fontSize: 14,
+    fontWeight: 700,
   },
   flexContainer: {
     display: 'flex',
@@ -35,18 +40,16 @@ const useStyles = makeStyles({
   },
 });
 
-function FilterExtension(props: FilterProps) {
+function FilterExtension(props: FilterExtensionProps) {
   const classes = useStyles();
 
   const { items } = props;
 
-  const [addFilter, setAddFilter] = useState<
-    Array<{ id: string; name: string; element: JSX.Element }>
-  >([]);
+  const [addFilter, setAddFilter] = useState<FilterExtensionProps | []>([]);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -66,33 +69,21 @@ function FilterExtension(props: FilterProps) {
     );
   };
 
-  const handleCloseAdd = (selectedFilter: {
-    id: string;
-    name: string;
-    element: JSX.Element;
-  }) => {
+  const handleCloseAdd = (selectedFilter: FilterItem) => {
     const isFilterExisting = addFilter.find(
       filterComponent => filterComponent.id === selectedFilter.id,
     );
 
     if (!isFilterExisting) {
-      setAddFilter(
-        (
-          prevFilters: Array<{
-            id: string;
-            name: string;
-            element: JSX.Element;
-          }>,
-        ) => {
-          const isFilterAdded = prevFilters.find(
-            filter => filter === selectedFilter,
-          );
-          if (!isFilterAdded) {
-            return [...prevFilters, selectedFilter];
-          }
-          return prevFilters;
-        },
-      );
+      setAddFilter((prevFilters: FilterExtensionProps) => {
+        const isFilterAdded = prevFilters.find(
+          filter => filter === selectedFilter,
+        );
+        if (!isFilterAdded) {
+          return [...prevFilters, selectedFilter];
+        }
+        return prevFilters;
+      });
     } else {
       handleDeleteFilter(selectedFilter);
     }
@@ -103,16 +94,25 @@ function FilterExtension(props: FilterProps) {
     invisbleFilter: Array<{ id: string; name: string; element: JSX.Element }>,
   ) => (
     <Menu
+      elevation={2}
+      getContentAnchorEl={null}
       id="list-advance-filter"
       anchorEl={anchorEl}
       keepMounted
       open={Boolean(anchorEl)}
       onClose={handleClose}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: 'center',
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
     >
-      <ListSubheader className={classes.listSubheader}>
+      <ListSubheader className={classes.filterTitle}>
         {t('all filters').toUpperCase()}
       </ListSubheader>
-
       {invisbleFilter.length !== 0 &&
         invisbleFilter.map(item => {
           const isFilterExisting = addFilter.find(
@@ -120,8 +120,20 @@ function FilterExtension(props: FilterProps) {
           );
           return (
             <MenuItem onClick={() => handleCloseAdd(item)} key={item?.id}>
-              {item?.name}
-              <Checkbox color="primary" checked={!!isFilterExisting} />
+              <Grid
+                container
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                spacing={1}
+              >
+                <Grid item xs={8}>
+                  {item?.name}
+                </Grid>
+                <Grid item xs={4}>
+                  <Checkbox color="primary" checked={!!isFilterExisting} />
+                </Grid>
+              </Grid>
             </MenuItem>
           );
         })}
