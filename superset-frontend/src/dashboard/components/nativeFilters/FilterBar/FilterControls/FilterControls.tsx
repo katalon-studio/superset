@@ -56,6 +56,7 @@ import DropdownContainer, {
   Ref as DropdownContainerRef,
 } from 'src/components/DropdownContainer';
 import Icons from 'src/components/Icons';
+import FilterExtension from 'src/katalon/CustomFilter/FilterExtension';
 import { FiltersOutOfScopeCollapsible } from '../FiltersOutOfScopeCollapsible';
 import { useFilterControlFactory } from '../useFilterControlFactory';
 import { FiltersDropdownContent } from '../FiltersDropdownContent';
@@ -63,7 +64,6 @@ import crossFiltersSelector from '../CrossFilters/selectors';
 import CrossFilter from '../CrossFilters/CrossFilter';
 import { useFilterOutlined } from '../useFilterOutlined';
 import { useChartsVerboseMaps } from '../utils';
-import FilterExtension from 'src/katalon/CustomFilter/FilterExtension';
 
 type FilterControlsProps = {
   dataMaskSelected: DataMaskStateWithId;

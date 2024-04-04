@@ -111,7 +111,16 @@ function FilterExtension(props: FilterExtensionProps) {
     const invisbleFilter: FilterItem[] = items.slice(3);
 
     return (
-      <Stack direction="row" spacing={2}>
+      <Stack
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '3px',
+        }}
+        direction="row"
+        spacing={2}
+      >
         {visibleFilter.length !== 0 &&
           visibleFilter.map((item, index) => (
             <div key={index}>{item.element}</div>

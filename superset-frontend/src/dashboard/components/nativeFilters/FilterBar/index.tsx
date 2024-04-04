@@ -48,6 +48,7 @@ import { logEvent } from 'src/logger/actions';
 import { LOG_ACTIONS_CHANGE_DASHBOARD_FILTER } from 'src/logger/LogUtils';
 import { FilterBarOrientation, RootState } from 'src/dashboard/types';
 import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
+import KatalonHorizontal from 'src/katalon/CustomFilter/KatalonHorizontal';
 import { checkIsApplyDisabled } from './utils';
 import { FiltersBarProps } from './types';
 import {
@@ -61,7 +62,6 @@ import ActionButtons from './ActionButtons';
 import Horizontal from './Horizontal';
 import Vertical from './Vertical';
 import { useSelectFiltersInScope } from '../state';
-import KatalonHorizontal from 'src/katalon/CustomFilter/KatalonHorizontal';
 
 // FilterBar is just being hidden as it must still
 // render fully due to encapsulated logics
