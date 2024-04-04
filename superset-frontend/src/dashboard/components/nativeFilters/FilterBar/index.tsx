@@ -61,6 +61,7 @@ import ActionButtons from './ActionButtons';
 import Horizontal from './Horizontal';
 import Vertical from './Vertical';
 import { useSelectFiltersInScope } from '../state';
+import KatalonHorizontal from 'src/katalon/CustomFilter/KatalonHorizontal';
 
 // FilterBar is just being hidden as it must still
 // render fully due to encapsulated logics
@@ -287,7 +288,7 @@ const FilterBar: React.FC<FiltersBarProps> = ({
 
   const filterBarComponent =
     orientation === FilterBarOrientation.HORIZONTAL ? (
-      <Horizontal
+      <KatalonHorizontal
         actions={actions}
         canEdit={canEdit}
         dashboardId={dashboardId}

@@ -63,6 +63,7 @@ import crossFiltersSelector from '../CrossFilters/selectors';
 import CrossFilter from '../CrossFilters/CrossFilter';
 import { useFilterOutlined } from '../useFilterOutlined';
 import { useChartsVerboseMaps } from '../utils';
+import FilterExtension from 'src/katalon/CustomFilter/FilterExtension';
 
 type FilterControlsProps = {
   dataMaskSelected: DataMaskStateWithId;
@@ -215,6 +216,7 @@ const FilterControls: FC<FilterControlsProps> = ({
     if (isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS)) {
       const nativeFiltersInScope = filtersInScope.map((filter, index) => ({
         id: filter.id,
+        name: filter.name,
         element: (
           <div
             className="filter-item-wrapper"
@@ -316,6 +318,8 @@ const FilterControls: FC<FilterControlsProps> = ({
     }
   }, [outlinedFilterId, lastUpdated, popoverRef, overflowedIds]);
 
+  const renderFilterExtension = () => <FilterExtension items={items} />;
+
   return (
     <>
       {portalNodes
@@ -332,7 +336,9 @@ const FilterControls: FC<FilterControlsProps> = ({
       {filterBarOrientation === FilterBarOrientation.VERTICAL &&
         renderVerticalContent()}
       {filterBarOrientation === FilterBarOrientation.HORIZONTAL &&
-        renderHorizontalContent()}
+        renderFilterExtension()}
+      {/* {filterBarOrientation === FilterBarOrientation.HORIZONTAL &&
+        renderHorizontalContent()} */}
     </>
   );
 };
