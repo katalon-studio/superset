@@ -33,10 +33,11 @@ const LabelContainer = styled.div<{
     cursor: pointer;
 
     transition: border-color 0.3s cubic-bezier(0.65, 0.05, 0.36, 1);
-    :hover,
-    :focus {
+    :hover {
       background-color: ${ACTIVE_COLOR};
     }
+
+    background-color: ${isActive && ACTIVE_COLOR};
 
     .date-label-content {
       color: ${isPlaceholder

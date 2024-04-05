@@ -9,117 +9,19 @@ import {
   SupersetTheme,
   useCSSTextTruncation,
 } from '@superset-ui/core';
-import Button from '@mui/material/Button';
 import ControlHeader from 'src/explore/components/ControlHeader';
-import Modal from 'src/components/Modal';
-import Icons from 'src/components/Icons';
-import { Tooltip } from 'src/components/Tooltip';
 import { useDebouncedEffect } from 'src/explore/exploreUtils';
 import { SLOW_DEBOUNCE } from 'src/constants';
 import { noOp } from 'src/utils/common';
-import ControlPopover from 'src/explore/components/controls/ControlPopover/ControlPopover';
-import {
-  FrameType,
-} from 'src/explore/components/controls/DateFilterControl/types';
+import { FrameType } from 'src/explore/components/controls/DateFilterControl/types';
 import {
   DATE_FILTER_TEST_KEY,
   fetchTimeRange,
   guessFrame,
   useDefaultTimeFilter,
 } from 'src/explore/components/controls/DateFilterControl';
-import { DateLabel } from 'src/explore/components/controls/DateFilterControl/components';
 import moment from 'moment';
-import { Grid, ListItemButton, ListItemText } from '@mui/material';
-import { find, values } from 'lodash';
-import DateRangePickerComponent from './DateRangePickerComponent';
-import { DropdownLabel } from './DropdownLabel';
-
-const ContentStyleWrapper = styled.div`
-  ${({ theme }) => css`
-    margin: -12px -16px;
-
-    .popper-date-range-picker {
-      .popper-date-range-picker__list-item {
-        width: 10.71rem;
-        border-right: 1px solid #1718191a !important;
-        border-bottom: 1px solid #1718191a !important;
-      }
-      &__calender {
-        border-bottom: 1px solid #1718191a !important;
-      }
-      & .PrivatePickersToolbar-root {
-        display: none;
-      }
-    }
-
-    .ant-row {
-      margin-top: 8px;
-    }
-
-    .ant-input-number {
-      width: 100%;
-    }
-
-    .ant-picker {
-      padding: 4px 17px 4px;
-      border-radius: 4px;
-      width: 100%;
-    }
-
-    .ant-divider-horizontal {
-      margin: 16px 0;
-    }
-
-    .control-label {
-      font-size: 11px;
-      font-weight: ${theme.typography.weights.medium};
-      color: ${theme.colors.grayscale.light2};
-      line-height: 16px;
-      text-transform: uppercase;
-      margin: 8px 0;
-    }
-
-    .vertical-radio {
-      display: block;
-      height: 40px;
-      line-height: 40px;
-    }
-
-    .section-title {
-      font-style: normal;
-      font-weight: ${theme.typography.weights.bold};
-      font-size: 15px;
-      line-height: 24px;
-      margin-bottom: 8px;
-    }
-
-    .control-anchor-to {
-      margin-top: 16px;
-    }
-
-    .control-anchor-to-datetime {
-      width: 217px;
-    }
-
-    .footer {
-      text-align: right;
-      padding: 0.5rem;
-    }
-  `}
-`;
-
-const IconWrapper = styled.span`
-  span {
-    margin-right: ${({ theme }) => 2 * theme.gridUnit}px;
-    vertical-align: middle;
-  }
-  .text {
-    vertical-align: middle;
-  }
-  .error {
-    color: ${({ theme }) => theme.colors.error.base};
-  }
-`;
+import PopoverDateRangePicker from './PopoverDateRangePicker';
 
 const getTooltipTitle = (
   isLabelTruncated: boolean,
@@ -146,10 +48,7 @@ const getTooltipTitle = (
 export default function DateFilterLabel(props: any) {
   const {
     onChange,
-    onOpenPopover = noOp,
     onClosePopover = noOp,
-    overlayStyle = 'Popover',
-    isOverflowingFilterBar = false,
   } = props;
   const defaultTimeFilter = useDefaultTimeFilter();
 
@@ -162,7 +61,8 @@ export default function DateFilterLabel(props: any) {
           .map((timeString: string) =>
             moment(timeString, 'YYYY-MM-DDTHH:mm:ss'),
           );
-  const [localTimeRange, setLocalTimeRange] = React.useState(timeRangeValueList);
+  const [localTimeRange, setLocalTimeRange] =
+    React.useState(timeRangeValueList);
 
   const [actualTimeRange, setActualTimeRange] = useState<string>(value);
 
@@ -258,13 +158,6 @@ export default function DateFilterLabel(props: any) {
     onClosePopover();
   }
 
-  function onOpen() {
-    setTimeRangeValue(value);
-    setFrame(guessedFrame);
-    setShow(true);
-    onOpenPopover();
-  }
-
   function onHide() {
     setTimeRangeValue(value);
     setFrame(guessedFrame);
@@ -272,165 +165,21 @@ export default function DateFilterLabel(props: any) {
     onClosePopover();
   }
 
-  const toggleOverlay = () => {
-    if (show) {
-      onHide();
-    } else {
-      onOpen();
-    }
-  };
-
-  const TestRunDailyGroupByOptions = {
-    DAILY: {
-      value: 'P1D',
-      label: 'Daily',
-    },
-    WEEKLY: {
-      value: 'P1W',
-      label: 'Weekly',
-    },
-    MONTHLY: {
-      value: 'P1M',
-      label: 'Monthly',
-    },
-    QUARTERLY: {
-      value: 'P3M',
-      label: 'Quarterly',
-    },
-  };
-
-  const overlayContent = (
-    <ContentStyleWrapper>
-      <Grid container className="popper-date-range-picker d-flex">
-        <Grid item className="popper-date-range-picker__list-item">
-          {values(TestRunDailyGroupByOptions).map(option => (
-            <ListItemButton
-              key={option.value}
-              onClick={() => setGroupByTime(option.value)}
-              selected={option.value === groupByTime}
-            >
-              <ListItemText primary={option.label} />
-            </ListItemButton>
-          ))}
-        </Grid>
-        <Grid item className="popper-date-range-picker__calender">
-          <DateRangePickerComponent
-            displayStaticWrapperAs="mobile"
-            value={localTimeRange}
-            onChange={(newValue: any) => {
-              setLocalTimeRange(newValue);
-            }}
-            maxDate={moment()}
-            renderInput={null}
-          />
-        </Grid>
-      </Grid>
-      <div className="footer">
-        <Button
-          color="primary"
-          key="cancel"
-          onClick={onHide}
-          data-test={DATE_FILTER_TEST_KEY.cancelButton}
-        >
-          {t('CANCEL')}
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          disabled={!validTimeRange}
-          key="apply"
-          onClick={onSave}
-          data-test={DATE_FILTER_TEST_KEY.applyButton}
-        >
-          {t('APPLY')}
-        </Button>
-      </div>
-    </ContentStyleWrapper>
-  );
-
-  const title = (
-    <IconWrapper>
-      <Icons.EditAlt iconColor={theme.colors.grayscale.base} />
-      <span className="text">{t('Date range picker')}</span>
-    </IconWrapper>
-  );
-
-  const dateFormat = 'YYYY/MM/DD';
-
-
-  const groupByLabel = find(values(TestRunDailyGroupByOptions), {
-    value: groupByTime,
-  })?.label;
-
-  const label = `${groupByLabel} - ${timeRangeValueList[0].format(
-    'YYYY-MM-DD',
-  )} to ${timeRangeValueList[1].format('YYYY-MM-DD')}`;
-
   const popoverContent = (
-    <ControlPopover
-      placement="right"
-      trigger="click"
-      content={overlayContent}
-      defaultVisible={show}
-      visible={show}
-      onVisibleChange={toggleOverlay}
-      getPopupContainer={triggerNode =>
-        isOverflowingFilterBar
-          ? (triggerNode.parentNode as HTMLElement)
-          : document.body
-      }
-      destroyTooltipOnHide
-    >
-      <Tooltip
-        placement="top"
-        title={label}
-        getPopupContainer={trigger => trigger.parentElement as HTMLElement}
-      >
-        <DropdownLabel
-          label={label}
-          isActive={show}
-          isPlaceholder={actualTimeRange === NO_TIME_RANGE}
-          data-test={DATE_FILTER_TEST_KEY.popoverOverlay}
-          ref={labelRef}
-        />
-      </Tooltip>
-    </ControlPopover>
-  );
-
-  const modalContent = (
-    <>
-      <Tooltip
-        placement="top"
-        title={tooltipTitle}
-        getPopupContainer={trigger => trigger.parentElement as HTMLElement}
-      >
-        <DateLabel
-          onClick={toggleOverlay}
-          label={actualTimeRange}
-          isActive={show}
-          isPlaceholder={actualTimeRange === NO_TIME_RANGE}
-          data-test={DATE_FILTER_TEST_KEY.modalOverlay}
-          ref={labelRef}
-        />
-      </Tooltip>
-      {/* the zIndex value is from trying so that the Modal doesn't overlay the AdhocFilter when GENERIC_CHART_AXES is enabled */}
-      <Modal
-        title={title}
-        show={show}
-        onHide={toggleOverlay}
-        width="600px"
-        hideFooter
-        zIndex={1030}
-      >
-        {overlayContent}
-      </Modal>
-    </>
+    <PopoverDateRangePicker
+      onSave={onSave}
+      onHide={onHide}
+      timeRangeValueList={timeRangeValueList}
+      groupByTime={groupByTime}
+      setLocalTimeRange={setLocalTimeRange}
+      localTimeRange={localTimeRange}
+    />
   );
 
   return (
     <>
       <ControlHeader {...props} />
-      {overlayStyle === 'Modal' ? modalContent : popoverContent}
+       {popoverContent}
     </>
   );
 }

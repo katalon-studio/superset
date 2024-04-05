@@ -1,5 +1,5 @@
 import { styled, NO_TIME_RANGE } from '@superset-ui/core';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { FilterPluginStyle } from 'src/filters/components/common';
 import { PluginFilterTimeProps } from 'src/filters/components/types';
 import DateFilterLabel from './DateFilterLabel';
@@ -67,6 +67,11 @@ export default function TimeFilterPlugin(props: PluginFilterTimeProps) {
     },
     [setDataMask],
   );
+
+
+  useEffect(() => {
+    handleTimeRangeChange(filterState.value, filterState.time_grain_sqla);
+  }, [filterState.value]);
 
   return props.formData?.inView ? (
     <TimeFilterStyles width={width} height={height}>
