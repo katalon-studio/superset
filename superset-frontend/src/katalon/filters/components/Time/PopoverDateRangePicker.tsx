@@ -31,7 +31,18 @@ const ContentStyleWrapper = styled.div`
   }
 `;
 
-export default function PopoverDateRangePicker(props: any) {
+interface PopoverDateRangePickerProps {
+  onSave: () => void;
+  onHide: () => void;
+  timeRangeValueList: moment.Moment[];
+  groupByTime: string;
+  setLocalTimeRange: (localTimeRange: moment.Moment[]) => void;
+  localTimeRange: moment.Moment[];
+}
+
+export default function PopoverDateRangePicker(
+  props: PopoverDateRangePickerProps,
+) {
   const { timeRangeValueList, localTimeRange, setLocalTimeRange } = props;
   const [groupByTime, setGroupByTime] = useState(props.groupByTime);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
