@@ -48,6 +48,7 @@ import { logEvent } from 'src/logger/actions';
 import { LOG_ACTIONS_CHANGE_DASHBOARD_FILTER } from 'src/logger/LogUtils';
 import { FilterBarOrientation, RootState } from 'src/dashboard/types';
 import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
+import KatalonHorizontal from 'src/katalon/CustomFilter/KatalonHorizontal';
 import { checkIsApplyDisabled } from './utils';
 import { FiltersBarProps } from './types';
 import {
@@ -287,7 +288,7 @@ const FilterBar: React.FC<FiltersBarProps> = ({
 
   const filterBarComponent =
     orientation === FilterBarOrientation.HORIZONTAL ? (
-      <Horizontal
+      <KatalonHorizontal
         actions={actions}
         canEdit={canEdit}
         dashboardId={dashboardId}
