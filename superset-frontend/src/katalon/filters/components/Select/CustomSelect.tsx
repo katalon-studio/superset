@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 import { FormControl, MenuItem, Popover } from '@mui/material';
-import React, { useState } from 'react';
+import React from 'react';
 import { SelectProps } from 'src/components/Select/types';
 import { DropdownLabel } from '../Time/DropdownLabel';
 
@@ -16,6 +16,7 @@ interface CustomSelectProps {
     option: SelectProps['onSelect'],
   ) => void;
 }
+
 function CustomSelect(props: CustomSelectProps) {
   const {
     selectLabel,

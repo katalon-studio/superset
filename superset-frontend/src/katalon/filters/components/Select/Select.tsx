@@ -53,7 +53,6 @@ import {
 import { customTagRender } from 'src/components/Select/CustomTag';
 import CustomSelect from './CustomSelect';
 
-
 const Select = forwardRef(
   (
     {
@@ -93,8 +92,7 @@ const Select = forwardRef(
     }: SelectProps,
     ref: RefObject<HTMLInputElement>,
   ) => {
-    // const isSingleMode = mode === 'single';
-    const isSingleMode = true;
+    const isSingleMode = mode === 'single';
     const shouldShowSearch = allowNewOptions ? true : showSearch;
     const [selectValue, setSelectValue] = useState(value);
     const [inputValue, setInputValue] = useState('');
@@ -292,10 +290,10 @@ const Select = forwardRef(
       if (allowNewOptions) {
         const newOption = searchValue &&
           !hasOption(searchValue, fullSelectOptions, true) && {
-          label: searchValue,
-          value: searchValue,
-          isNewOption: true,
-        };
+            label: searchValue,
+            value: searchValue,
+            isNewOption: true,
+          };
         const cleanSelectOptions = ensureIsArray(fullSelectOptions).filter(
           opt => !opt.isNewOption || hasOption(opt.value, selectValue),
         );
@@ -545,6 +543,11 @@ const Select = forwardRef(
       fireOnChange();
     };
 
+    const [enableDropDown, setEnableDropDown] =
+      useState<HTMLButtonElement | null>(null);
+
+    const [selectLabel, setSelectLabel] = useState('');
+
     const handleMenuItemClick = (
       event: React.MouseEvent<HTMLElement>,
       option: SelectProps['onSelect'],
@@ -565,11 +568,6 @@ const Select = forwardRef(
       setEnableDropDown(null);
     };
 
-    const [enableDropDown, setEnableDropDown] =
-      useState<HTMLButtonElement | null>(null);
-
-    const [selectLabel, setSelectLabel] = useState('');
-
     return (
       <CustomSelect
         id={name}
@@ -581,74 +579,7 @@ const Select = forwardRef(
         handleMenuItemClick={handleMenuItemClick}
       />
     );
-
-    return (
-      <>
-        {header && (
-          <StyledHeader headerPosition={headerPosition}>{header}</StyledHeader>
-        )}
-        <StyledSelect
-          allowClear={!isLoading && allowClear}
-          aria-label={ariaLabel || name}
-          autoClearSearchValue={autoClearSearchValue}
-          dropdownRender={dropdownRender}
-          filterOption={handleFilterOption}
-          filterSort={sortComparatorWithSearch}
-          getPopupContainer={
-            getPopupContainer || (triggerNode => triggerNode.parentNode)
-          }
-          headerPosition={headerPosition}
-          labelInValue={labelInValue}
-          maxTagCount={actualMaxTagCount}
-          maxTagPlaceholder={customMaxTagPlaceholder}
-          mode={mappedMode}
-          notFoundContent={isLoading ? t('Loading...') : notFoundContent}
-          onBlur={handleOnBlur}
-          onDeselect={handleOnDeselect}
-          onDropdownVisibleChange={handleOnDropdownVisibleChange}
-          // @ts-ignore
-          onPaste={onPaste}
-          onPopupScroll={undefined}
-          onSearch={shouldShowSearch ? handleOnSearch : undefined}
-          onSelect={handleOnSelect}
-          onClear={handleClear}
-          placeholder={placeholder}
-          showSearch={shouldShowSearch}
-          showArrow
-          tokenSeparators={tokenSeparators}
-          value={selectValue}
-          suffixIcon={getSuffixIcon(
-            isLoading,
-            shouldShowSearch,
-            isDropdownVisible,
-          )}
-          menuItemSelectedIcon={
-            invertSelection ? (
-              <StyledStopOutlined iconSize="m" aria-label="stop" />
-            ) : (
-              <StyledCheckOutlined iconSize="m" aria-label="check" />
-            )
-          }
-          options={shouldRenderChildrenOptions ? undefined : fullSelectOptions}
-          oneLine={oneLine}
-          tagRender={customTagRender}
-          {...props}
-          ref={ref}
-        >
-          {selectAllEnabled && (
-            <Option
-              id="select-all"
-              className="select-all"
-              key={SELECT_ALL_VALUE}
-              value={SELECT_ALL_VALUE}
-            >
-              {selectAllLabel()}
-            </Option>
-          )}
-          {shouldRenderChildrenOptions &&
-            renderSelectOptions(fullSelectOptions)}
-        </StyledSelect>
-      </>
-    );
   },
 );
+
+export default Select;
