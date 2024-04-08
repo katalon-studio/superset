@@ -1,5 +1,6 @@
+/* eslint-disable theme-colors/no-literal-colors */
 import React, { forwardRef, ReactNode, RefObject } from 'react';
-import { css, styled, useTheme } from '@superset-ui/core';
+import styled from 'styled-components';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export type DropdownLabel = {
@@ -15,20 +16,20 @@ const LabelContainer = styled.div<{
   isActive?: boolean;
   isPlaceholder?: boolean;
 }>`
-  ${({ theme, isActive, isPlaceholder }) => css`
+  ${({ isActive, isPlaceholder }) => `
     width: 100%;
-    height: ${theme.gridUnit * 10}px;
+    height: 40px;
 
     display: flex;
     align-items: center;
     flex-wrap: nowrap;
 
-    padding: 0 ${theme.gridUnit * 4}px;
+    padding: 0 16px;
 
-    background-color: ${theme.colors.grayscale.light5};
+    background-color: #FFFFFF;
 
-    border: 1px solid ${isActive ? ACTIVE_COLOR : theme.colors.grayscale.light2};
-    border-radius: ${theme.borderRadius}px;
+    border: 1px solid ${isActive ? ACTIVE_COLOR : '#E0E0E0'};
+    border-radius: 4px;
 
     cursor: pointer;
 
@@ -40,9 +41,7 @@ const LabelContainer = styled.div<{
     background-color: ${isActive && ACTIVE_COLOR};
 
     .date-label-content {
-      color: ${isPlaceholder
-        ? theme.colors.grayscale.light1
-        : theme.colors.grayscale.dark1};
+      color: ${isPlaceholder ? '#B2B2B2' : '#A7323F'};
       overflow: hidden;
       text-overflow: ellipsis;
       min-width: 0;
@@ -53,7 +52,7 @@ const LabelContainer = styled.div<{
 
     span[role='img'] {
       margin-left: auto;
-      padding-left: ${theme.gridUnit}px;
+      padding-left: 4px;
 
       & > span[role='img'] {
         line-height: 0;
@@ -63,15 +62,12 @@ const LabelContainer = styled.div<{
 `;
 
 export const DropdownLabel = forwardRef(
-  (props: DropdownLabel, ref: RefObject<HTMLSpanElement>) => {
-    const theme = useTheme();
-    return (
-      <LabelContainer {...props} tabIndex={0}>
-        <span className="date-label-content" ref={ref}>
-          {props.label}
-        </span>
-        <KeyboardArrowDownIcon />
-      </LabelContainer>
-    );
-  },
+  (props: DropdownLabel, ref: RefObject<HTMLSpanElement>) => (
+    <LabelContainer {...props} tabIndex={0}>
+      <span className="date-label-content" ref={ref}>
+        {props.label}
+      </span>
+      <KeyboardArrowDownIcon />
+    </LabelContainer>
+  ),
 );
