@@ -61,7 +61,7 @@ export default function DateFilterLabel(props: any) {
           .map((timeString: string) =>
             moment(timeString, 'YYYY-MM-DDTHH:mm:ss'),
           );
-  const [localTimeRange, setLocalTimeRange] =
+  const [timeRange, setTimeRange] =
     React.useState(timeRangeValueList);
 
   const [actualTimeRange, setActualTimeRange] = useState<string>(value);
@@ -150,9 +150,9 @@ export default function DateFilterLabel(props: any) {
   );
 
   function onSave() {
-    const newTimeRange = `${localTimeRange[0].format(
+    const newTimeRange = `${timeRange[0].format(
       'YYYY-MM-DDTHH:mm:ss',
-    )} : ${localTimeRange[1].format('YYYY-MM-DDTHH:mm:ss')}`;
+    )} : ${timeRange[1].format('YYYY-MM-DDTHH:mm:ss')}`;
     onChange(newTimeRange, groupByTime);
     setShow(false);
     onClosePopover();
@@ -169,11 +169,10 @@ export default function DateFilterLabel(props: any) {
     <PopoverDateRangePicker
       onSave={onSave}
       onHide={onHide}
-      timeRangeValueList={timeRangeValueList}
       groupByTime={groupByTime}
       setGroupByTime={setGroupByTime}
-      setLocalTimeRange={setLocalTimeRange}
-      localTimeRange={localTimeRange}
+      setTimeRange={setTimeRange}
+      timeRange={timeRange}
     />
   );
 

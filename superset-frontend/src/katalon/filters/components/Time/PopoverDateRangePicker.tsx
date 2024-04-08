@@ -6,7 +6,7 @@ import moment from 'moment';
 import { Grid, ListItemButton, ListItemText } from '@mui/material';
 import { find, values } from 'lodash';
 import Popover from '@mui/material/Popover';
-import DateRangePickerComponent from './DateRangePickerComponent';
+import { DateRangePickerComponent } from './DateRangePickerComponent';
 import { DropdownLabel } from './DropdownLabel';
 
 // eslint-disable-next-line theme-colors/no-literal-colors
@@ -34,30 +34,23 @@ const ContentStyleWrapper = styled.div`
 interface PopoverDateRangePickerProps {
   onSave: () => void;
   onHide: () => void;
-  timeRangeValueList: moment.Moment[];
   groupByTime: string;
-  setLocalTimeRange: (localTimeRange: moment.Moment[]) => void;
-  localTimeRange: moment.Moment[];
+  setTimeRange: (localTimeRange: moment.Moment[] | null[]) => void;
+  timeRange: moment.Moment[] | null[];
   setGroupByTime: (groupByTime: string) => void;
 }
 
 export default function PopoverDateRangePicker(
   props: PopoverDateRangePickerProps,
 ) {
-  const {
-    timeRangeValueList,
-    localTimeRange,
-    setLocalTimeRange,
-    groupByTime,
-    setGroupByTime,
-  } = props;
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null,
-  );
+  const { timeRange, setTimeRange, groupByTime, setGroupByTime } = props;
+  const [anchorEl, setAnchorEl] = useState<Element | null>(null);
+  const [localTimeRange, setLocalTimeRange] = useState<
+    moment.Moment[] | null[]
+  >(timeRange);
+  const [localGroupByTime, setLocalGroupByTime] = useState<string>(groupByTime);
 
-  const handleClickKatalonPopover = (
-    event: React.MouseEvent<HTMLButtonElement>,
-  ) => {
+  const handleClickKatalonPopover = (event: React.MouseEvent<Element>) => {
     setAnchorEl(event.currentTarget);
   };
 
@@ -67,6 +60,8 @@ export default function PopoverDateRangePicker(
 
   const onSave = () => {
     props.onSave();
+    setTimeRange(localTimeRange);
+    setGroupByTime(localGroupByTime);
     handleCloseKatalonPopover();
   };
 
@@ -94,8 +89,7 @@ export default function PopoverDateRangePicker(
     },
   };
 
-  const resonableTimeRange =
-    timeRangeValueList[0] !== null && timeRangeValueList[1] !== null;
+  const resonableTimeRange = timeRange[0] !== null && timeRange[1] !== null;
 
   const resonableLocalTimeRange =
     localTimeRange[0] !== null && localTimeRange[1] !== null;
@@ -107,8 +101,8 @@ export default function PopoverDateRangePicker(
           {values(TestRunDailyGroupByOptions).map(option => (
             <ListItemButton
               key={option.value}
-              onClick={() => setGroupByTime(option.value)}
-              selected={option.value === groupByTime}
+              onClick={() => setLocalGroupByTime(option.value)}
+              selected={option.value === localGroupByTime}
             >
               <ListItemText primary={option.label} />
             </ListItemButton>
@@ -148,9 +142,9 @@ export default function PopoverDateRangePicker(
   })?.label;
 
   const label = resonableTimeRange
-    ? `${groupByLabel} - ${timeRangeValueList[0].format(
+    ? `${groupByLabel} - ${timeRange[0]!.format(
         'YYYY-MM-DD',
-      )} to ${timeRangeValueList[1].format('YYYY-MM-DD')}`
+      )} to ${timeRange[1]!.format('YYYY-MM-DD')}`
     : 'No filter';
 
   const open = Boolean(anchorEl);
