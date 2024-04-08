@@ -77,7 +77,8 @@ import {
   GroupByFilterPlugin,
 } from 'src/filters/components';
 import {
-  KatalonTimeFilterPlugin
+  KatalonTimeFilterPlugin,
+  KatalonSelectFilterPlugin
 } from 'src/katalon/filters/components';
 import { PivotTableChartPlugin as PivotTableChartPluginV2 } from '@superset-ui/plugin-chart-pivot-table';
 import { HandlebarsChartPlugin } from '@superset-ui/plugin-chart-handlebars';
@@ -160,7 +161,8 @@ export default class MainPreset extends Preset {
         new EchartsWaterfallChartPlugin().configure({
           key: 'waterfall',
         }),
-        new SelectFilterPlugin().configure({ key: 'filter_select' }),
+        // new SelectFilterPlugin().configure({ key: 'filter_select' }),
+        new KatalonSelectFilterPlugin().configure({ key: 'filter_select' }),
         new RangeFilterPlugin().configure({ key: 'filter_range' }),
         // new TimeFilterPlugin().configure({ key: 'filter_time' }),
         new KatalonTimeFilterPlugin().configure({ key: 'filter_time' }),
