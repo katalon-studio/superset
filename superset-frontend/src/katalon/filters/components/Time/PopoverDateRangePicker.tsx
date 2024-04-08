@@ -38,13 +38,19 @@ interface PopoverDateRangePickerProps {
   groupByTime: string;
   setLocalTimeRange: (localTimeRange: moment.Moment[]) => void;
   localTimeRange: moment.Moment[];
+  setGroupByTime: (groupByTime: string) => void;
 }
 
 export default function PopoverDateRangePicker(
   props: PopoverDateRangePickerProps,
 ) {
-  const { timeRangeValueList, localTimeRange, setLocalTimeRange } = props;
-  const [groupByTime, setGroupByTime] = useState(props.groupByTime);
+  const {
+    timeRangeValueList,
+    localTimeRange,
+    setLocalTimeRange,
+    groupByTime,
+    setGroupByTime,
+  } = props;
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null,
   );

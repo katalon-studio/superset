@@ -1,5 +1,5 @@
 /* eslint-disable theme-colors/no-literal-colors */
-import React, { forwardRef, ReactNode, RefObject } from 'react';
+import React, { ReactNode } from 'react';
 import styled from 'styled-components';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
@@ -34,9 +34,6 @@ const LabelContainer = styled.div<{
     cursor: pointer;
 
     transition: border-color 0.3s cubic-bezier(0.65, 0.05, 0.36, 1);
-    :hover {
-      background-color: ${ACTIVE_COLOR};
-    }
 
     background-color: ${isActive && ACTIVE_COLOR};
 
@@ -61,13 +58,9 @@ const LabelContainer = styled.div<{
   `}
 `;
 
-export const DropdownLabel = forwardRef(
-  (props: DropdownLabel, ref: RefObject<HTMLSpanElement>) => (
-    <LabelContainer {...props} tabIndex={0}>
-      <span className="date-label-content" ref={ref}>
-        {props.label}
-      </span>
-      <KeyboardArrowDownIcon />
-    </LabelContainer>
-  ),
+export const DropdownLabel = (props: DropdownLabel) => (
+  <LabelContainer {...props} tabIndex={0}>
+    <span className="date-label-content">{props.label}</span>
+    <KeyboardArrowDownIcon />
+  </LabelContainer>
 );

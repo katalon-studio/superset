@@ -171,6 +171,7 @@ export default function DateFilterLabel(props: any) {
       onHide={onHide}
       timeRangeValueList={timeRangeValueList}
       groupByTime={groupByTime}
+      setGroupByTime={setGroupByTime}
       setLocalTimeRange={setLocalTimeRange}
       localTimeRange={localTimeRange}
     />

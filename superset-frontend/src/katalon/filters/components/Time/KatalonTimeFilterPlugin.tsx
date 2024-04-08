@@ -68,10 +68,9 @@ export default function TimeFilterPlugin(props: PluginFilterTimeProps) {
     [setDataMask],
   );
 
-
   useEffect(() => {
     handleTimeRangeChange(filterState.value, filterState.time_grain_sqla);
-  }, [filterState.value]);
+  }, [filterState.value, filterState.time_grain_sqla]);
 
   return props.formData?.inView ? (
     <TimeFilterStyles width={width} height={height}>
