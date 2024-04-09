@@ -52,6 +52,7 @@ import {
 
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { DataColumnMeta, TableChartTransformedProps } from './types';
 import DataTable, {
   DataTableProps,
@@ -65,9 +66,6 @@ import { formatColumnValue } from './utils/formatValue';
 import { PAGE_SIZE_OPTIONS } from './consts';
 import { updateExternalFormData } from './DataTable/utils/externalAPIs';
 import getScrollBarSize from './DataTable/utils/getScrollBarSize';
-import HeaderRenderer from './DataTableKatalon/HeaderRenderer';
-import CellRenderer from './DataTableKatalon/CellRenderer';
-import DataTableKatalon from './DataTableKatalon';
 
 type ValueRange = [number, number];
 
@@ -729,11 +727,11 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   console.log('KATALON', data);
 
-  const mock = [
+  const mockRows = [
     ...Array.from({ length: 20 }, (_, i) => ({
       id: `${i + 100}`,
       status: 'FAILED',
-      name: `Test_Run_${i}`,
+      name: `Gryffindor_Regression_Test_${i}`,
       environments: ['windows', 'chrome', 'firefox'],
       profiles: ['default', 'qa'],
       startedTime: 'Nov 29 2023',
@@ -745,6 +743,21 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   const classes = useStyles();
 
+  const PAGE_SIZE = 10;
+
+  const statusIconMapper = {
+    PASSED: '/static/assets/images/icons/status-passed.svg',
+    FAILED: '/static/assets/images/icons/status-failed.svg',
+    INCOMPLETE: '/static/assets/images/icons/status-incomplete.svg',
+    RUNNING: '/static/assets/images/icons/status-running.svg',
+  };
+
+  const environmentIconMapper = {
+    windows: '/static/assets/images/icons/windows.svg',
+    firefox: '/static/assets/images/icons/firefox.svg',
+    chrome: '/static/assets/images/icons/chrome.svg',
+  };
+
   const renderIDColumn = (id: string) => (
     <Link
       style={{ color: '#6464e4', fontWeight: 600 }}
@@ -754,29 +767,16 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     </Link>
   );
 
-  const renderStatusColumn = (value: string) => {
-    const statusIconMapper = {
-      PASSED: '/static/assets/images/icons/status-passed.svg',
-      FAILED: '/static/assets/images/icons/status-failed.svg',
-    };
-    return (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-        }}
-      >
-        <img
-          style={{
-            width: '16px',
-            height: '16px',
-          }}
-          src={statusIconMapper[value]}
-          alt="icon"
-        />
-      </div>
-    );
-  };
+  const renderStatusColumn = (value: string) => (
+    <img
+      style={{
+        width: '20px',
+        height: '20px',
+      }}
+      src={statusIconMapper[value]}
+      alt="icon"
+    />
+  );
 
   const renderNameColumn = (name: string) => (
     <div
@@ -804,29 +804,22 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     </div>
   );
 
-  const renderEnvironmentColumn = (environments: string[]) => {
-    const environmentIconMapper = {
-      windows: '/static/assets/images/icons/windows.svg',
-      firefox: '/static/assets/images/icons/firefox.svg',
-      chrome: '/static/assets/images/icons/chrome.svg',
-    };
-    return (
-      <div className="flex">
-        {environments.map((env, index) => (
-          <img
-            key={index}
-            style={{
-              width: '20px',
-              height: '20px',
-              marginRight: '2px',
-            }}
-            src={environmentIconMapper[env]}
-            alt="icon"
-          />
-        ))}
-      </div>
-    );
-  };
+  const renderEnvironmentColumn = (environments: string[]) => (
+    <div className="flex">
+      {environments.map((env, index) => (
+        <img
+          key={index}
+          style={{
+            width: '20px',
+            height: '20px',
+            marginRight: '2px',
+          }}
+          src={environmentIconMapper[env]}
+          alt="icon"
+        />
+      ))}
+    </div>
+  );
 
   const renderProfileColumn = (profiles: string[]) => (
     <div className="flex">
@@ -853,29 +846,71 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   const renderExecutorColumn = (executor: string) => <span>{executor}</span>;
 
-  const headerRenderer: HeaderRenderer = {
-    id: 'ID',
-    status: 'STATUS',
-    name: 'NAME',
-    environments: 'ENVIRONMENT',
-    profiles: 'PROFILE',
-    startedTime: 'STARTED TIME',
-    duration: 'DURATION',
-    requirement: 'REQUIREMENT',
-    executor: 'EXECUTOR',
-  };
-
-  const cellRenderer: CellRenderer<any> = {
-    id: renderIDColumn,
-    status: renderStatusColumn,
-    name: renderNameColumn,
-    environments: renderEnvironmentColumn,
-    profiles: renderProfileColumn,
-    startedTime: renderStartedTimeColumn,
-    duration: renderDurationColumn,
-    requirement: renderRequirementColumn,
-    executor: renderExecutorColumn,
-  };
+  const mockColumns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'ID',
+      flex: 0.8,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderIDColumn(cell.value),
+    },
+    {
+      field: 'status',
+      headerName: 'STATUS',
+      flex: 0.5,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderStatusColumn(cell.value),
+    },
+    {
+      field: 'name',
+      headerName: 'NAME',
+      flex: 1.6,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderNameColumn(cell.value),
+    },
+    {
+      field: 'environments',
+      headerName: 'ENVIRONMENT',
+      flex: 0.8,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderEnvironmentColumn(cell.value),
+    },
+    {
+      field: 'profiles',
+      headerName: 'PROFILE',
+      flex: 0.8,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderProfileColumn(cell.value),
+    },
+    {
+      field: 'startedTime',
+      headerName: 'STARTED TIME',
+      flex: 1,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderStartedTimeColumn(cell.value),
+    },
+    {
+      field: 'duration',
+      headerName: 'DURATION',
+      flex: 0.8,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderDurationColumn(cell.value),
+    },
+    {
+      field: 'requirement',
+      headerName: 'REQUIREMENT',
+      flex: 1,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderRequirementColumn(cell.value),
+    },
+    {
+      field: 'executor',
+      headerName: 'EXECUTOR',
+      flex: 0.8,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => renderExecutorColumn(cell.value),
+    },
+  ];
 
   return (
     // <Styles>
@@ -901,11 +936,20 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     //     sticky={sticky}
     //   />
     // </Styles>
-    <DataTableKatalon
-      rows={mock}
-      headerRenderer={headerRenderer}
-      cellRenderer={cellRenderer}
-      headerStyle={classes.tableHeader}
+    <DataGrid
+      rows={mockRows}
+      columns={mockColumns}
+      getRowId={row => row.id}
+      checkboxSelection={false}
+      rowSelection={false}
+      disableRowSelectionOnClick
+      disableColumnMenu
+      initialState={{
+        pagination: { paginationModel: { pageSize: PAGE_SIZE } },
+      }}
+      pageSizeOptions={[PAGE_SIZE]}
+      hideFooter={mockRows.length <= PAGE_SIZE}
+      autoHeight
     />
   );
 }
