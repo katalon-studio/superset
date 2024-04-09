@@ -731,10 +731,10 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   const mock = [
     ...Array.from({ length: 20 }, (_, i) => ({
-      id: `${i}`,
-      status: 'PASSED',
+      id: `${i + 100}`,
+      status: 'FAILED',
       name: `Test_Run_${i}`,
-      environments: ['windows', 'chrome', 'macos'],
+      environments: ['windows', 'chrome', 'firefox'],
       profiles: ['default', 'qa'],
       startedTime: 'Nov 29 2023',
       duration: '3m 32s',
@@ -746,10 +746,37 @@ export default function TableChart<D extends DataRecord = DataRecord>(
   const classes = useStyles();
 
   const renderIDColumn = (id: string) => (
-    <Link to={`https://www.google.com/${id}`}>#{id}</Link>
+    <Link
+      style={{ color: '#6464e4', fontWeight: 600 }}
+      to={`https://www.google.com/${id}`}
+    >
+      #{id}
+    </Link>
   );
 
-  const renderStatusColumn = (value: string) => <span>{value}</span>;
+  const renderStatusColumn = (value: string) => {
+    const statusIconMapper = {
+      PASSED: '/static/assets/images/icons/status-passed.svg',
+      FAILED: '/static/assets/images/icons/status-failed.svg',
+    };
+    return (
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <img
+          style={{
+            width: '16px',
+            height: '16px',
+          }}
+          src={statusIconMapper[value]}
+          alt="icon"
+        />
+      </div>
+    );
+  };
 
   const renderNameColumn = (name: string) => (
     <div
@@ -760,8 +787,8 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     >
       <img
         style={{
-          width: '20px',
-          height: '20px',
+          width: '18px',
+          height: '18px',
         }}
         src="/static/assets/images/icons/test-run.svg"
         alt="icon"
@@ -777,21 +804,35 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     </div>
   );
 
-  const renderEnvironmentColumn = (environments: string[]) => (
-    <div className="flex">
-      {environments.map((env, index) => (
-        <span key={index} className="mr-2">
-          {env}
-        </span>
-      ))}
-    </div>
-  );
+  const renderEnvironmentColumn = (environments: string[]) => {
+    const environmentIconMapper = {
+      windows: '/static/assets/images/icons/windows.svg',
+      firefox: '/static/assets/images/icons/firefox.svg',
+      chrome: '/static/assets/images/icons/chrome.svg',
+    };
+    return (
+      <div className="flex">
+        {environments.map((env, index) => (
+          <img
+            key={index}
+            style={{
+              width: '20px',
+              height: '20px',
+              marginRight: '2px',
+            }}
+            src={environmentIconMapper[env]}
+            alt="icon"
+          />
+        ))}
+      </div>
+    );
+  };
 
   const renderProfileColumn = (profiles: string[]) => (
     <div className="flex">
       {profiles.map((profile, index) => (
-        <span key={index} className="mr-2">
-          {profile}
+        <span key={index}>
+          {`${profile}${index !== profiles.length - 1 ? ', ' : ''}`}
         </span>
       ))}
     </div>
@@ -802,7 +843,12 @@ export default function TableChart<D extends DataRecord = DataRecord>(
   const renderDurationColumn = (duration: string) => <span>{duration}</span>;
 
   const renderRequirementColumn = (requirement: string) => (
-    <Link to={`https://www.google.com/${requirement}`}>{requirement}</Link>
+    <Link
+      style={{ color: '#6464e4', fontWeight: 600 }}
+      to={`https://www.google.com/${requirement}`}
+    >
+      {requirement}
+    </Link>
   );
 
   const renderExecutorColumn = (executor: string) => <span>{executor}</span>;
@@ -823,8 +869,8 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     id: renderIDColumn,
     status: renderStatusColumn,
     name: renderNameColumn,
-    environment: renderEnvironmentColumn,
-    profile: renderProfileColumn,
+    environments: renderEnvironmentColumn,
+    profiles: renderProfileColumn,
     startedTime: renderStartedTimeColumn,
     duration: renderDurationColumn,
     requirement: renderRequirementColumn,
