@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
-import { FormControl, MenuItem, Popover } from '@mui/material';
+import { Box, FormControl, MenuItem, Popover, Typography } from '@mui/material';
 import React from 'react';
-import { SelectProps } from 'src/components/Select/types';
+import IconCheck from '@mui/icons-material/Check';
 import { DropdownLabel } from '../Time/DropdownLabel';
 
 interface CustomSelectProps {
-  selectLabel: string;
+  selectLabel: any;
   id: string | undefined;
   fullSelectOptions: any;
   enableDropDown: HTMLButtonElement | null;
@@ -13,7 +13,7 @@ interface CustomSelectProps {
   handleClickDropdown: (event: React.MouseEvent<HTMLElement>) => void;
   handleMenuItemClick: (
     event: React.MouseEvent<HTMLElement>,
-    option: SelectProps['onSelect'],
+    option: any,
   ) => void;
 }
 
@@ -29,6 +29,8 @@ function CustomSelect(props: CustomSelectProps) {
   } = props;
 
   const open = Boolean(enableDropDown);
+
+  const compareLabel = (option: any, label: any) => option?.label === label;
 
   return (
     <FormControl sx={{ width: 150 }}>
@@ -63,8 +65,27 @@ function CustomSelect(props: CustomSelectProps) {
               key={option.label}
               value={option.label}
               onClick={event => handleMenuItemClick(event, option)}
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+              }}
             >
-              {option.label}
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexGrow: 1,
+                  alignItems: 'center',
+                  width: '60%',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                <Typography noWrap sx={{ width: '100%' }}>
+                  {option.label}
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                {compareLabel(option, selectLabel) && <IconCheck />}
+              </Box>
             </MenuItem>
           ))}
       </Popover>

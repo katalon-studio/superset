@@ -104,6 +104,11 @@ const Select = forwardRef(
     const [onChangeCount, setOnChangeCount] = useState(0);
     const previousChangeCount = usePrevious(onChangeCount, 0);
 
+    const [enableDropDown, setEnableDropDown] =
+      useState<HTMLButtonElement | null>(null);
+
+    const [selectLabel, setSelectLabel] = useState(value);
+
     const fireOnChange = useCallback(
       () => setOnChangeCount(onChangeCount + 1),
       [onChangeCount],
@@ -543,17 +548,17 @@ const Select = forwardRef(
       fireOnChange();
     };
 
-    const [enableDropDown, setEnableDropDown] =
-      useState<HTMLButtonElement | null>(null);
-
-    const [selectLabel, setSelectLabel] = useState('');
-
     const handleMenuItemClick = (
       event: React.MouseEvent<HTMLElement>,
-      option: SelectProps['onSelect'],
+      option: any,
     ) => {
-      setSelectValue(option.value);
-      setSelectLabel(option.label);
+      if (selectLabel === option?.label) {
+        setSelectValue([]);
+        setSelectLabel([]);
+      } else {
+        setSelectValue(option?.value);
+        setSelectLabel(option?.label);
+      }
       setEnableDropDown(null);
       fireOnChange();
     };
@@ -568,10 +573,12 @@ const Select = forwardRef(
       setEnableDropDown(null);
     };
 
+    const label = selectValue?.length ? selectLabel : 'All';
+
     return (
       <CustomSelect
-        id={name}
-        selectLabel={selectLabel}
+        id="custom-select-filter"
+        selectLabel={label}
         fullSelectOptions={fullSelectOptions}
         enableDropDown={enableDropDown}
         handleCloseClickDropdown={handleCloseClickDropdown}
