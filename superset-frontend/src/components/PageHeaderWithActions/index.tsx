@@ -20,6 +20,8 @@ import React, { ReactNode, ReactElement } from 'react';
 import { css, SupersetTheme, t, useTheme } from '@superset-ui/core';
 import { AntdDropdown, AntdDropdownProps } from 'src/components';
 import { TooltipPlacement } from 'src/components/Tooltip';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 import {
   DynamicEditableTitle,
   DynamicEditableTitleProps,
@@ -134,24 +136,31 @@ export const PageHeaderWithActions = ({
   tooltipProps,
 }: PageHeaderWithActionsProps) => {
   const theme = useTheme();
+  const isKatalonEmbeddedDashboard = getUrlParam(
+    URL_PARAMS.isKatalonEmbeddedMode,
+  );
   return (
     <div css={headerStyles} className="header-with-actions">
       <div className="title-panel">
-        <DynamicEditableTitle {...editableTitleProps} />
-        {showTitlePanelItems && (
-          <div css={buttonsStyles}>
-            {certificatiedBadgeProps?.certifiedBy && (
-              <CertifiedBadge {...certificatiedBadgeProps} />
+        {!isKatalonEmbeddedDashboard && (
+          <>
+            <DynamicEditableTitle {...editableTitleProps} />
+            {showTitlePanelItems && (
+              <div css={buttonsStyles}>
+                {certificatiedBadgeProps?.certifiedBy && (
+                  <CertifiedBadge {...certificatiedBadgeProps} />
+                )}
+                {showFaveStar && <FaveStar {...faveStarProps} />}
+                {titlePanelAdditionalItems}
+              </div>
             )}
-            {showFaveStar && <FaveStar {...faveStarProps} />}
-            {titlePanelAdditionalItems}
-          </div>
+          </>
         )}
       </div>
       <div className="right-button-panel">
         {rightPanelAdditionalItems}
         <div css={additionalActionsContainerStyles}>
-          {showMenuDropdown && (
+          {!isKatalonEmbeddedDashboard && showMenuDropdown && (
             <AntdDropdown
               trigger={['click']}
               overlay={additionalActionsMenu}

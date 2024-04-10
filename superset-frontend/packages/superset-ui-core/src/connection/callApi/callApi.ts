@@ -66,7 +66,7 @@ export default async function callApi({
   fetchRetryOptions,
   headers,
   method = 'GET',
-  mode = 'same-origin',
+  mode = 'cors',
   postPayload,
   jsonPayload,
   redirect = 'follow',

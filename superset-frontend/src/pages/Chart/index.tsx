@@ -146,7 +146,13 @@ export default function ExplorePage() {
         })
         .catch(err => {
           dispatch(hydrateExplore(fallbackExploreInitialData));
-          dispatch(addDangerToast(err.message));
+
+          const isKatalonEmbeddedMode = getUrlParam(
+            URL_PARAMS.isKatalonEmbeddedMode,
+          );
+          if (!isKatalonEmbeddedMode) {
+            dispatch(addDangerToast(err.message));
+          }
         })
         .finally(() => {
           setIsLoaded(true);

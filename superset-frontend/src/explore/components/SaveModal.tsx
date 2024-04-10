@@ -46,6 +46,8 @@ import { setSaveChartModalVisibility } from 'src/explore/actions/saveModalAction
 import { SaveActionType } from 'src/explore/types';
 import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
 import { Dashboard } from 'src/types/Dashboard';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 
 // Session storage key for recent dashboard
 const SK_DASHBOARD_ID = 'save_chart_recent_dashboard';
@@ -277,7 +279,15 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
 
       // Go to new dashboard url
       if (gotodash && dashboard) {
-        this.props.history.push(dashboard.url);
+        const isKatalonEmbeddedMode = getUrlParam(
+          URL_PARAMS.isKatalonEmbeddedMode,
+        );
+        let { url } = dashboard;
+        if (isKatalonEmbeddedMode) {
+          url += '?standalone=1&isKatalonEmbeddedMode=true';
+        }
+
+        this.props.history.push(url);
         return;
       }
 
@@ -335,28 +345,33 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
 
   renderSaveChartModal = () => {
     const info = this.info();
+    const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
     return (
       <Form data-test="save-modal-body" layout="vertical">
-        <FormItem data-test="radio-group">
-          <Radio
-            id="overwrite-radio"
-            disabled={!this.canOverwriteSlice()}
-            checked={this.state.action === 'overwrite'}
-            onChange={() => this.changeAction('overwrite')}
-            data-test="save-overwrite-radio"
-          >
-            {t('Save (Overwrite)')}
-          </Radio>
-          <Radio
-            id="saveas-radio"
-            data-test="saveas-radio"
-            checked={this.state.action === 'saveas'}
-            onChange={() => this.changeAction('saveas')}
-          >
-            {t('Save as...')}
-          </Radio>
-        </FormItem>
-        <hr />
+        {!isKatalonEmbeddedMode && (
+          <>
+            <FormItem data-test="radio-group">
+              <Radio
+                id="overwrite-radio"
+                disabled={!this.canOverwriteSlice()}
+                checked={this.state.action === 'overwrite'}
+                onChange={() => this.changeAction('overwrite')}
+                data-test="save-overwrite-radio"
+              >
+                {t('Save (Overwrite)')}
+              </Radio>
+              <Radio
+                id="saveas-radio"
+                data-test="saveas-radio"
+                checked={this.state.action === 'saveas'}
+                onChange={() => this.changeAction('saveas')}
+              >
+                {t('Save as...')}
+              </Radio>
+            </FormItem>
+            <hr />
+          </>
+        )}
         <FormItem label={t('Chart name')} required>
           <Input
             name="new_slice_name"
@@ -384,6 +399,7 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
           </FormItem>
         )}
         {!(
+          isKatalonEmbeddedMode &&
           isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) &&
           this.state.vizType === 'filter_box'
         ) && (
@@ -443,43 +459,49 @@ class SaveModal extends React.Component<SaveModalProps, SaveModalState> {
     return null;
   };
 
-  renderFooter = () => (
-    <div data-test="save-modal-footer">
-      <Button id="btn_cancel" buttonSize="small" onClick={this.onHide}>
-        {t('Cancel')}
-      </Button>
-      <Button
-        id="btn_modal_save_goto_dash"
-        buttonSize="small"
-        disabled={
-          !this.state.newSliceName ||
-          !this.state.dashboard ||
-          (this.props.datasource?.type !== DatasourceType.Table &&
-            !this.state.datasetName) ||
-          (isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) &&
-            this.state.vizType === 'filter_box')
-        }
-        onClick={() => this.saveOrOverwrite(true)}
-      >
-        {t('Save & go to dashboard')}
-      </Button>
-      <Button
-        id="btn_modal_save"
-        buttonSize="small"
-        buttonStyle="primary"
-        onClick={() => this.saveOrOverwrite(false)}
-        disabled={
-          this.state.isLoading ||
-          !this.state.newSliceName ||
-          (this.props.datasource?.type !== DatasourceType.Table &&
-            !this.state.datasetName)
-        }
-        data-test="btn-modal-save"
-      >
-        {t('Save')}
-      </Button>
-    </div>
-  );
+  renderFooter = () => {
+    const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+
+    return (
+      <div data-test="save-modal-footer">
+        <Button id="btn_cancel" buttonSize="small" onClick={this.onHide}>
+          {t('Cancel')}
+        </Button>
+        <Button
+          id="btn_modal_save_goto_dash"
+          buttonSize="small"
+          disabled={
+            !this.state.newSliceName ||
+            !this.state.dashboard ||
+            (this.props.datasource?.type !== DatasourceType.Table &&
+              !this.state.datasetName) ||
+            (isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS) &&
+              this.state.vizType === 'filter_box')
+          }
+          onClick={() => this.saveOrOverwrite(true)}
+        >
+          {t('Save & go to dashboard')}
+        </Button>
+        {!isKatalonEmbeddedMode && (
+          <Button
+            id="btn_modal_save"
+            buttonSize="small"
+            buttonStyle="primary"
+            onClick={() => this.saveOrOverwrite(false)}
+            disabled={
+              this.state.isLoading ||
+              !this.state.newSliceName ||
+              (this.props.datasource?.type !== DatasourceType.Table &&
+                !this.state.datasetName)
+            }
+            data-test="btn-modal-save"
+          >
+            {t('Save')}
+          </Button>
+        )}
+      </div>
+    );
+  };
 
   render() {
     return (

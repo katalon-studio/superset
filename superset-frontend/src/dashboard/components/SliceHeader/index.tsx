@@ -37,6 +37,8 @@ import Icons from 'src/components/Icons';
 import { RootState } from 'src/dashboard/types';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -195,6 +197,8 @@ const SliceHeader: FC<SliceHeaderProps> = ({
 
   const exploreUrl = `/explore/?dashboard_page_id=${dashboardPageId}&slice_id=${slice.slice_id}`;
 
+  const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+
   return (
     <ChartHeaderStyles data-test="slice-header" ref={innerRef}>
       <div className="header-title" ref={headerRef}>
@@ -258,10 +262,10 @@ const SliceHeader: FC<SliceHeaderProps> = ({
                 <CrossFilterIcon iconSize="m" />
               </Tooltip>
             )}
-            {!uiConfig.hideChartControls && (
+            {!isKatalonEmbeddedMode && !uiConfig.hideChartControls && (
               <FiltersBadge chartId={slice.slice_id} />
             )}
-            {!uiConfig.hideChartControls && (
+            {!isKatalonEmbeddedMode && !uiConfig.hideChartControls && (
               <SliceHeaderControls
                 slice={slice}
                 isCached={isCached}

@@ -392,8 +392,12 @@ class DatasourceControl extends React.PureComponent {
       }
     }
 
-    const titleText = isMissingDatasource
+    const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+    const text = !isKatalonEmbeddedMode
       ? t('Missing dataset')
+      : 'Select a dataset';
+    const titleText = isMissingDatasource
+      ? t(text)
       : getDatasourceTitle(datasource);
 
     const tooltip = titleText;
@@ -427,7 +431,7 @@ class DatasourceControl extends React.PureComponent {
           </AntdDropdown>
         </div>
         {/* missing dataset */}
-        {isMissingDatasource && isMissingParams && (
+        {!isKatalonEmbeddedMode && isMissingDatasource && isMissingParams && (
           <div className="error-alert">
             <ErrorAlert
               level="warning"

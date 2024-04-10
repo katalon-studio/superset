@@ -37,6 +37,7 @@ import {
   UNSAVED_CHART_ID,
 } from 'src/explore/constants';
 import { DashboardStandaloneMode } from 'src/dashboard/util/constants';
+import Config from '../../../config';
 
 export function getChartKey(explore) {
   const { slice, form_data } = explore;
@@ -111,8 +112,10 @@ export function getChartDataUri({ path, qs, allowDomainSharding = false }) {
   let uri = new URI({
     protocol: window.location.protocol.slice(0, -1),
     hostname: getHostName(allowDomainSharding),
-    port: window.location.port ? window.location.port : '',
-    path,
+    // port: window.location.port ? window.location.port : '',
+    port: Config.chartConfig.port,
+    // path,
+    path: Config.chartConfig.path + path,
   });
   if (qs) {
     uri = uri.search(qs);

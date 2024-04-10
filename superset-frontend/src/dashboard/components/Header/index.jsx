@@ -28,6 +28,7 @@ import {
   t,
   getSharedLabelColor,
   getExtensionsRegistry,
+  SupersetClient,
 } from '@superset-ui/core';
 import { Global } from '@emotion/react';
 import {
@@ -466,10 +467,12 @@ class Header extends React.PureComponent {
       logEvent,
     } = this.props;
 
-    const userCanEdit =
-      dashboardInfo.dash_edit_perm && !dashboardInfo.is_managed_externally;
+    // const userCanEdit =
+    //   dashboardInfo.dash_edit_perm && !dashboardInfo.is_managed_externally;
+    const userCanEdit = true;
     const userCanShare = dashboardInfo.dash_share_perm;
-    const userCanSaveAs = dashboardInfo.dash_save_perm;
+    // const userCanSaveAs = dashboardInfo.dash_save_perm;
+    const userCanSaveAs = true;
     const userCanCurate =
       isFeatureEnabled(FeatureFlag.EMBEDDED_SUPERSET) &&
       findPermission('can_set_embedded', 'Dashboard', user.roles);

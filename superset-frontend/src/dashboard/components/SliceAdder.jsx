@@ -45,6 +45,8 @@ import { slicePropShape } from 'src/dashboard/util/propShapes';
 import { debounce, pickBy } from 'lodash';
 import Checkbox from 'src/components/Checkbox';
 import { InfoTooltipWithTrigger } from '@superset-ui/chart-controls';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 import AddSliceCard from './AddSliceCard';
 import AddSliceDragPreview from './dnd/AddSliceDragPreview';
 import DragDroppable from './dnd/DragDroppable';
@@ -331,13 +333,25 @@ class SliceAdder extends React.Component {
           <NewChartButton
             buttonStyle="link"
             buttonSize="xsmall"
-            onClick={() =>
-              window.open(
-                `/chart/add?dashboard_id=${this.props.dashboardId}`,
-                '_blank',
-                'noopener noreferrer',
-              )
-            }
+            onClick={() => {
+              const isKatalonEmbeddedDashboard = getUrlParam(
+                URL_PARAMS.isKatalonEmbeddedMode,
+              );
+              const projectId = getUrlParam(URL_PARAMS.projectId);
+              const accessToken = getUrlParam(URL_PARAMS.accessToken);
+
+              if (isKatalonEmbeddedDashboard) {
+                window.location.assign(
+                  `/explore/?dashboard_id=${this.props.dashboardId}&isKatalonEmbeddedMode=true&projectId=${projectId}&accessToken=${accessToken}`,
+                );
+              } else {
+                window.open(
+                  `/chart/add?dashboard_id=${this.props.dashboardId}`,
+                  '_blank',
+                  'noopener noreferrer',
+                );
+              }
+            }}
           >
             <Icons.PlusSmall />
             {t('Create new chart')}
