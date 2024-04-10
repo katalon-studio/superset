@@ -52,7 +52,7 @@ import {
 
 import { makeStyles } from '@mui/styles';
 import { Link } from 'react-router-dom';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef } from '@katalon-studio/katalon-ui/v2';
 import { DataColumnMeta, TableChartTransformedProps } from './types';
 import DataTable, {
   DataTableProps,
