@@ -38,7 +38,7 @@ const LabelContainer = styled.div<{
     background-color: ${isActive && ACTIVE_COLOR};
 
     .date-label-content {
-      color: ${isPlaceholder ? '#B2B2B2' : '#A7323F'};
+      color: ${isPlaceholder ? '#B2B2B2' : '#000000'};
       overflow: hidden;
       text-overflow: ellipsis;
       min-width: 0;
