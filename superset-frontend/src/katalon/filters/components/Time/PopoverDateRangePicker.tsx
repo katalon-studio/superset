@@ -32,7 +32,10 @@ const ContentStyleWrapper = styled.div`
 `;
 
 interface PopoverDateRangePickerProps {
-  onSave: () => void;
+  onSave: (
+    localTimeRange: moment.Moment[] | null[],
+    localGroupByTime: string,
+  ) => void;
   onHide: () => void;
   groupByTime: string;
   setTimeRange: (localTimeRange: moment.Moment[] | null[]) => void;
@@ -59,7 +62,7 @@ export default function PopoverDateRangePicker(
   };
 
   const onSave = () => {
-    props.onSave();
+    props.onSave(localTimeRange, localGroupByTime);
     setTimeRange(localTimeRange);
     setGroupByTime(localGroupByTime);
     handleCloseKatalonPopover();

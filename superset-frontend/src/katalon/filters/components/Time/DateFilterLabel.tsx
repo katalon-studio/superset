@@ -149,10 +149,10 @@ export default function DateFilterLabel(props: any) {
     [timeRangeValue],
   );
 
-  function onSave() {
-    const newTimeRange = `${timeRange[0].format(
+  function onSave(timeRange: moment.Moment[] | null[], groupByTime: string) {
+    const newTimeRange = `${timeRange[0]!.format(
       'YYYY-MM-DDTHH:mm:ss',
-    )} : ${timeRange[1].format('YYYY-MM-DDTHH:mm:ss')}`;
+    )} : ${timeRange[1]!.format('YYYY-MM-DDTHH:mm:ss')}`;
     onChange(newTimeRange, groupByTime);
     setShow(false);
     onClosePopover();

@@ -83,6 +83,7 @@ export default function TimeFilterPlugin(props: PluginFilterTimeProps) {
         onMouseLeave={unsetHoveredFilter}
       >
         <DateFilterLabel
+          key={filterState.value}
           groupByTime={filterState.time_grain_sqla || 'P1D'}
           value={filterState.value || NO_TIME_RANGE}
           name="time_range"
