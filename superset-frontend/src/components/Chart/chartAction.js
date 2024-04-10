@@ -189,8 +189,7 @@ const v1ChartDataRequest = async (
     // eslint-disable-next-line camelcase
     domainShardingEnabled && requestParams?.dashboard_id;
   const url = getChartDataUri({
-    // path: '/api/v1/chart/data',
-    path: '/proxy/api/v1/chart/data',
+    path: '/api/v1/chart/data',
     qs,
     allowDomainSharding,
   }).toString();
@@ -648,8 +647,7 @@ export const getDatasourceSamples = async (
       searchParams.page = page;
     }
 
-    const response =
-      await SupersetClient.post({
+    const response = await SupersetClient.post({
       endpoint: '/datasource/samples',
       jsonPayload,
       searchParams,
