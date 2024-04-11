@@ -83,6 +83,7 @@ import { PivotTableChartPlugin as PivotTableChartPluginV2 } from '@superset-ui/p
 import { HandlebarsChartPlugin } from '@superset-ui/plugin-chart-handlebars';
 import FilterBoxChartPlugin from '../FilterBox/FilterBoxChartPlugin';
 import TimeTableChartPlugin from '../TimeTable';
+import KatalonChartTable from '../../katalon/chart-table/src'
 
 export default class MainPreset extends Preset {
   constructor() {
@@ -131,7 +132,8 @@ export default class MainPreset extends Preset {
         new RoseChartPlugin().configure({ key: 'rose' }),
         new SankeyChartPlugin().configure({ key: 'sankey' }),
         new SunburstChartPlugin().configure({ key: 'sunburst' }),
-        new TableChartPlugin().configure({ key: 'table' }),
+        // new TableChartPlugin().configure({ key: 'table' }),
+        new KatalonChartTable().configure({ key: 'table' }),
         new TimePivotChartPlugin().configure({ key: 'time_pivot' }),
         new TimeTableChartPlugin().configure({ key: 'time_table' }),
         new WordCloudChartPlugin().configure({ key: 'word_cloud' }),
