@@ -339,7 +339,6 @@ const config = {
         exclude: [
           /superset-ui.*\/node_modules\//,
           /\.test.jsx?$/,
-          /katalon\/node_modules\//,
         ],
         include: [
           new RegExp(`${APP_DIR}/(src|.storybook|plugins|packages)`),
