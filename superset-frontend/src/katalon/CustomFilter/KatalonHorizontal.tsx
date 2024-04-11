@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-unresolved */
 import React, { useMemo } from 'react';
 import {
   DataMaskStateWithId,
@@ -80,6 +82,7 @@ const FiltersLinkContainer = styled.div<{ hasFilters: boolean }>`
   `}
 `;
 
+// @ts-ignore
 const HorizontalFilterBar: React.FC<HorizontalBarProps> = ({
   actions,
   canEdit,

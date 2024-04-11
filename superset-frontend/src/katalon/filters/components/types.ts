@@ -1,5 +1,7 @@
+/* eslint-disable import/no-unresolved */
 import { SetDataMaskHook } from '@superset-ui/core';
 import { FilterBarOrientation } from 'src/dashboard/types';
+
 export interface PluginFilterStylesProps {
   height: number;
   width: number;

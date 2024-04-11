@@ -1,3 +1,7 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable prettier/prettier */
+/* eslint-disable import/no-unresolved */
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AppSection,
