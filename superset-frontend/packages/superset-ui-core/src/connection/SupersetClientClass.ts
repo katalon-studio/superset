@@ -90,10 +90,10 @@ export default class SupersetClientClass {
       // as the base of baseUrl
       window.location.href,
     );
-    // this.baseUrl = url.href.replace(/\/+$/, ''); // always strip trailing slash
-    this.baseUrl = Config.supersetClientClass.baseUrl;
-    // this.host = url.host;
-    this.host = Config.supersetClientClass.host;
+    this.baseUrl = url.href.replace(/\/+$/, ''); // always strip trailing slash
+    // this.baseUrl = Config.supersetClientClass.baseUrl;
+    this.host = url.host;
+    // this.host = Config.supersetClientClass.host;
     this.protocol = url.protocol as Protocol;
     this.headers = { Accept: 'application/json', ...headers }; // defaulting accept to json
     this.mode = mode;

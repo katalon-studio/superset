@@ -26,8 +26,8 @@ function getDomainsConfig() {
     return [];
   }
 
-  // const availableDomains = new Set([window.location.hostname]);
-  const availableDomains = new Set([Config.chartConfig.host]);
+  const availableDomains = new Set([window.location.hostname]);
+  // const availableDomains = new Set([Config.chartConfig.host]);
 
   // don't do domain sharding if a certain query param is set
   const disableDomainSharding =

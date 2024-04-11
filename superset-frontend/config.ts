@@ -10,6 +10,7 @@ const Config = {
   //   path: '/proxy',
   //   port: '8080',
   // },
+  // masterApp: 'http://localhost:5173',
 
   // QA
   supersetClientClass: {

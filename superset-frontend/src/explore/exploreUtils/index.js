@@ -112,10 +112,10 @@ export function getChartDataUri({ path, qs, allowDomainSharding = false }) {
   let uri = new URI({
     protocol: window.location.protocol.slice(0, -1),
     hostname: getHostName(allowDomainSharding),
-    // port: window.location.port ? window.location.port : '',
-    port: Config.chartConfig.port,
-    // path,
-    path: Config.chartConfig.path + path,
+    port: window.location.port ? window.location.port : '',
+    // port: Config.chartConfig.port,
+    path,
+    // path: Config.chartConfig.path + path,
   });
   if (qs) {
     uri = uri.search(qs);
