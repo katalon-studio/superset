@@ -51,22 +51,6 @@ const ActionButtons = ({
     >
       <Button
         sx={{
-          bgcolor: '#2236E5',
-          textTransform: 'none',
-          fontSize: 14,
-          fontWeight: 500,
-        }}
-        variant="contained"
-        disabled={isApplyDisabled}
-        disableElevation
-        size="small"
-        onClick={onApply}
-        {...getFilterBarTestId('apply-button')}
-      >
-        {t('Apply')}
-      </Button>
-      <Button
-        sx={{
           bgcolor: '#F2F3FA',
           color: '#1E30CC',
           textTransform: 'none',
@@ -85,6 +69,22 @@ const ActionButtons = ({
         {...getFilterBarTestId('clear-button')}
       >
         {t('Clear all')}
+      </Button>
+      <Button
+        sx={{
+          bgcolor: '#2236E5',
+          textTransform: 'none',
+          fontSize: 14,
+          fontWeight: 500,
+        }}
+        variant="contained"
+        disabled={isApplyDisabled}
+        disableElevation
+        size="small"
+        onClick={onApply}
+        {...getFilterBarTestId('apply-button')}
+      >
+        {t('Apply')}
       </Button>
     </Stack>
   );
