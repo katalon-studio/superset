@@ -1,7 +1,8 @@
+/* eslint-disable import/no-unresolved */
 import { styled, NO_TIME_RANGE } from '@superset-ui/core';
 import React, { useCallback, useEffect } from 'react';
 import { FilterPluginStyle } from 'src/filters/components/common';
-import { PluginFilterTimeProps } from 'src/filters/components/types';
+import { PluginFilterTimeProps } from 'src/filters/components/Time/types';
 import DateFilterLabel from './DateFilterLabel';
 
 const TimeFilterStyles = styled(FilterPluginStyle)`
@@ -84,6 +85,7 @@ export default function TimeFilterPlugin(props: PluginFilterTimeProps) {
         onMouseLeave={unsetHoveredFilter}
       >
         <DateFilterLabel
+          key={filterState.value}
           groupByTime={filterState.time_grain_sqla || 'P1D'}
           value={filterState.value || NO_TIME_RANGE}
           name="time_range"

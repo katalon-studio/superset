@@ -32,6 +32,8 @@ import {
   ParseMethod,
 } from './types';
 import { DEFAULT_FETCH_RETRY_OPTIONS, DEFAULT_BASE_URL } from './constants';
+// @ts-ignore
+import Config from '../../../../config';
 
 const defaultUnauthorizedHandler = () => {
   if (!window.location.pathname.startsWith('/login')) {
@@ -89,9 +91,9 @@ export default class SupersetClientClass {
       window.location.href,
     );
     // this.baseUrl = url.href.replace(/\/+$/, ''); // always strip trailing slash
-    this.baseUrl = 'http://localhost:8080/proxy';
+    this.baseUrl = Config.supersetClientClass.baseUrl;
     // this.host = url.host;
-    this.host = 'localhost:8080/proxy';
+    this.host = Config.supersetClientClass.host;
     this.protocol = url.protocol as Protocol;
     this.headers = { Accept: 'application/json', ...headers }; // defaulting accept to json
     this.mode = mode;

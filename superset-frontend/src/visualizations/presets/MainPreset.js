@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 import { isFeatureEnabled, Preset, FeatureFlag } from '@superset-ui/core';
 import CalendarChartPlugin from '@superset-ui/legacy-plugin-chart-calendar';
 import ChordChartPlugin from '@superset-ui/legacy-plugin-chart-chord';
@@ -69,16 +70,14 @@ import {
   EchartsWaterfallChartPlugin,
 } from '@superset-ui/plugin-chart-echarts';
 import {
-  SelectFilterPlugin,
   RangeFilterPlugin,
-  TimeFilterPlugin,
   TimeColumnFilterPlugin,
   TimeGrainFilterPlugin,
   GroupByFilterPlugin,
 } from 'src/filters/components';
 import {
   KatalonTimeFilterPlugin,
-  KatalonSelectFilterPlugin
+  KatalonSelectFilterPlugin,
 } from 'src/katalon/filters/components';
 import { PivotTableChartPlugin as PivotTableChartPluginV2 } from '@superset-ui/plugin-chart-pivot-table';
 import { HandlebarsChartPlugin } from '@superset-ui/plugin-chart-handlebars';

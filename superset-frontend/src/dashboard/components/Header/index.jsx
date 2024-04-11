@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/* eslint-disable */
 /* eslint-env browser */
 import moment from 'moment';
 import React from 'react';

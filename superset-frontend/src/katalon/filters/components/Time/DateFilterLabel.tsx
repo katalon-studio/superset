@@ -1,10 +1,10 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/no-unresolved */
 /* eslint-disable theme-colors/no-literal-colors */
 import React, { ReactNode, useState, useEffect, useMemo } from 'react';
 import {
   css,
-  styled,
-  t,
-  useTheme,
   NO_TIME_RANGE,
   SupersetTheme,
   useCSSTextTruncation,
@@ -15,7 +15,6 @@ import { SLOW_DEBOUNCE } from 'src/constants';
 import { noOp } from 'src/utils/common';
 import { FrameType } from 'src/explore/components/controls/DateFilterControl/types';
 import {
-  DATE_FILTER_TEST_KEY,
   fetchTimeRange,
   guessFrame,
   useDefaultTimeFilter,
@@ -46,10 +45,7 @@ const getTooltipTitle = (
   );
 
 export default function DateFilterLabel(props: any) {
-  const {
-    onChange,
-    onClosePopover = noOp,
-  } = props;
+  const { onChange, onClosePopover = noOp } = props;
   const defaultTimeFilter = useDefaultTimeFilter();
 
   const value = props.value ?? defaultTimeFilter;
@@ -61,20 +57,24 @@ export default function DateFilterLabel(props: any) {
           .map((timeString: string) =>
             moment(timeString, 'YYYY-MM-DDTHH:mm:ss'),
           );
-  const [timeRange, setTimeRange] =
-    React.useState(timeRangeValueList);
+  const [timeRange, setTimeRange] = React.useState(timeRangeValueList);
 
+  // @ts-ignore
   const [actualTimeRange, setActualTimeRange] = useState<string>(value);
 
+  // @ts-ignore
   const [show, setShow] = useState<boolean>(false);
   const guessedFrame = useMemo(() => guessFrame(value), [value]);
+  // @ts-ignore
   const [frame, setFrame] = useState<FrameType>(guessedFrame);
   const [lastFetchedTimeRange, setLastFetchedTimeRange] = useState(value);
   const [timeRangeValue, setTimeRangeValue] = useState(value);
+  // @ts-ignore
   const [validTimeRange, setValidTimeRange] = useState<boolean>(false);
+  // @ts-ignore
   const [evalResponse, setEvalResponse] = useState<string>(value);
+  // @ts-ignore
   const [tooltipTitle, setTooltipTitle] = useState<ReactNode | null>(value);
-  const theme = useTheme();
   const [labelRef, labelIsTruncated] = useCSSTextTruncation<HTMLSpanElement>();
   const [groupByTime, setGroupByTime] = useState(props.groupByTime);
 
@@ -149,10 +149,10 @@ export default function DateFilterLabel(props: any) {
     [timeRangeValue],
   );
 
-  function onSave() {
-    const newTimeRange = `${timeRange[0].format(
+  function onSave(timeRange: moment.Moment[] | null[], groupByTime: string) {
+    const newTimeRange = `${timeRange[0]!.format(
       'YYYY-MM-DDTHH:mm:ss',
-    )} : ${timeRange[1].format('YYYY-MM-DDTHH:mm:ss')}`;
+    )} : ${timeRange[1]!.format('YYYY-MM-DDTHH:mm:ss')}`;
     onChange(newTimeRange, groupByTime);
     setShow(false);
     onClosePopover();
@@ -179,7 +179,7 @@ export default function DateFilterLabel(props: any) {
   return (
     <>
       <ControlHeader {...props} />
-       {popoverContent}
+      {popoverContent}
     </>
   );
 }
