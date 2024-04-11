@@ -931,6 +931,14 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     );
   };
 
+  const configurationDecorator = (configuration: string) => {
+    if (!configuration) return null;
+    const numbers: string[] = configuration.split(',');
+
+    const hashedNumbers: string = numbers.map(num => `#${num}`).join(', ');
+    return <span>{hashedNumbers}</span>;
+  };
+
   const timeStartedDecorator = (date: Date) => {
     const months = [
       'Jan',
@@ -1024,6 +1032,13 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       renderCell: cell => browserDecorator(cell.value),
     },
     {
+      field: 'configuration',
+      headerName: 'CONFIGURATION',
+      flex: 0.5,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => configurationDecorator(cell.value),
+    },
+    {
       field: 'started_time',
       headerName: 'TIME STARTED',
       flex: 0.5,
@@ -1034,7 +1049,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       field: 'executor_avatar',
       headerName: 'EXECUTOR',
       flex: 0.5,
-      headerAlign: 'right',
+      headerAlign: 'center',
       headerClassName: classes.lastColumnHeader,
       renderCell: cell => executorDecorator(cell.value),
     },
