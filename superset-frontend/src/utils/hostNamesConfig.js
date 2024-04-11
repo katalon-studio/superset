@@ -18,7 +18,7 @@
  */
 import { initFeatureFlags } from '@superset-ui/core';
 import getBootstrapData from './getBootstrapData';
-import Config from '../../config';
+// import Config from '../../config';
 
 function getDomainsConfig() {
   const appContainer = document.getElementById('app');
