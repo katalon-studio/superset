@@ -772,6 +772,12 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     if (name.toLowerCase().includes('linux')) {
       return '/static/assets/images/icons/linux.svg';
     }
+    if (name.toLowerCase().includes('android')) {
+      return '/static/assets/images/icons/macos.svg'; // TODO: icon for Android
+    }
+    if (name.toLowerCase().includes('ios')) {
+      return '/static/assets/images/icons/macos.svg'; // TODO: icon for IOS
+    }
     return '';
   };
 
@@ -965,23 +971,43 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     return <span>{formattedDate}</span>;
   };
 
-  const executorDecorator = (executorAvatar: string) => (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        marginRight: '16px',
-      }}
-    >
-      <img
-        style={{ width: '20px', height: '20px' }}
-        src={executorAvatar}
-        alt="avatar"
-      />
-    </div>
-  );
+  const executorDecorator = (executorAvatar: string) => {
+    if (!executorAvatar)
+      return (
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            marginRight: '16px',
+          }}
+        >
+          <img
+            style={{ width: '20px', height: '20px' }}
+            src="https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png"
+            alt="avatar"
+          />
+        </div>
+      );
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100%',
+          marginRight: '16px',
+        }}
+      >
+        <img
+          style={{ width: '20px', height: '20px' }}
+          src={executorAvatar}
+          alt="avatar"
+        />
+      </div>
+    );
+  };
 
   const tableColumns: GridColDef[] = [
     {
@@ -1096,10 +1122,10 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       columnHeaderHeight={40}
       rows={data}
       columns={tableColumns}
-      getRowId={row => row.id}
       pageSizeOptions={[PAGE_SIZE]}
       hideFooter={data.length <= PAGE_SIZE}
       checkboxSelection
+      disableRowSelectionOnClick
     />
   );
 }
