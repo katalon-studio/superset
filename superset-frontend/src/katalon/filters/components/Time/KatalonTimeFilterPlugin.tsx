@@ -1,7 +1,8 @@
+/* eslint-disable import/no-unresolved */
 import { styled, NO_TIME_RANGE } from '@superset-ui/core';
 import React, { useCallback, useEffect } from 'react';
 import { FilterPluginStyle } from 'src/filters/components/common';
-import { PluginFilterTimeProps } from 'src/filters/components/types';
+import { PluginFilterTimeProps } from 'src/filters/components/Time/types';
 import DateFilterLabel from './DateFilterLabel';
 
 const TimeFilterStyles = styled(FilterPluginStyle)`

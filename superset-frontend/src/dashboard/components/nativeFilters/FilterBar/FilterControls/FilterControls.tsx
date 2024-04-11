@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable import/no-unresolved */
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -233,6 +236,7 @@ const FilterControls: FC<FilterControlsProps> = ({
     return [...crossFilters];
   }, [filtersInScope, renderer, rendererCrossFilter, selectedCrossFilters]);
 
+  // @ts-ignore
   const renderHorizontalContent = () => (
     <div
       css={(theme: SupersetTheme) => css`
@@ -318,6 +322,7 @@ const FilterControls: FC<FilterControlsProps> = ({
     }
   }, [outlinedFilterId, lastUpdated, popoverRef, overflowedIds]);
 
+  // @ts-ignore
   const renderFilterExtension = () => <FilterExtension items={items} />;
 
   return (

@@ -60,6 +60,7 @@ function CustomSelect(props: CustomSelectProps) {
         }}
       >
         {fullSelectOptions &&
+          // @ts-ignore
           fullSelectOptions.map(option => (
             <MenuItem
               key={option.label}

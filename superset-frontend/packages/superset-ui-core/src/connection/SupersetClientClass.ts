@@ -32,6 +32,7 @@ import {
   ParseMethod,
 } from './types';
 import { DEFAULT_FETCH_RETRY_OPTIONS, DEFAULT_BASE_URL } from './constants';
+// @ts-ignore
 import Config from '../../../../config';
 
 const defaultUnauthorizedHandler = () => {

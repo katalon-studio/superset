@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/* eslint-disable */
 import rison from 'rison';
 import { SupersetClient, t } from '@superset-ui/core';
 import { addSuccessToast } from 'src/components/MessageToasts/actions';

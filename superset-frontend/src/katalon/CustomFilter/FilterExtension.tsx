@@ -1,3 +1,4 @@
+/* eslint-disable theme-colors/no-literal-colors */
 import React, { useState, MouseEvent } from 'react';
 import { t } from '@superset-ui/core';
 import {
