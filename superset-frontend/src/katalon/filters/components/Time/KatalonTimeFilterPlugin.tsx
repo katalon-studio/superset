@@ -21,6 +21,7 @@ const ControlContainer = styled.div<{
   height: 100%;
   max-width: 100%;
   width: 100%;
+  margin-right: 15px;
   & > div,
   & > div:hover {
     ${({ validateStatus, theme }) =>
