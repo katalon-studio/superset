@@ -1,3 +1,5 @@
+/* eslint-disable import/no-unresolved */
+/* eslint-disable theme-colors/no-literal-colors */
 import React, { useMemo } from 'react';
 import {
   DataMaskState,
