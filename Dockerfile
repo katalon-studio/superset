@@ -40,7 +40,7 @@ RUN --mount=type=bind,target=/frontend-mem-nag.sh,src=./docker/frontend-mem-nag.
     /frontend-mem-nag.sh
 
 RUN npm config set @katalon-studio:registry https://npm.pkg.github.com/
-RUN npm config set //npm.pkg.github.com/:_authToken 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
+RUN npm config set //npm.pkg.github.com/:_authToken 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
 
 RUN --mount=type=bind,target=./src/katalon/package.json,src=./superset-frontend/src/katalon/package.json \
     cd ./src/katalon && npm install --legacy-peer-deps
