@@ -10,6 +10,7 @@ import {
   MenuItem,
   Stack,
 } from '@mui/material';
+import styled from 'styled-components';
 
 interface FilterItem {
   id: string;
@@ -20,6 +21,28 @@ interface FilterItem {
 interface FilterExtensionProps {
   items: FilterItem[];
 }
+
+// eslint-disable-next-line theme-colors/no-literal-colors
+const ContentStyleWrapper = styled.div`
+  display: flex;
+  align-items: end;
+  .ant-form-item-control {
+    width: 190px !important;
+    margin-right: 10px;
+  }
+  .MuiFormControl-root {
+    max-width: 100% !important;
+  }
+  .ant-form-item-label {
+    label {
+      height: 100% !important;
+      h4 {
+        color: #47494d;
+        font-weight: 500;
+      }
+    }
+  }
+`;
 
 function FilterExtension(props: FilterExtensionProps) {
   const { items } = props;
@@ -109,39 +132,44 @@ function FilterExtension(props: FilterExtensionProps) {
     // Take the list all filters,
     // then device them into two parts
     const visibleFilter: FilterItem[] = items.slice(0, 2);
-    const invisbleFilter: FilterItem[] = items.slice(3);
+    const invisbleFilter: FilterItem[] = items.slice(2);
 
     return (
-      <Stack
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          flexWrap: 'wrap',
-          gap: '3px',
-        }}
-        direction="row"
-        spacing={2}
-      >
-        {visibleFilter.length !== 0 &&
-          visibleFilter.map((item, index) => (
-            <div key={index}>{item.element}</div>
-          ))}
-        {addFilter.length !== 0 &&
-          addFilter.map((item, index) => <div key={index}>{item.element}</div>)}
-        <Button
+      <ContentStyleWrapper>
+        <Stack
           sx={{
-            bgcolor: '#FFFFFF',
-            color: '#0F1866',
-            textTransform: 'none',
-            fontSize: 16,
-            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'end',
+            flexWrap: 'wrap',
           }}
-          onClick={handleClick}
+          direction="row"
         >
-          {t('+ Add more')}
-        </Button>
-        {renderPopperMenu(invisbleFilter)}
-      </Stack>
+          {visibleFilter.length !== 0 &&
+            visibleFilter.map((item, index) => (
+              <div key={index}>{item.element}</div>
+            ))}
+          {addFilter.length !== 0 &&
+            addFilter.map((item, index) => (
+              <div key={index}>{item.element}</div>
+            ))}
+          <Button
+            sx={{
+              height: '40px',
+              bgcolor: '#FFFFFF',
+              color: '#0F1866',
+              textTransform: 'none',
+              fontSize: 14,
+              fontWeight: 500,
+              lineHeight: '1.14',
+              whiteSpace: 'nowrap',
+            }}
+            onClick={handleClick}
+          >
+            {t('+ Add more')}
+          </Button>
+          {renderPopperMenu(invisbleFilter)}
+        </Stack>
+      </ContentStyleWrapper>
     );
   };
 
