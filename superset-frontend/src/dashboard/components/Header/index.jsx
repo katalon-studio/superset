@@ -59,6 +59,8 @@ import setPeriodicRunner, {
 import { PageHeaderWithActions } from 'src/components/PageHeaderWithActions';
 import { DashboardEmbedModal } from '../DashboardEmbedControls';
 import OverwriteConfirm from '../OverwriteConfirm';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -501,6 +503,8 @@ class Header extends React.PureComponent {
 
     const NavExtension = extensionsRegistry.get('dashboard.nav.right');
 
+    const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+
     return (
       <div
         css={headerContainerStyle}
@@ -624,7 +628,7 @@ class Header extends React.PureComponent {
               ) : (
                 <div css={actionButtonsStyle}>
                   {NavExtension && <NavExtension />}
-                  {userCanEdit && (
+                  {!isKatalonEmbeddedMode && userCanEdit && (
                     <Button
                       buttonStyle="secondary"
                       onClick={this.toggleEditMode}
