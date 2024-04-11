@@ -22,6 +22,7 @@ const Config = {
     path: '/proxy',
     port: '',
   },
+  masterApp: 'https://platform.qa.katalon.com',
 };
 
 export default Config;

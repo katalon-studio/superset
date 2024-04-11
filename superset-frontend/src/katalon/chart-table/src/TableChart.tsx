@@ -48,11 +48,13 @@ import {
   css,
   t,
   tn,
+  isPostProcessingResample,
 } from '@superset-ui/core';
 
 import { makeStyles } from '@mui/styles';
-import { Link } from 'react-router-dom';
 import { DataGrid, GridColDef } from '@katalon-studio/katalon-ui/v2';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { URL_PARAMS } from 'src/constants';
 import { DataColumnMeta, TableChartTransformedProps } from './types';
 import DataTable, {
   DataTableProps,
@@ -66,6 +68,7 @@ import { formatColumnValue } from './utils/formatValue';
 import { PAGE_SIZE_OPTIONS } from './consts';
 import { updateExternalFormData } from './DataTable/utils/externalAPIs';
 import getScrollBarSize from './DataTable/utils/getScrollBarSize';
+import Config from '../../../../config';
 
 type ValueRange = [number, number];
 
@@ -218,6 +221,22 @@ const useStyles = makeStyles(() => ({
     '& .MuiDataGrid-columnHeaderTitle': {
       color: '#737a8f',
       fontWeight: 700,
+    },
+  },
+  firstColumnHeader: {
+    backgroundColor: '#f7f9fb',
+    '& .MuiDataGrid-columnHeaderTitle': {
+      color: '#737a8f',
+      fontWeight: 700,
+      paddingLeft: '16px',
+    },
+  },
+  lastColumnHeader: {
+    backgroundColor: '#f7f9fb',
+    '& .MuiDataGrid-columnHeaderTitle': {
+      color: '#737a8f',
+      fontWeight: 700,
+      paddingRight: '16px',
     },
   },
 }));
@@ -727,19 +746,31 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   console.log('KATALON', data);
 
-  const mockRows = [
-    ...Array.from({ length: 20 }, (_, i) => ({
-      id: `${i + 100}`,
-      status: 'FAILED',
-      name: `Gryffindor_Regression_Test_${i}`,
-      environments: ['windows', 'chrome', 'firefox'],
-      profiles: ['default', 'qa'],
-      startedTime: 'Nov 29 2023',
-      duration: '3m 32s',
-      requirement: 'RA-TES-1665',
-      executor: 'Huy Nguyen',
-    })),
-  ];
+  // TODO: Only use the decorators for test_run_data_table_dataset dataset
+
+  const dataConverter = (data: any) =>
+    data.map((item: any) => {
+      let environment = '';
+      if (!item.browser || item.browser === '') {
+        environment = item.os;
+      } else if (!item.os || item.os === '') {
+        environment = item.browser;
+      } else {
+        environment = `${item.os},${item.browser}`;
+      }
+
+      return {
+        id: item.id,
+        status: item.status,
+        name: item.name,
+        environment,
+        profile: item.profile,
+        started_time: item.started_time,
+        duration: item.duration,
+        requirement: item.requirement,
+        executor_avatar: item.executor_avatar,
+      };
+    });
 
   const classes = useStyles();
 
@@ -752,162 +783,266 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     RUNNING: '/static/assets/images/icons/status-running.svg',
   };
 
-  const environmentIconMapper = {
-    windows: '/static/assets/images/icons/windows.svg',
-    firefox: '/static/assets/images/icons/firefox.svg',
-    chrome: '/static/assets/images/icons/chrome.svg',
+  const environmentIconMapper = (name: string) => {
+    if (name.includes('Win')) {
+      return '/static/assets/images/icons/windows.svg';
+    }
+    if (name.includes('Mac')) {
+      return '/static/assets/images/icons/windows.svg'; // TODO: icon for Mac
+    }
+    if (name.includes('Chrome')) {
+      return '/static/assets/images/icons/chrome.svg';
+    }
+    if (name.includes('Firefox')) {
+      return '/static/assets/images/icons/firefox.svg';
+    }
+    if (name.includes('Safari')) {
+      return '/static/assets/images/icons/firefox.svg'; // TODO: icon for Safari
+    }
+    return '';
   };
 
-  const renderIDColumn = (id: string) => (
-    <Link
-      style={{ color: '#6464e4', fontWeight: 600 }}
-      to={`https://www.google.com/${id}`}
-    >
-      #{id}
-    </Link>
-  );
+  const renderIDColumn = (id: string) => {
+    const projectId = getUrlParam(URL_PARAMS.projectId);
+    const masterAppHost = Config.masterApp;
+
+    return (
+      <a
+        style={{ color: '#6464e4', fontWeight: 600, marginLeft: '16px' }}
+        href={`${masterAppHost}/project/${projectId}/executions/${id}`}
+        target="_blank"
+        rel="noreferrer"
+      >
+        #{id}
+      </a>
+    );
+  };
 
   const renderStatusColumn = (value: string) => (
-    <img
-      style={{
-        width: '20px',
-        height: '20px',
-      }}
-      src={statusIconMapper[value]}
-      alt="icon"
-    />
-  );
-
-  const renderNameColumn = (name: string) => (
     <div
       style={{
         display: 'flex',
+        justifyContent: 'center',
         alignItems: 'center',
+        height: '100%',
       }}
     >
       <img
         style={{
-          width: '18px',
-          height: '18px',
+          width: '20px',
+          height: '20px',
         }}
-        src="/static/assets/images/icons/test-run.svg"
+        src={statusIconMapper[value]}
         alt="icon"
       />
-      <span
+    </div>
+  );
+
+  const renderNameColumn = (name: string) => {
+    if (!name) return null;
+    return (
+      <div
         style={{
-          marginLeft: '8px',
-          fontWeight: 600,
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
-        {name}
-      </span>
-    </div>
-  );
-
-  const renderEnvironmentColumn = (environments: string[]) => (
-    <div className="flex">
-      {environments.map((env, index) => (
         <img
-          key={index}
           style={{
-            width: '20px',
-            height: '20px',
-            marginRight: '2px',
+            width: '16px',
+            height: '16px',
           }}
-          src={environmentIconMapper[env]}
+          src="/static/assets/images/icons/test-run.svg"
           alt="icon"
         />
-      ))}
-    </div>
-  );
-
-  const renderProfileColumn = (profiles: string[]) => (
-    <div className="flex">
-      {profiles.map((profile, index) => (
-        <span key={index}>
-          {`${profile}${index !== profiles.length - 1 ? ', ' : ''}`}
+        <span
+          style={{
+            marginLeft: '8px',
+            fontWeight: 600,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+            maxWidth: '300px',
+          }}
+        >
+          {name}
         </span>
-      ))}
+      </div>
+    );
+  };
+
+  const renderEnvironmentColumn = (environments: string) => {
+    if (!environments) return null;
+    const arr = environments?.split(',');
+    return (
+      <div className="flex">
+        {arr?.map((env, index) => (
+          <img
+            key={index}
+            style={{
+              width: '20px',
+              height: '20px',
+              marginRight: '2px',
+            }}
+            src={environmentIconMapper(env)}
+            alt="icon"
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const renderProfileColumn = (profiles: string) => <span>{profiles}</span>;
+
+  const renderStartedTimeColumn = (date: Date) => {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    const year = date.getFullYear();
+    const month = months[date.getMonth()];
+    const day = date.getDate();
+    const formattedDate = `${year} ${month} ${day < 10 ? `0${day}` : day}`;
+
+    return <span>{formattedDate}</span>;
+  };
+
+  const renderDurationColumn = (milliseconds: number) => {
+    // If milliseconds is less than 1000, return milliseconds only
+    if (milliseconds < 1000) {
+      return `${milliseconds}ms`;
+    }
+
+    // Calculate days, hours, minutes, and seconds
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    // Calculate remaining hours, minutes, and seconds after subtracting days
+    const remainingHours = hours % 24;
+    const remainingMinutes = minutes % 60;
+    const remainingSeconds = seconds % 60;
+
+    // Construct the formatted string
+    let formattedString = '';
+    if (days > 0) {
+      formattedString += `${days}d `;
+    }
+    if (remainingHours > 0) {
+      formattedString += `${remainingHours}h `;
+    }
+    if (remainingMinutes > 0) {
+      formattedString += `${remainingMinutes}m `;
+    }
+    if (remainingSeconds > 0) {
+      formattedString += `${remainingSeconds}s`;
+    }
+
+    return <span>{formattedString.trim()}</span>;
+  };
+
+  // const renderRequirementColumn = (requirement: string) => (
+  //   <Link
+  //     style={{ color: '#6464e4', fontWeight: 600 }}
+  //     to={`https://www.google.com/${requirement}`}
+  //   >
+  //     {requirement}
+  //   </Link>
+  // );
+
+  const renderExecutorColumn = (executorAvatar: string) => (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'end',
+        alignItems: 'center',
+        height: '100%',
+        marginRight: '16px',
+      }}
+    >
+      <img
+        style={{ width: '20px', height: '20px' }}
+        src={executorAvatar}
+        alt="avatar"
+      />
     </div>
   );
-
-  const renderStartedTimeColumn = (date: string) => <span>{date}</span>;
-
-  const renderDurationColumn = (duration: string) => <span>{duration}</span>;
-
-  const renderRequirementColumn = (requirement: string) => (
-    <Link
-      style={{ color: '#6464e4', fontWeight: 600 }}
-      to={`https://www.google.com/${requirement}`}
-    >
-      {requirement}
-    </Link>
-  );
-
-  const renderExecutorColumn = (executor: string) => <span>{executor}</span>;
 
   const mockColumns: GridColDef[] = [
     {
       field: 'id',
       headerName: 'ID',
-      flex: 0.8,
-      headerClassName: classes.tableHeader,
+      flex: 0.3,
+      headerClassName: classes.firstColumnHeader,
       renderCell: cell => renderIDColumn(cell.value),
     },
     {
       field: 'status',
       headerName: 'STATUS',
-      flex: 0.5,
+      flex: 0.3,
+      headerAlign: 'center',
       headerClassName: classes.tableHeader,
       renderCell: cell => renderStatusColumn(cell.value),
     },
     {
       field: 'name',
       headerName: 'NAME',
-      flex: 1.6,
+      flex: 1.5,
       headerClassName: classes.tableHeader,
       renderCell: cell => renderNameColumn(cell.value),
     },
     {
-      field: 'environments',
+      field: 'environment',
       headerName: 'ENVIRONMENT',
-      flex: 0.8,
+      flex: 0.5,
       headerClassName: classes.tableHeader,
       renderCell: cell => renderEnvironmentColumn(cell.value),
     },
     {
-      field: 'profiles',
+      field: 'profile',
       headerName: 'PROFILE',
-      flex: 0.8,
+      flex: 0.5,
       headerClassName: classes.tableHeader,
       renderCell: cell => renderProfileColumn(cell.value),
     },
     {
-      field: 'startedTime',
+      field: 'started_time',
       headerName: 'STARTED TIME',
-      flex: 1,
+      flex: 0.5,
       headerClassName: classes.tableHeader,
       renderCell: cell => renderStartedTimeColumn(cell.value),
     },
     {
       field: 'duration',
       headerName: 'DURATION',
-      flex: 0.8,
+      flex: 0.3,
       headerClassName: classes.tableHeader,
       renderCell: cell => renderDurationColumn(cell.value),
     },
+    // {
+    //   field: 'requirement',
+    //   headerName: 'REQUIREMENT',
+    //   flex: 1,
+    //   headerClassName: classes.tableHeader,
+    //   renderCell: cell => renderRequirementColumn(cell.value),
+    // },
     {
-      field: 'requirement',
-      headerName: 'REQUIREMENT',
-      flex: 1,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => renderRequirementColumn(cell.value),
-    },
-    {
-      field: 'executor',
+      field: 'executor_avatar',
       headerName: 'EXECUTOR',
-      flex: 0.8,
-      headerClassName: classes.tableHeader,
+      flex: 0.5,
+      headerAlign: 'right',
+      headerClassName: classes.lastColumnHeader,
       renderCell: cell => renderExecutorColumn(cell.value),
     },
   ];
@@ -937,7 +1072,11 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     //   />
     // </Styles>
     <DataGrid
-      rows={mockRows}
+      sx={{
+        fontFamily: 'Inter',
+      }}
+      rowHeight={40}
+      rows={dataConverter(data)}
       columns={mockColumns}
       getRowId={row => row.id}
       checkboxSelection={false}
@@ -948,7 +1087,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
         pagination: { paginationModel: { pageSize: PAGE_SIZE } },
       }}
       pageSizeOptions={[PAGE_SIZE]}
-      hideFooter={mockRows.length <= PAGE_SIZE}
+      hideFooter={data.length <= PAGE_SIZE}
       autoHeight
     />
   );
