@@ -219,14 +219,14 @@ const useStyles = makeStyles(() => ({
   tableHeader: {
     backgroundColor: '#f7f9fb',
     '& .MuiDataGrid-columnHeaderTitle': {
-      color: '#737a8f',
+      color: '#46474d',
       fontWeight: 700,
     },
   },
   firstColumnHeader: {
     backgroundColor: '#f7f9fb',
     '& .MuiDataGrid-columnHeaderTitle': {
-      color: '#737a8f',
+      color: '#46474d',
       fontWeight: 700,
       paddingLeft: '16px',
     },
@@ -234,7 +234,7 @@ const useStyles = makeStyles(() => ({
   lastColumnHeader: {
     backgroundColor: '#f7f9fb',
     '& .MuiDataGrid-columnHeaderTitle': {
-      color: '#737a8f',
+      color: '#46474d',
       fontWeight: 700,
       paddingRight: '16px',
     },
@@ -748,30 +748,6 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   // TODO: Only use the decorators for test_run_data_table_dataset dataset
 
-  const dataConverter = (data: any) =>
-    data.map((item: any) => {
-      let environment = '';
-      if (!item.browser || item.browser === '') {
-        environment = item.os;
-      } else if (!item.os || item.os === '') {
-        environment = item.browser;
-      } else {
-        environment = `${item.os},${item.browser}`;
-      }
-
-      return {
-        id: item.id,
-        status: item.status,
-        name: item.name,
-        environment,
-        profile: item.profile,
-        started_time: item.started_time,
-        duration: item.duration,
-        requirement: item.requirement,
-        executor_avatar: item.executor_avatar,
-      };
-    });
-
   const classes = useStyles();
 
   const PAGE_SIZE = 10;
@@ -780,29 +756,59 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     PASSED: '/static/assets/images/icons/status-passed.svg',
     FAILED: '/static/assets/images/icons/status-failed.svg',
     INCOMPLETE: '/static/assets/images/icons/status-incomplete.svg',
-    RUNNING: '/static/assets/images/icons/status-running.svg',
+    ERROR: '/static/assets/images/icons/status-error.svg',
   };
 
-  const environmentIconMapper = (name: string) => {
-    if (name.includes('Win')) {
+  const osIconMapper = (name: string) => {
+    if (name.toLowerCase().includes('win')) {
       return '/static/assets/images/icons/windows.svg';
     }
-    if (name.includes('Mac')) {
-      return '/static/assets/images/icons/windows.svg'; // TODO: icon for Mac
+    if (name.toLowerCase().includes('mac')) {
+      return '/static/assets/images/icons/macos.svg';
     }
-    if (name.includes('Chrome')) {
-      return '/static/assets/images/icons/chrome.svg';
-    }
-    if (name.includes('Firefox')) {
-      return '/static/assets/images/icons/firefox.svg';
-    }
-    if (name.includes('Safari')) {
-      return '/static/assets/images/icons/firefox.svg'; // TODO: icon for Safari
+    if (name.toLowerCase().includes('linux')) {
+      return '/static/assets/images/icons/linux.svg';
     }
     return '';
   };
 
-  const renderIDColumn = (id: string) => {
+  const browserIconMapper = (name: string) => {
+    if (name.toLowerCase().includes('chrome')) {
+      return '/static/assets/images/icons/chrome.svg';
+    }
+    if (name.toLowerCase().includes('firefox')) {
+      return '/static/assets/images/icons/firefox.svg';
+    }
+    if (name.toLowerCase().includes('edge')) {
+      return '/static/assets/images/icons/edge.svg';
+    }
+    if (name.toLowerCase().includes('safari')) {
+      return '/static/assets/images/icons/edge.svg'; // TODO: icon for Safari
+    }
+    return '';
+  };
+
+  const statusDecorator = (value: string) => (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+      }}
+    >
+      <img
+        style={{
+          width: '14px',
+          height: '14px',
+        }}
+        src={statusIconMapper[value]}
+        alt="icon"
+      />
+    </div>
+  );
+
+  const IDDecorator = (id: string) => {
     const projectId = getUrlParam(URL_PARAMS.projectId);
     const masterAppHost = Config.masterApp;
 
@@ -818,27 +824,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     );
   };
 
-  const renderStatusColumn = (value: string) => (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-      }}
-    >
-      <img
-        style={{
-          width: '20px',
-          height: '20px',
-        }}
-        src={statusIconMapper[value]}
-        alt="icon"
-      />
-    </div>
-  );
-
-  const renderNameColumn = (name: string) => {
+  const nameDecorator = (name: string) => {
     if (!name) return null;
     return (
       <div
@@ -858,11 +844,10 @@ export default function TableChart<D extends DataRecord = DataRecord>(
         <span
           style={{
             marginLeft: '8px',
-            fontWeight: 600,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
-            maxWidth: '300px',
+            maxWidth: '200px',
           }}
         >
           {name}
@@ -871,20 +856,53 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     );
   };
 
-  const renderEnvironmentColumn = (environments: string) => {
-    if (!environments) return null;
-    const arr = environments?.split(',');
+  const profileDecorator = (profiles: string) => <span>{profiles}</span>;
+
+  const durationDecorator = (milliseconds: number) => {
+    if (milliseconds < 1000) {
+      return `${milliseconds}ms`;
+    }
+
+    const seconds = Math.floor(milliseconds / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    const remainingHours = hours % 24;
+    const remainingMinutes = minutes % 60;
+    const remainingSeconds = seconds % 60;
+
+    let formattedString = '';
+    if (days > 0) {
+      formattedString += `${days}d `;
+    }
+    if (remainingHours > 0) {
+      formattedString += `${remainingHours}h `;
+    }
+    if (remainingMinutes > 0) {
+      formattedString += `${remainingMinutes}m `;
+    }
+    if (remainingSeconds > 0) {
+      formattedString += `${remainingSeconds}s`;
+    }
+
+    return <span>{formattedString.trim()}</span>;
+  };
+
+  const osDecorator = (os: string) => {
+    if (!os) return null;
+    const osList = os?.split(',');
     return (
       <div className="flex">
-        {arr?.map((env, index) => (
+        {osList?.map((os, index) => (
           <img
             key={index}
             style={{
-              width: '20px',
-              height: '20px',
+              width: '16px',
+              height: '16px',
               marginRight: '2px',
             }}
-            src={environmentIconMapper(env)}
+            src={osIconMapper(os)}
             alt="icon"
           />
         ))}
@@ -892,9 +910,28 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     );
   };
 
-  const renderProfileColumn = (profiles: string) => <span>{profiles}</span>;
+  const browserDecorator = (browser: string) => {
+    if (!browser) return null;
+    const browserList = browser?.split(',');
+    return (
+      <div className="flex">
+        {browserList?.map((browser, index) => (
+          <img
+            key={index}
+            style={{
+              width: '16px',
+              height: '16px',
+              marginRight: '2px',
+            }}
+            src={browserIconMapper(browser)}
+            alt="icon"
+          />
+        ))}
+      </div>
+    );
+  };
 
-  const renderStartedTimeColumn = (date: Date) => {
+  const timeStartedDecorator = (date: Date) => {
     const months = [
       'Jan',
       'Feb',
@@ -917,55 +954,11 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     return <span>{formattedDate}</span>;
   };
 
-  const renderDurationColumn = (milliseconds: number) => {
-    // If milliseconds is less than 1000, return milliseconds only
-    if (milliseconds < 1000) {
-      return `${milliseconds}ms`;
-    }
-
-    // Calculate days, hours, minutes, and seconds
-    const seconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    // Calculate remaining hours, minutes, and seconds after subtracting days
-    const remainingHours = hours % 24;
-    const remainingMinutes = minutes % 60;
-    const remainingSeconds = seconds % 60;
-
-    // Construct the formatted string
-    let formattedString = '';
-    if (days > 0) {
-      formattedString += `${days}d `;
-    }
-    if (remainingHours > 0) {
-      formattedString += `${remainingHours}h `;
-    }
-    if (remainingMinutes > 0) {
-      formattedString += `${remainingMinutes}m `;
-    }
-    if (remainingSeconds > 0) {
-      formattedString += `${remainingSeconds}s`;
-    }
-
-    return <span>{formattedString.trim()}</span>;
-  };
-
-  // const renderRequirementColumn = (requirement: string) => (
-  //   <Link
-  //     style={{ color: '#6464e4', fontWeight: 600 }}
-  //     to={`https://www.google.com/${requirement}`}
-  //   >
-  //     {requirement}
-  //   </Link>
-  // );
-
-  const renderExecutorColumn = (executorAvatar: string) => (
+  const executorDecorator = (executorAvatar: string) => (
     <div
       style={{
         display: 'flex',
-        justifyContent: 'end',
+        justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
         marginRight: '16px',
@@ -979,71 +972,71 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     </div>
   );
 
-  const mockColumns: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: 'ID',
-      flex: 0.3,
-      headerClassName: classes.firstColumnHeader,
-      renderCell: cell => renderIDColumn(cell.value),
-    },
+  const tableColumns: GridColDef[] = [
     {
       field: 'status',
       headerName: 'STATUS',
       flex: 0.3,
       headerAlign: 'center',
       headerClassName: classes.tableHeader,
-      renderCell: cell => renderStatusColumn(cell.value),
+      renderCell: cell => statusDecorator(cell.value),
+    },
+    {
+      field: 'id',
+      headerName: 'ID',
+      flex: 0.3,
+      headerClassName: classes.firstColumnHeader,
+      renderCell: cell => IDDecorator(cell.value),
     },
     {
       field: 'name',
       headerName: 'NAME',
-      flex: 1.5,
+      flex: 1.3,
       headerClassName: classes.tableHeader,
-      renderCell: cell => renderNameColumn(cell.value),
-    },
-    {
-      field: 'environment',
-      headerName: 'ENVIRONMENT',
-      flex: 0.5,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => renderEnvironmentColumn(cell.value),
+      renderCell: cell => nameDecorator(cell.value),
     },
     {
       field: 'profile',
       headerName: 'PROFILE',
       flex: 0.5,
       headerClassName: classes.tableHeader,
-      renderCell: cell => renderProfileColumn(cell.value),
-    },
-    {
-      field: 'started_time',
-      headerName: 'STARTED TIME',
-      flex: 0.5,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => renderStartedTimeColumn(cell.value),
+      renderCell: cell => profileDecorator(cell.value),
     },
     {
       field: 'duration',
       headerName: 'DURATION',
-      flex: 0.3,
+      flex: 0.5,
       headerClassName: classes.tableHeader,
-      renderCell: cell => renderDurationColumn(cell.value),
+      renderCell: cell => durationDecorator(cell.value),
     },
-    // {
-    //   field: 'requirement',
-    //   headerName: 'REQUIREMENT',
-    //   flex: 1,
-    //   headerClassName: classes.tableHeader,
-    //   renderCell: cell => renderRequirementColumn(cell.value),
-    // },
+    {
+      field: 'os',
+      headerName: 'PLATFORM',
+      flex: 0.5,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => osDecorator(cell.value),
+    },
+    {
+      field: 'browser',
+      headerName: 'ENVIRONMENT',
+      flex: 0.5,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => browserDecorator(cell.value),
+    },
+    {
+      field: 'started_time',
+      headerName: 'TIME STARTED',
+      flex: 0.5,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => timeStartedDecorator(cell.value),
+    },
     {
       field: 'executor_avatar',
       headerName: 'EXECUTOR',
       flex: 0.5,
       headerAlign: 'right',
       headerClassName: classes.lastColumnHeader,
-      renderCell: cell => renderExecutorColumn(cell.value),
+      renderCell: cell => executorDecorator(cell.value),
     },
   ];
 
@@ -1075,20 +1068,17 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       sx={{
         fontFamily: 'Inter',
       }}
-      rowHeight={40}
-      rows={dataConverter(data)}
-      columns={mockColumns}
-      getRowId={row => row.id}
-      checkboxSelection={false}
-      rowSelection={false}
-      disableRowSelectionOnClick
-      disableColumnMenu
       initialState={{
         pagination: { paginationModel: { pageSize: PAGE_SIZE } },
       }}
+      rowHeight={40}
+      columnHeaderHeight={40}
+      rows={data}
+      columns={tableColumns}
+      getRowId={row => row.id}
       pageSizeOptions={[PAGE_SIZE]}
       hideFooter={data.length <= PAGE_SIZE}
-      autoHeight
+      checkboxSelection
     />
   );
 }
