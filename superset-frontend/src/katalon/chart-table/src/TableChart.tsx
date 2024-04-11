@@ -220,6 +220,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#f7f9fb',
     '& .MuiDataGrid-columnHeaderTitle': {
       color: '#46474d',
+      fontSize: '11px',
       fontWeight: 700,
     },
   },
@@ -227,6 +228,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#f7f9fb',
     '& .MuiDataGrid-columnHeaderTitle': {
       color: '#46474d',
+      fontSize: '11px',
       fontWeight: 700,
       paddingLeft: '16px',
     },
@@ -235,6 +237,7 @@ const useStyles = makeStyles(() => ({
     backgroundColor: '#f7f9fb',
     '& .MuiDataGrid-columnHeaderTitle': {
       color: '#46474d',
+      fontSize: '11px',
       fontWeight: 700,
       paddingRight: '16px',
     },
@@ -1034,7 +1037,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     {
       field: 'configuration',
       headerName: 'CONFIGURATION',
-      flex: 0.5,
+      flex: 0.6,
       headerClassName: classes.tableHeader,
       renderCell: cell => configurationDecorator(cell.value),
     },
@@ -1082,6 +1085,9 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     <DataGrid
       sx={{
         fontFamily: 'Inter',
+        '.MuiDataGrid-columnHeaderTitleContainer': {
+          backgroundColor: '#f7f9fb',
+        },
       }}
       initialState={{
         pagination: { paginationModel: { pageSize: PAGE_SIZE } },

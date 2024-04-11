@@ -155,18 +155,18 @@ if (!isDevMode) {
     }),
   );
 
-  plugins.push(
-    // runs type checking on a separate process to speed up the build
-    new ForkTsCheckerWebpackPlugin({
-      eslint: {
-        files: './{src,packages,plugins}/**/*.{ts,tsx,js,jsx}',
-        memoryLimit: 4096,
-        options: {
-          ignorePath: './.eslintignore',
-        },
-      },
-    }),
-  );
+  // plugins.push(
+  //   // runs type checking on a separate process to speed up the build
+  //   new ForkTsCheckerWebpackPlugin({
+  //     eslint: {
+  //       files: './{src,packages,plugins}/**/*.{ts,tsx,js,jsx}',
+  //       memoryLimit: 4096,
+  //       // options: {
+  //       //   ignorePath: './.eslintignore',
+  //       // },
+  //     },
+  //   }),
+  // );
 }
 
 const PREAMBLE = [path.join(APP_DIR, '/src/preamble.ts')];
@@ -339,6 +339,7 @@ const config = {
         exclude: [
           /superset-ui.*\/node_modules\//,
           /\.test.jsx?$/,
+          /katalon\/node_modules\//,
         ],
         include: [
           new RegExp(`${APP_DIR}/(src|.storybook|plugins|packages)`),
