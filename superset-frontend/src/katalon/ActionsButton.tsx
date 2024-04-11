@@ -43,10 +43,10 @@ const ActionButtons = ({
       sx={{
         marginLeft: 'auto',
         alignItems: 'center',
-        marginTop: '35px',
+        marginTop: '30px',
       }}
       direction="row"
-      spacing={2}
+      spacing={1}
       data-test="filterbar-action-buttons"
     >
       <Button
@@ -57,6 +57,7 @@ const ActionButtons = ({
           whiteSpace: 'nowrap',
           fontSize: 14,
           fontWeight: 500,
+          height: '32px',
           '&.MuiButtonBase-root:hover': {
             bgcolor: 'transparent',
           },
@@ -73,6 +74,7 @@ const ActionButtons = ({
       <Button
         sx={{
           bgcolor: '#2236E5',
+          height: '32px',
           textTransform: 'none',
           fontSize: 14,
           fontWeight: 500,

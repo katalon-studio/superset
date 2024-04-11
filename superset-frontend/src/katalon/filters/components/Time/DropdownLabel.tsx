@@ -17,7 +17,7 @@ const LabelContainer = styled.div<{
   isPlaceholder?: boolean;
 }>`
   ${({ isActive, isPlaceholder }) => `
-    width: 100%;
+    min-width: 190px;
     height: 40px;
 
     display: flex;
@@ -28,7 +28,7 @@ const LabelContainer = styled.div<{
 
     background-color: #FFFFFF;
 
-    border: 1px solid ${isActive ? ACTIVE_COLOR : '#E0E0E0'};
+    border: 1px solid ${isActive ? ACTIVE_COLOR : '#dbdde5'};
     border-radius: 4px;
 
     cursor: pointer;
