@@ -93,7 +93,9 @@ jobs:
           provenance: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          platforms: linux/${{ vars.IMAGE_ARCH }}
+          platforms: linux/${{ vars.IMAGE_ARCH }},
+          build-args: |
+            "GH_TOKEN=${{ secrets.GH_TOKEN }}"
     outputs:
       IMAGE_VERSION: ${{ steps.set_outputs.outputs.IMAGE_VERSION }}
 
