@@ -123,7 +123,7 @@ const VerticalFormItem = styled(StyledFormItem)`
 const HorizontalFormItem = styled(StyledFormItem)`
   && {
     margin-bottom: 0;
-    align-items: center;
+    display: block;
   }
 
   .ant-form-item-label {

@@ -108,18 +108,16 @@ function FilterExtension(props: FilterExtensionProps) {
     // Take the list all filters,
     // then device them into two parts
     const visibleFilter: FilterItem[] = items.slice(0, 2);
-    const invisbleFilter: FilterItem[] = items.slice(3);
+    const invisbleFilter: FilterItem[] = items.slice(2);
 
     return (
       <Stack
         sx={{
           display: 'flex',
-          alignItems: 'center',
+          alignItems: 'end',
           flexWrap: 'wrap',
-          gap: '3px',
         }}
         direction="row"
-        spacing={2}
       >
         {visibleFilter.length !== 0 &&
           visibleFilter.map((item, index) => (
@@ -132,8 +130,8 @@ function FilterExtension(props: FilterExtensionProps) {
             bgcolor: '#FFFFFF',
             color: '#0F1866',
             textTransform: 'none',
-            fontSize: 16,
-            fontWeight: 600,
+            fontSize: 14,
+            fontWeight: 500,
           }}
           onClick={handleClick}
         >

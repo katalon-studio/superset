@@ -38,7 +38,7 @@ const HorizontalBarContent = styled.div`
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
     line-height: 0;
     .loading {

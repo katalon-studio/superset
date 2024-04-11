@@ -58,10 +58,9 @@ import {
   useInitialization,
 } from './state';
 import { createFilterKey, updateFilterKey } from './keyValue';
-import ActionButtons from './ActionButtons';
-import Horizontal from './Horizontal';
 import Vertical from './Vertical';
 import { useSelectFiltersInScope } from '../state';
+import ActionButtons from 'src/katalon/ActionsButton';
 
 // FilterBar is just being hidden as it must still
 // render fully due to encapsulated logics
