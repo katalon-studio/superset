@@ -42,6 +42,7 @@ cattrs==23.2.1
     # via requests-cache
 celery==5.2.2
 celery[sqs]==5.2.2
+pycurl==7.45.3
     # via apache-superset
 certifi==2023.7.22
     # via requests
