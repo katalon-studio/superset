@@ -40,8 +40,8 @@ cachelib==0.9.0
     #   flask-session
 cattrs==23.2.1
     # via requests-cache
-celery==5.2.2
-celery[sqs]==5.2.2
+celery==5.3.6
+celery[sqs]==5.3.6
 pycurl==7.45.3
     # via apache-superset
 certifi==2023.7.22
