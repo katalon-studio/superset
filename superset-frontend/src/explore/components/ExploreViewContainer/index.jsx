@@ -553,8 +553,6 @@ function ExploreViewContainer(props) {
     return renderChartContainer();
   }
 
-  const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
-
   return (
     <ExploreContainer>
       <ConnectedExploreChartHeader
@@ -701,11 +699,7 @@ function ExploreViewContainer(props) {
           actions={props.actions}
           form_data={props.form_data}
           sliceName={props.sliceName}
-          dashboardId={
-            !isKatalonEmbeddedMode
-              ? props.dashboardId
-              : getUrlParam(URL_PARAMS.dashboardId)
-          }
+          dashboardId={props.dashboardId}
         />
       )}
     </ExploreContainer>
