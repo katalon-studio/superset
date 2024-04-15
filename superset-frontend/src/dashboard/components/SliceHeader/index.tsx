@@ -37,8 +37,7 @@ import Icons from 'src/components/Icons';
 import { RootState } from 'src/dashboard/types';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
-import { getUrlParam } from 'src/utils/urlUtils';
-import { URL_PARAMS } from 'src/constants';
+import { getIsKatalonEmbeddedDashboard } from 'src/utils/getIsKatalonEmbeddedDashboard';
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -131,6 +130,90 @@ const ChartHeaderStyles = styled.div`
   `}
 `;
 
+const renderKatalonVersion = (
+  innerRef: any,
+  headerRef: any,
+  headerTooltip: any,
+  sliceName: any,
+  editMode: any,
+  updateSliceName: (arg0: string) => void,
+  canExplore: any,
+  exploreUrl: any,
+  annotationQuery: any,
+  annotationError: any,
+  crossFilterValue: any,
+  SliceHeaderExtension: any,
+  dashboardId: any,
+  slice: any,
+) => (
+  <ChartHeaderStyles data-test="slice-header" ref={innerRef}>
+    <div className="header-title" ref={headerRef}>
+      <Tooltip title={headerTooltip}>
+        <EditableTitle
+          title={
+            sliceName ||
+            (editMode
+              ? '---' // this makes an empty title clickable
+              : '')
+          }
+          canEdit={editMode}
+          onSaveTitle={updateSliceName}
+          showTooltip={false}
+          url={canExplore ? exploreUrl : undefined}
+        />
+      </Tooltip>
+      {!!Object.values(annotationQuery).length && (
+        <Tooltip
+          id="annotations-loading-tooltip"
+          placement="top"
+          title={annotationsLoading}
+        >
+          <i
+            role="img"
+            aria-label={annotationsLoading}
+            className="fa fa-refresh warning"
+          />
+        </Tooltip>
+      )}
+      {!!Object.values(annotationError).length && (
+        <Tooltip
+          id="annotation-errors-tooltip"
+          placement="top"
+          title={annotationsError}
+        >
+          <i
+            role="img"
+            aria-label={annotationsError}
+            className="fa fa-exclamation-circle danger"
+          />
+        </Tooltip>
+      )}
+    </div>
+    <div className="header-controls">
+      {!editMode && (
+        <>
+          {SliceHeaderExtension && (
+            <SliceHeaderExtension
+              sliceId={slice.slice_id}
+              dashboardId={dashboardId}
+            />
+          )}
+          {crossFilterValue && (
+            <Tooltip
+              placement="top"
+              title={t(
+                'This chart applies cross-filters to charts whose datasets contain columns with the same name.',
+              )}
+            >
+              <CrossFilterIcon iconSize="m" />
+            </Tooltip>
+          )}
+        </>
+      )}
+    </div>
+  </ChartHeaderStyles>
+);
+
 const SliceHeader: FC<SliceHeaderProps> = ({
   innerRef = null,
   forceRefresh = () => ({}),
@@ -197,7 +280,26 @@ const SliceHeader: FC<SliceHeaderProps> = ({
 
   const exploreUrl = `/explore/?dashboard_page_id=${dashboardPageId}&slice_id=${slice.slice_id}`;
 
-  const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+  // Begin code of Katalon simplify menu items of hamburger icon in chart
+  if (getIsKatalonEmbeddedDashboard()) {
+    return renderKatalonVersion(
+      innerRef,
+      headerRef,
+      headerTooltip,
+      sliceName,
+      editMode,
+      updateSliceName,
+      canExplore,
+      exploreUrl,
+      annotationQuery,
+      annotationError,
+      crossFilterValue,
+      SliceHeaderExtension,
+      dashboardId,
+      slice,
+    );
+  }
+  // End code of Katalon simplify menu items of hamburger icon in chart
 
   return (
     <ChartHeaderStyles data-test="slice-header" ref={innerRef}>
@@ -262,10 +364,10 @@ const SliceHeader: FC<SliceHeaderProps> = ({
                 <CrossFilterIcon iconSize="m" />
               </Tooltip>
             )}
-            {!isKatalonEmbeddedMode && !uiConfig.hideChartControls && (
+            {!uiConfig.hideChartControls && (
               <FiltersBadge chartId={slice.slice_id} />
             )}
-            {!isKatalonEmbeddedMode && !uiConfig.hideChartControls && (
+            {!uiConfig.hideChartControls && (
               <SliceHeaderControls
                 slice={slice}
                 isCached={isCached}
