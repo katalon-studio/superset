@@ -1,9 +1,10 @@
 import React from 'react';
-import { LocalizationProvider, StaticDateRangePicker } from '@mui/lab';
-import DateAdapter from '@mui/lab/AdapterMoment';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { StaticDateRangePicker } from '@mui/x-date-pickers-pro/StaticDateRangePicker';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 export const DateRangePickerComponent = props => (
-  <LocalizationProvider dateAdapter={DateAdapter}>
+  <LocalizationProvider dateAdapter={AdapterMoment}>
     <StaticDateRangePicker {...props} />
   </LocalizationProvider>
 );

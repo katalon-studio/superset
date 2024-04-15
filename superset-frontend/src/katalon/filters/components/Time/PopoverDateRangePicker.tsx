@@ -20,7 +20,10 @@ const ContentStyleWrapper = styled.div`
     &__calender {
       border-bottom: 1px solid #1718191a !important;
     }
-    & .PrivatePickersToolbar-root {
+    & .MuiPickersToolbar-root {
+      display: none;
+    }
+    & .MuiDialogActions-root {
       display: none;
     }
   }

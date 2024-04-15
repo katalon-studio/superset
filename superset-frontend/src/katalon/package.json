@@ -32,6 +32,8 @@
     "@mui/material": "^5.15.14",
     "@mui/styles": "^5.15.15",
     "@mui/x-data-grid": "^7.1.0",
+    "@mui/x-date-pickers": "^7.2.0",
+    "@mui/x-date-pickers-pro": "^7.2.0",
     "@types/react": "^17.0.80",
     "classnames": "^2.3.2",
     "d3-array": "^2.4.0",
