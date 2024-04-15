@@ -32,7 +32,6 @@ import {
   ParseMethod,
 } from './types';
 import { DEFAULT_FETCH_RETRY_OPTIONS, DEFAULT_BASE_URL } from './constants';
-// import Config from '../../../../config';
 
 const defaultUnauthorizedHandler = () => {
   if (!window.location.pathname.startsWith('/login')) {
@@ -90,9 +89,7 @@ export default class SupersetClientClass {
       window.location.href,
     );
     this.baseUrl = url.href.replace(/\/+$/, ''); // always strip trailing slash
-    // this.baseUrl = Config.supersetClientClass.baseUrl;
     this.host = url.host;
-    // this.host = Config.supersetClientClass.host;
     this.protocol = url.protocol as Protocol;
     this.headers = { Accept: 'application/json', ...headers }; // defaulting accept to json
     this.mode = mode;
@@ -201,24 +198,13 @@ export default class SupersetClientClass {
     ignoreUnauthorized = false,
     ...rest
   }: RequestConfig & { parseMethod?: T }) {
-    // await this.ensureAuth();
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const projectId = urlParams.get('projectId');
-    const accessToken = urlParams.get('accessToken');
-    const combinedHeaders = {
-      ...this.headers,
-      ...headers,
-      ...(projectId && { 'x-project-id': projectId }),
-      ...(accessToken && { Authorization: `Bearer ${accessToken}` }),
-    };
-
+    await this.ensureAuth();
     return callApiAndParseWithTimeout({
       ...rest,
       credentials: credentials ?? this.credentials,
       mode: mode ?? this.mode,
       url: this.getUrl({ endpoint, host, url }),
-      headers: combinedHeaders,
+      headers: { ...this.headers, ...headers },
       timeout: timeout ?? this.timeout,
       fetchRetryOptions: fetchRetryOptions ?? this.fetchRetryOptions,
     }).catch(res => {

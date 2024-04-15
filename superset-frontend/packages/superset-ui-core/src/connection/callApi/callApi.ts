@@ -67,7 +67,6 @@ export default async function callApi({
   headers,
   method = 'GET',
   mode = 'same-origin',
-  // mode = 'cors',
   postPayload,
   jsonPayload,
   redirect = 'follow',
