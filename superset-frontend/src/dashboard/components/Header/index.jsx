@@ -59,8 +59,6 @@ import setPeriodicRunner, {
 import { PageHeaderWithActions } from 'src/components/PageHeaderWithActions';
 import { DashboardEmbedModal } from '../DashboardEmbedControls';
 import OverwriteConfirm from '../OverwriteConfirm';
-import { getUrlParam } from 'src/utils/urlUtils';
-import { URL_PARAMS } from 'src/constants';
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -470,12 +468,10 @@ class Header extends React.PureComponent {
       logEvent,
     } = this.props;
 
-    // const userCanEdit =
-    //   dashboardInfo.dash_edit_perm && !dashboardInfo.is_managed_externally;
-    const userCanEdit = true;
+    const userCanEdit =
+      dashboardInfo.dash_edit_perm && !dashboardInfo.is_managed_externally;
     const userCanShare = dashboardInfo.dash_share_perm;
-    // const userCanSaveAs = dashboardInfo.dash_save_perm;
-    const userCanSaveAs = true;
+    const userCanSaveAs = dashboardInfo.dash_save_perm;
     const userCanCurate =
       isFeatureEnabled(FeatureFlag.EMBEDDED_SUPERSET) &&
       findPermission('can_set_embedded', 'Dashboard', user.roles);
@@ -502,8 +498,6 @@ class Header extends React.PureComponent {
     };
 
     const NavExtension = extensionsRegistry.get('dashboard.nav.right');
-
-    const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
 
     return (
       <div
@@ -628,7 +622,7 @@ class Header extends React.PureComponent {
               ) : (
                 <div css={actionButtonsStyle}>
                   {NavExtension && <NavExtension />}
-                  {!isKatalonEmbeddedMode && userCanEdit && (
+                  {userCanEdit && (
                     <Button
                       buttonStyle="secondary"
                       onClick={this.toggleEditMode}

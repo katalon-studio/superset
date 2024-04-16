@@ -119,10 +119,6 @@ export const URL_PARAMS = {
     name: 'projectId',
     type: 'string',
   },
-  accessToken: {
-    name: 'accessToken',
-    type: 'string',
-  },
 } as const;
 
 export const RESERVED_CHART_URL_PARAMS: string[] = [

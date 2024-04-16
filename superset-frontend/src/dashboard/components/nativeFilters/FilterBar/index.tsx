@@ -1,6 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable import/no-unresolved */
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -52,7 +49,8 @@ import { LOG_ACTIONS_CHANGE_DASHBOARD_FILTER } from 'src/logger/LogUtils';
 import { FilterBarOrientation, RootState } from 'src/dashboard/types';
 import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
 import KatalonHorizontal from 'src/katalon/CustomFilter/KatalonHorizontal';
-import ActionButtons from 'src/katalon/ActionsButton';
+import KatalonActionButtons from 'src/katalon/KatalonActionButtons';
+import { getIsKatalonEmbeddedDashboard } from 'src/utils/getIsKatalonEmbeddedDashboard';
 import { checkIsApplyDisabled } from './utils';
 import { FiltersBarProps } from './types';
 import {
@@ -62,6 +60,8 @@ import {
   useInitialization,
 } from './state';
 import { createFilterKey, updateFilterKey } from './keyValue';
+import ActionButtons from './ActionButtons';
+import Horizontal from './Horizontal';
 import Vertical from './Vertical';
 import { useSelectFiltersInScope } from '../state';
 
@@ -238,6 +238,7 @@ const FilterBar: React.FC<FiltersBarProps> = ({
   const handleApply = useCallback(() => {
     dispatch(logEvent(LOG_ACTIONS_CHANGE_DASHBOARD_FILTER, {}));
     const filterIds = Object.keys(dataMaskSelected);
+
     setUpdateKey(1);
     filterIds.forEach(filterId => {
       if (dataMaskSelected[filterId]) {
@@ -290,7 +291,7 @@ const FilterBar: React.FC<FiltersBarProps> = ({
 
   const filterBarComponent =
     orientation === FilterBarOrientation.HORIZONTAL ? (
-      <KatalonHorizontal
+      <Horizontal
         actions={actions}
         canEdit={canEdit}
         dashboardId={dashboardId}
@@ -315,6 +316,56 @@ const FilterBar: React.FC<FiltersBarProps> = ({
         width={verticalConfig.width}
       />
     ) : null;
+
+  // Begin code of Katalon custom filter bar
+  if (getIsKatalonEmbeddedDashboard()) {
+    const actions = (
+      <KatalonActionButtons
+        filterBarOrientation={orientation}
+        width={verticalConfig?.width}
+        onApply={handleApply}
+        onClearAll={handleClearAll}
+        dataMaskSelected={dataMaskSelected}
+        dataMaskApplied={dataMaskApplied}
+        isApplyDisabled={isApplyDisabled}
+      />
+    );
+
+    const filterBarComponent =
+      orientation === FilterBarOrientation.HORIZONTAL ? (
+        <KatalonHorizontal
+          actions={actions}
+          canEdit={canEdit}
+          dashboardId={dashboardId}
+          dataMaskSelected={dataMaskSelected}
+          filterValues={filterValues}
+          isInitialized={isInitialized}
+          onSelectionChange={handleFilterSelectionChange}
+        />
+      ) : verticalConfig ? (
+        <Vertical
+          actions={actions}
+          canEdit={canEdit}
+          dataMaskSelected={dataMaskSelected}
+          filtersOpen={verticalConfig.filtersOpen}
+          filterValues={filterValues}
+          isInitialized={isInitialized}
+          isDisabled={isApplyDisabled}
+          height={verticalConfig.height}
+          offset={verticalConfig.offset}
+          onSelectionChange={handleFilterSelectionChange}
+          toggleFiltersBar={verticalConfig.toggleFiltersBar}
+          width={verticalConfig.width}
+        />
+      ) : null;
+
+    return hidden ? (
+      <HiddenFilterBar>{filterBarComponent}</HiddenFilterBar>
+    ) : (
+      filterBarComponent
+    );
+  }
+  // End code of Katalon custom filter bar
 
   return hidden ? (
     <HiddenFilterBar>{filterBarComponent}</HiddenFilterBar>

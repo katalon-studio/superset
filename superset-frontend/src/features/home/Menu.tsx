@@ -34,6 +34,7 @@ import {
   MenuObjectProps,
   MenuData,
 } from 'src/types/bootstrapTypes';
+import { getIsKatalonEmbeddedDashboard } from 'src/utils/getIsKatalonEmbeddedDashboard';
 import RightMenu from './RightMenu';
 
 interface MenuProps {
@@ -238,9 +239,6 @@ export function Menu({
 
   const standalone = getUrlParam(URL_PARAMS.standalone);
   if (standalone || uiConfig.hideNav) return <></>;
-  if (getUrlParam(URL_PARAMS.isKatalonEmbeddedMode)) {
-    return <></>;
-  }
 
   const renderSubMenu = ({
     label,
@@ -297,6 +295,13 @@ export function Menu({
       </SubMenu>
     );
   };
+
+  // Begin code of Katalon hide navbar
+  if (getIsKatalonEmbeddedDashboard()) {
+    return <></>;
+  }
+  // End code of Katalon hide navbar
+
   return (
     <StyledHeader className="top" id="main-menu" role="navigation">
       <Global styles={globalStyles(theme)} />

@@ -65,8 +65,6 @@ import { ExploreActions } from 'src/explore/actions/exploreActions';
 import { ChartState, ExplorePageState } from 'src/explore/types';
 import { Tooltip } from 'src/components/Tooltip';
 import Icons from 'src/components/Icons';
-import { getUrlParam } from 'src/utils/urlUtils';
-import { URL_PARAMS } from 'src/constants';
 import ControlRow from './ControlRow';
 import Control from './Control';
 import { ExploreAlert } from './ExploreAlert';
@@ -743,48 +741,36 @@ export const ControlPanelsContainer = (props: ControlPanelsContainerProps) => {
 
   const showCustomizeTab = customizeSections.length > 0;
 
-  const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
-
   return (
     <Styles ref={containerRef}>
-      {!isKatalonEmbeddedMode ? (
-        <ControlPanelsTabs
-          id="controlSections"
-          data-test="control-tabs"
-          fullWidth={showCustomizeTab}
-          allowOverflow={false}
-        >
-          <Tabs.TabPane key="query" tab={dataTabTitle}>
+      <ControlPanelsTabs
+        id="controlSections"
+        data-test="control-tabs"
+        fullWidth={showCustomizeTab}
+        allowOverflow={false}
+      >
+        <Tabs.TabPane key="query" tab={dataTabTitle}>
+          <Collapse
+            defaultActiveKey={expandedQuerySections}
+            expandIconPosition="right"
+            ghost
+          >
+            {showDatasourceAlert && <DatasourceAlert />}
+            {querySections.map(renderControlPanelSection)}
+          </Collapse>
+        </Tabs.TabPane>
+        {showCustomizeTab && (
+          <Tabs.TabPane key="display" tab={t('Customize')}>
             <Collapse
-              defaultActiveKey={expandedQuerySections}
+              defaultActiveKey={expandedCustomizeSections}
               expandIconPosition="right"
               ghost
             >
-              {showDatasourceAlert && <DatasourceAlert />}
-              {querySections.map(renderControlPanelSection)}
+              {customizeSections.map(renderControlPanelSection)}
             </Collapse>
           </Tabs.TabPane>
-          {showCustomizeTab && (
-            <Tabs.TabPane key="display" tab={t('Customize')}>
-              <Collapse
-                defaultActiveKey={expandedCustomizeSections}
-                expandIconPosition="right"
-                ghost
-              >
-                {customizeSections.map(renderControlPanelSection)}
-              </Collapse>
-            </Tabs.TabPane>
-          )}
-        </ControlPanelsTabs>
-      ) : (
-        <Collapse
-          defaultActiveKey={expandedQuerySections}
-          expandIconPosition="right"
-          ghost
-        >
-          {querySections.map(renderControlPanelSection)}
-        </Collapse>
-      )}
+        )}
+      </ControlPanelsTabs>
       <div css={actionButtonsContainerStyles}>
         <RunQueryButton
           onQuery={props.onQuery}
