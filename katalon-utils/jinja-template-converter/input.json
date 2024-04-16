@@ -1,0 +1,55 @@
+{
+  "select": [
+    {
+      "column": "e.id",
+      "alias": "execution_id"
+    },
+    {
+      "column": "etr.profile",
+      "alias": "profile"
+    },
+    {
+      "column": "pl.browser_name",
+      "alias": "browser"
+    },
+    {
+      "column": "pl.os_name",
+      "alias": "os"
+    }
+  ],
+  "from": {
+    "table": "execution",
+    "alias": "e"
+  },
+  "join": [
+    {
+      "table": "execution_test_result",
+      "alias": "etr",
+      "condition": "etr.execution_id = e.id",
+      "filterNames": ["profile"]
+    },
+    {
+      "table": "platform",
+      "alias": "pl",
+      "condition": "pl.id = e.id",
+      "filterNames": ["browser_name", "os_name"]
+    }
+  ],
+  "where": [
+    {
+      "name": "profile",
+      "column": "etr.profile",
+      "operator": "IN"
+    },
+    {
+      "name": "browser_name",
+      "column": "pl.browser_name",
+      "operator": "IN"
+    },
+    {
+      "name": "os_name",
+      "column": "pl.os_name",
+      "operator": "IN"
+    }
+  ]
+}

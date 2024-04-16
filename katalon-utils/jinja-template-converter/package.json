@@ -1,0 +1,14 @@
+{
+  "name": "katalon-jinja-converter",
+  "version": "1.0.0",
+  "description": "A Jinja template converter used in Katalon Superset project ",
+  "main": "converter.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Tri Quan",
+  "license": "ISC",
+  "dependencies": {
+    "handlebars": "^4.7.8"
+  }
+}
