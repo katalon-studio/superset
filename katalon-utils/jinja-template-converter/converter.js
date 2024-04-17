@@ -1,22 +1,56 @@
 const Handlebars = require("handlebars");
 const fs = require("fs");
 
+function formatInput(input) {
+  try {
+    input.where.forEach((where) => {
+      const splitted = where.column.split(".");
+      const alias = splitted[0];
+      const filterName = splitted[1];
+      const join = input.join.find((j) => j.alias === alias);
+      if (!join.filterNames) {
+        join.filterNames = [];
+      }
+      join.filterNames.push(filterName);
+    });
+
+    // input.select.forEach((select) => {
+    //   const column = select.column;
+    //   const where = input.where.find((w) => w.column === column);
+    //   if (where) {
+    //     select.isFilterColumn = true;
+    //   } else {
+    //     select.isFilterColumn = false;
+    //   }
+    // });
+    // console.log("input", input);
+    return input;
+  } catch (error) {
+    console.log("Input error, please check the input file", error);
+  }
+}
+
 function generateSQLQueryTemplate(input) {
+  const formattedInput = formatInput(input);
+
   let templateSource = `
   SELECT
-  {{#each input.select}}
-    {% if get_filters('profile', remove_filter=True) %}
-      {{{this.column}}} AS {{{this.alias}}}{{#unless @last}},{{/unless}}
-    {% else %}
-        NULL AS {{{this.alias}}}{{#unless @last}},{{/unless}}
-    {% endif %}
-
+  {{#each formattedInput.select}}
+    {{#if this.filterName}}
+      {% if get_filters('{{{this.filterName}}}', remove_filter=True) %}
+        {{{this.column}}} AS {{{this.alias}}}{{#unless @last}},{{/unless}}
+      {% else %}
+          NULL AS {{{this.alias}}}{{#unless @last}},{{/unless}}
+      {% endif %}
+    {{else}}
+        {{{this.column}}} AS {{{this.alias}}}{{#unless @last}},{{/unless}}
+    {{/if}}
   {{/each}}
 
-  FROM {{input.from.table}} AS {{input.from.alias}}
+  FROM {{formattedInput.from.table}} AS {{formattedInput.from.alias}}
 
 
-  {{#each input.join}}
+  {{#each formattedInput.join}}
   {% if {{#each filterNames}}get_filters('{{{this}}}', remove_filter=True) {{#unless @last}}or {{/unless}}{{/each}}%}
       JOIN {{{this.table}}} AS {{{this.alias}}} ON {{{this.condition}}}
   {% endif %}
@@ -24,8 +58,8 @@ function generateSQLQueryTemplate(input) {
 
 
   WHERE 1=1
-  {{#each input.where}}
-  {% for filter in get_filters('{{{this.name}}}', remove_filter=True) %}
+  {{#each formattedInput.where}}
+  {% for filter in get_filters('{{{this.filterName}}}', remove_filter=True) %}
       {% if filter.get('op') == '{{{this.operator}}}' %}
           AND {{{this.column}}} = \\{{ "'" + filter.get('val')[0] + "'" \}}
       {%- endif -%}
@@ -33,7 +67,7 @@ function generateSQLQueryTemplate(input) {
   {{/each}}
   `;
 
-  return Handlebars.compile(templateSource)({ input });
+  return Handlebars.compile(templateSource)({ formattedInput });
 }
 
 const args = process.argv.slice(2);

@@ -1,29 +1,21 @@
 
   SELECT
-    {% if get_filters('profile', remove_filter=True) %}
-      e.id AS execution_id,
-    {% else %}
-        NULL AS execution_id,
-    {% endif %}
-
-    {% if get_filters('profile', remove_filter=True) %}
-      etr.profile AS profile,
-    {% else %}
-        NULL AS profile,
-    {% endif %}
-
-    {% if get_filters('profile', remove_filter=True) %}
-      pl.browser_name AS browser,
-    {% else %}
-        NULL AS browser,
-    {% endif %}
-
-    {% if get_filters('profile', remove_filter=True) %}
-      pl.os_name AS os
-    {% else %}
-        NULL AS os
-    {% endif %}
-
+        e.id AS execution_id,
+      {% if get_filters('profile', remove_filter=True) %}
+        etr.profile AS profile,
+      {% else %}
+          NULL AS profile,
+      {% endif %}
+      {% if get_filters('browser_name', remove_filter=True) %}
+        pl.browser_name AS browser,
+      {% else %}
+          NULL AS browser,
+      {% endif %}
+      {% if get_filters('os_name', remove_filter=True) %}
+        pl.os_name AS os
+      {% else %}
+          NULL AS os
+      {% endif %}
 
   FROM execution AS e
 
