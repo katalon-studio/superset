@@ -14,16 +14,6 @@ function formatInput(input) {
       join.filterNames.push(filterName);
     });
 
-    // input.select.forEach((select) => {
-    //   const column = select.column;
-    //   const where = input.where.find((w) => w.column === column);
-    //   if (where) {
-    //     select.isFilterColumn = true;
-    //   } else {
-    //     select.isFilterColumn = false;
-    //   }
-    // });
-    // console.log("input", input);
     return input;
   } catch (error) {
     console.log("Input error, please check the input file", error);
