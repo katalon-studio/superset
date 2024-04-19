@@ -15,7 +15,7 @@ on:
 jobs:
   import_assets:
     name: 'Import assets to Superset'
-    runs-on: self-hosted-large
+    runs-on: self-hosted-medium-amd64
 
     defaults:
       run:
