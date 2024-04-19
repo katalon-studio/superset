@@ -47,4 +47,4 @@ jobs:
         run : superset-cli --help
 
       - name: 'Import assets'
-        run: superset-cli https://superset.qa.katalon.com import-assets  --disable-jinja-templating --overwrite katalon-assets
+        run: superset-cli https://superset.qa.katalon.com import-assets --disable-jinja-templating --overwrite katalon-assets
