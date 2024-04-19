@@ -15,7 +15,7 @@ on:
 jobs:
   import_assets:
     name: 'Import assets to Superset'
-    runs-on: self-hosted-superset
+    runs-on: ubuntu-latest
 
     defaults:
       run:
@@ -28,10 +28,10 @@ jobs:
           repository: preset-io/backend-sdk
           path: preset-cli
 
-      - name: 'Install Python and pip'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y python3 python3-pip
+#      - name: 'Install Python and pip'
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y python3 python3-pip
 
       - name: 'Install CLI'
         run: |
