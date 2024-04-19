@@ -15,7 +15,7 @@ on:
 jobs:
   import_assets:
     name: 'Import assets to Superset'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-medium
 
     defaults:
       run:
@@ -47,4 +47,4 @@ jobs:
         run : superset-cli --help
 
       - name: 'Import assets'
-        run: superset-cli https://superset.qa.katalon.com import-assets  --disable-jinja-templating /katalon-assets
+        run: superset-cli https://superset.qa.katalon.com import-assets  --disable-jinja-templating --overwrite katalon-assets
