@@ -1,0 +1,50 @@
+name: 'Import assets to Superset'
+
+env:
+  WORKSPACE: ${{ secrets.WORKSPACE }}
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - release
+      - 3.1.0.katalon
+      - TES-6296
+
+jobs:
+  import_assets:
+    name: 'Import assets to Superset'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: 'Checkout CLI'
+        uses: actions/checkout@v3
+        with:
+          repository: preset-io/backend-sdk
+          path: preset-cli
+
+      - name: 'Install CLI'
+        run: |
+          cd preset-cli
+          pip install .
+          cd ..
+
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+
+      - name: 'pwd'
+        run: pwd
+
+      - name: 'ls'
+        run: ls
+
+      - name: 'superset-cli'
+        run : superset-cli --help
+
+#      - name: 'Import assets'
+#        run: superset-cli http://localhost:8088 import-assets  --disable-jinja-templating
