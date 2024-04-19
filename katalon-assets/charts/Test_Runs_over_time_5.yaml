@@ -1,0 +1,91 @@
+slice_name: Test Runs over time
+description: null
+certified_by: null
+certification_details: null
+viz_type: echarts_timeseries_bar
+params:
+  datasource: 5__table
+  viz_type: echarts_timeseries_bar
+  slice_id: 128
+  x_axis: started_time
+  time_grain_sqla: P1D
+  x_axis_sort_asc: true
+  x_axis_sort_series: name
+  x_axis_sort_series_ascending: true
+  metrics:
+  - expressionType: SQL
+    sqlExpression: SUM(CASE WHEN status = 'PASSED' THEN 1 ELSE 0 END)
+    column: null
+    aggregate: null
+    datasourceWarning: false
+    hasCustomLabel: true
+    label: Passed
+    optionName: metric_rxhvroo5a4j_jeqnc87038o
+  - expressionType: SQL
+    sqlExpression: SUM(CASE WHEN status = 'FAILED' THEN 1 ELSE 0 END)
+    column: null
+    aggregate: null
+    datasourceWarning: false
+    hasCustomLabel: true
+    label: Failed
+    optionName: metric_7zf2uur7pzp_yrtn1zf5xii
+  groupby: []
+  adhoc_filters:
+  - expressionType: SIMPLE
+    subject: started_time
+    operator: TEMPORAL_RANGE
+    operatorId: TEMPORAL_RANGE
+    comparator: 'DATEADD(DATETIME("now"), -7, day) : now'
+    clause: WHERE
+    sqlExpression: null
+    isExtra: false
+    isNew: false
+    datasourceWarning: false
+    filterOptionName: filter_2mm5qsx9ojt_teathx9g0n
+  order_desc: true
+  row_limit: 10000
+  truncate_metric: true
+  show_empty_columns: true
+  comparison_type: values
+  annotation_layers: []
+  forecastPeriods: 10
+  forecastInterval: 0.8
+  orientation: vertical
+  x_axis_title_margin: 15
+  y_axis_title_margin: 15
+  y_axis_title_position: Left
+  sort_series_type: sum
+  sort_series_ascending: false
+  color_scheme: d3Category10
+  show_value: false
+  stack: Stack
+  only_total: true
+  minorTicks: false
+  zoomable: false
+  show_legend: true
+  legendType: scroll
+  legendOrientation: top
+  x_axis_time_format: '%b %d'
+  y_axis_format: SMART_NUMBER
+  truncateXAxis: true
+  y_axis_bounds:
+  - null
+  - null
+  rich_tooltip: true
+  tooltipTimeFormat: smart_date
+  extra_form_data: {}
+  dashboards:
+  - 48
+query_context: '{"datasource":{"id":5,"type":"table"},"force":false,"queries":[{"filters":[{"col":"started_time","op":"TEMPORAL_RANGE","val":"DATEADD(DATETIME(\"now\"),
+  -7, day) : now"}],"extras":{"time_grain_sqla":"P1D","having":"","where":""},"applied_time_extras":{},"columns":[{"timeGrain":"P1D","columnType":"BASE_AXIS","sqlExpression":"started_time","label":"started_time","expressionType":"SQL"}],"metrics":[{"aggregate":null,"column":null,"datasourceWarning":false,"expressionType":"SQL","hasCustomLabel":true,"label":"Passed","optionName":"metric_rxhvroo5a4j_jeqnc87038o","sqlExpression":"SUM(CASE
+  WHEN status = ''PASSED'' THEN 1 ELSE 0 END)"},{"aggregate":null,"column":null,"datasourceWarning":false,"expressionType":"SQL","hasCustomLabel":true,"label":"Failed","optionName":"metric_7zf2uur7pzp_yrtn1zf5xii","sqlExpression":"SUM(CASE
+  WHEN status = ''FAILED'' THEN 1 ELSE 0 END)"}],"orderby":[[{"aggregate":null,"column":null,"datasourceWarning":false,"expressionType":"SQL","hasCustomLabel":true,"label":"Passed","optionName":"metric_rxhvroo5a4j_jeqnc87038o","sqlExpression":"SUM(CASE
+  WHEN status = ''PASSED'' THEN 1 ELSE 0 END)"},false]],"annotation_layers":[],"row_limit":10000,"series_columns":[],"series_limit":0,"order_desc":true,"url_params":{},"custom_params":{},"custom_form_data":{},"time_offsets":[],"post_processing":[{"operation":"pivot","options":{"index":["started_time"],"columns":[],"aggregates":{"Passed":{"operator":"mean"},"Failed":{"operator":"mean"}},"drop_missing_columns":false}},{"operation":"flatten"}]}],"form_data":{"adhoc_filters":[{"clause":"WHERE","comparator":"DATEADD(DATETIME(\"now\"),
+  -7, day) : now","datasourceWarning":false,"expressionType":"SIMPLE","filterOptionName":"filter_2mm5qsx9ojt_teathx9g0n","isExtra":false,"isNew":false,"operator":"TEMPORAL_RANGE","operatorId":"TEMPORAL_RANGE","sqlExpression":null,"subject":"started_time"}],"annotation_layers":[],"color_scheme":"d3Category10","comparison_type":"values","dashboards":[48],"datasource":"5__table","extra_form_data":{},"forecastInterval":0.8,"forecastPeriods":10,"groupby":[],"legendOrientation":"top","legendType":"scroll","metrics":[{"aggregate":null,"column":null,"datasourceWarning":false,"expressionType":"SQL","hasCustomLabel":true,"label":"Passed","optionName":"metric_rxhvroo5a4j_jeqnc87038o","sqlExpression":"SUM(CASE
+  WHEN status = ''PASSED'' THEN 1 ELSE 0 END)"},{"aggregate":null,"column":null,"datasourceWarning":false,"expressionType":"SQL","hasCustomLabel":true,"label":"Failed","optionName":"metric_7zf2uur7pzp_yrtn1zf5xii","sqlExpression":"SUM(CASE
+  WHEN status = ''FAILED'' THEN 1 ELSE 0 END)"}],"minorTicks":false,"only_total":true,"order_desc":true,"orientation":"vertical","rich_tooltip":true,"row_limit":10000,"show_empty_columns":true,"show_legend":true,"show_value":false,"slice_id":5,"sort_series_ascending":false,"sort_series_type":"sum","stack":"Stack","time_grain_sqla":"P1D","tooltipTimeFormat":"smart_date","truncateXAxis":true,"truncate_metric":true,"viz_type":"echarts_timeseries_bar","x_axis":"started_time","x_axis_sort_asc":true,"x_axis_sort_series":"name","x_axis_sort_series_ascending":true,"x_axis_time_format":"%b
+  %d","x_axis_title_margin":15,"y_axis_bounds":[null,null],"y_axis_format":"SMART_NUMBER","y_axis_title_margin":15,"y_axis_title_position":"Left","zoomable":false,"force":false,"result_format":"json","result_type":"full"},"result_format":"json","result_type":"full"}'
+cache_timeout: null
+uuid: c00e73f8-847f-4b86-9f3e-59530da474cd
+version: 1.0.0
+dataset_uuid: 1665b7da-2d1f-412b-a8d2-4abfa0a42e3f

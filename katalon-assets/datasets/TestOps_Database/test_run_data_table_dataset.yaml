@@ -1,0 +1,209 @@
+table_name: test_run_data_table_dataset
+main_dttm_col: startedtime
+description: null
+default_endpoint: null
+offset: 0
+cache_timeout: null
+schema: null
+sql: "SELECT \n    e.project_order AS id,\n    CASE \n        WHEN e.status = 0 THEN\
+  \ 'PASSED'\n        WHEN e.status = 1 THEN 'FAILED'\n        WHEN e.status = 2 THEN\
+  \ 'ERROR'\n\t\tWHEN e.status = 3 THEN 'INCOMPLETE'\n\t\tWHEN e.status = 5 THEN 'NOT_RUN'\n\
+  \    END AS status,\n\tCASE \n        WHEN e.execution_stage = 0 THEN 'RUNNING'\n\
+  \        WHEN e.execution_stage = 1 THEN 'COMPLETED'\n        WHEN e.execution_stage\
+  \ = 2 THEN 'TERMINATE'\n\t\tWHEN e.execution_stage = 5 THEN 'IMPORTING'\n\t\tWHEN\
+  \ e.execution_stage = 6 THEN 'ERROR'\n    END AS stage,\n\t(SELECT ts.name\n\t \t\
+  FROM kit_objs.execution_statistics es\n\t\tINNER JOIN kit_objs.test_suite ts ON\
+  \ ts.id = es.test_suite_id\n\t\tWHERE es.execution_id = e.id \n\t \t\tAND es.unit\
+  \ = 0 \n\t \t\tAND es.statistics_type = 35\n\t \tORDER BY es.id ASC\n\t\tLIMIT 1\n\
+  \t) AS name,\n\t(SELECT STRING_AGG(DISTINCT NULLIF(p.os_name, ''), ', ')\n\t \t\
+  FROM kit_objs.execution_statistics es\n\t\tINNER JOIN kit_objs.platform p ON p.id\
+  \ = es.platform_id\n\t\tWHERE es.execution_id = e.id \n\t \t\tAND es.unit = 0 \n\
+  \t \t\tAND es.statistics_type = 35\n\t) AS os,\n\t(SELECT STRING_AGG(DISTINCT NULLIF(p.browser_name,\
+  \ ''), ', ')\n\t \tFROM kit_objs.execution_statistics es\n\t\tINNER JOIN kit_objs.platform\
+  \ p ON p.id = es.platform_id\n\t\tWHERE es.execution_id = e.id \n\t \t\tAND es.unit\
+  \ = 0 \n\t \t\tAND es.statistics_type = 35\n\t) AS browser,\n\t(SELECT STRING_AGG(DISTINCT\
+  \ NULLIF(etr.profile, ''), ', ')\n\t \tFROM kit_objs.execution_test_result etr\n\
+  \t\tWHERE etr.execution_id = e.id\n\t) AS profile,\n\t(SELECT STRING_AGG(j.project_order::text,\
+  \ ', ')\n\t \tFROM kit_objs.job j\n\t\tWHERE j.execution_id = e.id\n\t) AS configuration,\n\
+  \te.start_time AS started_time,\n\tEXTRACT(EPOCH FROM end_time - start_time) * 1000\
+  \ AS duration,\n\t(SELECT CONCAT(ua.first_name, ' ', ua.last_name)\n\t \tFROM kit_objs.user_account\
+  \ ua\n\t \tWHERE ua.id = e.user_id\n\t) AS executor,\n\t(SELECT ua.avatar\n\t \t\
+  FROM kit_objs.user_account ua\n\t \tWHERE ua.id = e.user_id\n\t) AS executor_avatar,\n\
+  \te.project_id\nFROM kit_objs.execution e\nORDER BY id"
+params: null
+template_params: null
+filter_select_enabled: true
+fetch_values_predicate: null
+extra: null
+normalize_columns: false
+always_filter_main_dttm: false
+uuid: 1665b7da-2d1f-412b-a8d2-4abfa0a42e3f
+metrics:
+- metric_name: count
+  verbose_name: COUNT(*)
+  metric_type: count
+  expression: COUNT(*)
+  description: null
+  d3format: null
+  currency: null
+  extra: null
+  warning_text: null
+columns:
+- column_name: duration
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: DECIMAL
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: started_time
+  verbose_name: null
+  is_dttm: true
+  is_active: true
+  type: DATETIME
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: project_id
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: LONGINTEGER
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: id
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: LONGINTEGER
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: executor_avatar
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: configuration
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: stage
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: name
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: status
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: browser
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: executor
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: profile
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+- column_name: os
+  verbose_name: null
+  is_dttm: false
+  is_active: true
+  type: STRING
+  advanced_data_type: null
+  groupby: true
+  filterable: true
+  expression: ''
+  description: null
+  python_date_format: null
+  extra: null
+version: 1.0.0
+database_uuid: d222afcd-2e6b-425b-9ed3-54cf01b9cb41

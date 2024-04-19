@@ -1,0 +1,55 @@
+slice_name: Test Runs
+description: null
+certified_by: null
+certification_details: null
+viz_type: table
+params:
+  datasource: 5__table
+  viz_type: table
+  slice_id: 129
+  query_mode: aggregate
+  groupby:
+  - id
+  - status
+  - stage
+  - name
+  - os
+  - browser
+  - profile
+  - started_time
+  - duration
+  - configuration
+  - executor_avatar
+  - executor
+  time_grain_sqla: P1D
+  temporal_columns_lookup:
+    started_time: true
+  all_columns: []
+  percent_metrics: []
+  adhoc_filters:
+  - clause: WHERE
+    comparator: No filter
+    datasourceWarning: false
+    expressionType: SIMPLE
+    filterOptionName: filter_gghqi79n7u5_dfhnyhltykr
+    isExtra: false
+    isNew: false
+    operator: TEMPORAL_RANGE
+    operatorId: TEMPORAL_RANGE
+    sqlExpression: null
+    subject: started_time
+  order_by_cols: []
+  row_limit: 1000
+  server_page_length: 10
+  order_desc: true
+  table_timestamp_format: smart_date
+  show_cell_bars: true
+  color_pn: true
+  extra_form_data: {}
+  dashboards:
+  - 48
+query_context: null
+cache_timeout: null
+uuid: 4318c3d5-fb9c-423b-a3c4-694f0a8181ec
+version: 1.0.0
+dataset_uuid: 1665b7da-2d1f-412b-a8d2-4abfa0a42e3f

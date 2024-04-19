@@ -1,0 +1,13 @@
+database_name: TestOps Database
+sqlalchemy_uri: postgresql+psycopg2://kit_readonly_user1:XXXXXXXXXX@qa-testops-kit-aurora-postgresql14-db-cluster.cluster-c37ymbs5r7nc.us-east-1.rds.amazonaws.com:5432/kit
+cache_timeout: null
+expose_in_sqllab: true
+allow_run_async: false
+allow_ctas: false
+allow_cvas: false
+allow_dml: false
+allow_file_upload: false
+extra:
+  allows_virtual_table_explore: true
+uuid: d222afcd-2e6b-425b-9ed3-54cf01b9cb41
+version: 1.0.0
