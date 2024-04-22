@@ -15,7 +15,7 @@ on:
 jobs:
   import_assets:
     name: 'Import assets to Superset'
-    runs-on: ubuntu-latest
+    runs-on: self-hosted-superset
 
     defaults:
       run:
