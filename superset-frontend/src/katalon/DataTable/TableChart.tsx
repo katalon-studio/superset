@@ -88,34 +88,34 @@ const formatData = (data: any) =>
     }
 
     return {
-      ...rest,
       configuration: parsedConfiguration,
       profile: parsedProfile,
       environment: parsedEnvironment,
       name,
       executor: parsedExecutor,
       test_result_status: parsedTestResultStatus,
+      ...rest,
     };
   });
 
 export default function TableChart<D extends DataRecord = DataRecord>(
   props: TableChartTransformedProps<D>,
 ) {
-  // TODO: Only use the decorators for test_run_data_table_dataset dataset
+  // TODO: Only use the decorators for Test Run v2 dataset
 
   const classes = useStyles();
 
   const { data } = props;
   console.log('data', data);
 
-  const formattedData = formatData(data);
-  console.log('FORMATTED DATA', formattedData);
+  const rows = formatData(data);
+  console.log('rows', rows);
 
-  const tableColumns: GridColDef[] = [
+  const columns: GridColDef[] = [
     {
       field: 'status',
       headerName: 'STATUS',
-      flex: 0.2,
+      width: 60,
       headerAlign: 'center',
       headerClassName: classes.tableHeader,
       renderCell: cell => statusDecorator(cell.value),
@@ -123,63 +123,63 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     {
       field: 'id',
       headerName: 'ID',
-      flex: 0.3,
+      width: 90,
       headerClassName: classes.firstColumnHeader,
       renderCell: cell => IDDecorator(cell.value),
     },
     {
       field: 'name',
       headerName: 'NAME',
-      flex: 1.3,
+      width: 320,
       headerClassName: classes.tableHeader,
       renderCell: cell => nameDecorator(cell.value),
     },
     {
       field: 'profile',
       headerName: 'PROFILE',
-      flex: 0.5,
+      width: 150,
       headerClassName: classes.tableHeader,
       renderCell: cell => profileDecorator(cell.value),
     },
     {
       field: 'duration',
       headerName: 'DURATION',
-      flex: 0.5,
+      width: 100,
       headerClassName: classes.tableHeader,
       renderCell: cell => durationDecorator(cell.value),
     },
     {
       field: 'environment',
       headerName: 'ENVIRONMENT',
-      flex: 0.5,
+      width: 150,
       headerClassName: classes.tableHeader,
       renderCell: cell => environmentDecorator(cell.value),
     },
     {
       field: 'time_started',
       headerName: 'TIME STARTED',
-      flex: 0.5,
+      width: 150,
       headerClassName: classes.tableHeader,
       renderCell: cell => timeStartedDecorator(cell.value),
     },
     {
       field: 'test_result_status',
       headerName: 'TEST RESULT STATUS',
-      flex: 0.7,
+      width: 280,
       headerClassName: classes.tableHeader,
       renderCell: cell => testResultStatusDecorator(cell.value),
     },
     {
       field: 'configuration',
       headerName: 'CONFIGURATION',
-      flex: 0.6,
+      width: 150,
       headerClassName: classes.tableHeader,
       renderCell: cell => configurationDecorator(cell.value),
     },
     {
       field: 'executor',
       headerName: 'EXECUTOR',
-      flex: 0.5,
+      width: 170,
       headerClassName: classes.lastColumnHeader,
       renderCell: cell => executorDecorator(cell.value),
     },
@@ -196,12 +196,12 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       initialState={{
         pagination: { paginationModel: { pageSize: PAGE_SIZE } },
       }}
-      rowHeight={40}
-      columnHeaderHeight={40}
-      rows={formattedData}
-      columns={tableColumns}
+      rowHeight={42}
+      columnHeaderHeight={42}
+      rows={rows}
+      columns={columns}
       pageSizeOptions={[PAGE_SIZE]}
-      hideFooter={formattedData.length <= PAGE_SIZE}
+      hideFooter={rows.length <= PAGE_SIZE}
       checkboxSelection
       disableRowSelectionOnClick
     />

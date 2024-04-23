@@ -5,6 +5,7 @@ import { getUrlParam } from 'src/utils/urlUtils';
 import { URL_PARAMS } from 'src/constants';
 import moment from 'moment';
 import Config from '../../../config';
+import MoreChip from './components/MoreChip';
 
 const statusIconMapper = {
   PASSED: '/static/assets/images/katalon/status-passed.svg',
@@ -134,19 +135,22 @@ const durationDecorator = (milliseconds: number) => {
 };
 
 const environmentDecorator = (environmentList: any[]) => {
+  // TODO - Uncomment this line and remove the mock data
   // if (!environmentList || environmentList.length === 0) return null;
 
   const list = [
     { os: 'Windows', browser: 'Edge' },
     { os: 'Windows', browser: 'Chrome' },
     { os: 'MacOS', browser: 'Chrome' },
+    { os: 'MacOS', browser: 'Edge' },
   ];
 
-  return (
-    <div style={{ display: 'flex' }}>
-      {list.slice(0, 2).map((environment, index) => (
-        <div>
-          {index === 1 && <span>|</span>}
+  const maxDisplay = 2;
+
+  const renderTooltipContent = () => (
+    <div>
+      {list.slice(maxDisplay).map(environment => (
+        <div style={{ margin: '10px 4px' }}>
           <img
             style={{
               width: '16px',
@@ -166,7 +170,41 @@ const environmentDecorator = (environmentList: any[]) => {
           />
         </div>
       ))}
-      {list.length > 2 && <span>+{list.length - 2}</span>}
+    </div>
+  );
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+      {list.slice(0, 2).map((environment, index) => (
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {index === 1 && (
+            <span style={{ color: '#dbdde5', margin: '0 4px' }}>|</span>
+          )}
+          <img
+            style={{
+              width: '16px',
+              height: '16px',
+              marginRight: '2px',
+            }}
+            src={osIconMapper(environment.os)}
+            alt="icon"
+          />
+          <img
+            style={{
+              width: '16px',
+              height: '16px',
+            }}
+            src={browserIconMapper(environment.browser)}
+            alt="icon"
+          />
+        </div>
+      ))}
+      {list.length > maxDisplay && (
+        <MoreChip
+          amount={list.length - maxDisplay}
+          tooltipContent={renderTooltipContent()}
+        />
+      )}
     </div>
   );
 };
@@ -184,28 +222,89 @@ const testResultStatusDecorator = (testResultStatus: any) => {
     totalIncomplete,
     totalSkipped,
   } = testResultStatus;
-  return (
+
+  const Cell = ({ icon, amount }: { icon: string; amount: number }) => (
     <div
       style={{
         display: 'flex',
-        height: '100%',
+        alignItems: 'center',
+        paddingLeft: '6px',
+        width: '50px',
       }}
     >
-      <span>
-        {totalPassed} / {totalFailed} / {totalError} / {totalIncomplete} /{' '}
-        {totalSkipped}
-      </span>
+      <img
+        style={{
+          width: '12px',
+          height: '12px',
+          marginRight: '4px',
+        }}
+        src={icon}
+        alt="icon"
+      />
+      <span style={{ fontSize: '12px', fontWeight: 500 }}>{amount}</span>
+    </div>
+  );
+
+  return (
+    <div style={{ height: '100%', display: 'flex', alignItems: 'center' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          borderRadius: '4px',
+          border: '1px solid #dbdde5',
+          overflow: 'hidden',
+          height: '26px',
+        }}
+      >
+        <Cell icon={statusIconMapper.PASSED} amount={totalPassed} />
+        <div style={{ height: '100%', borderRight: '1px dashed #dbdde5' }} />
+        <Cell icon={statusIconMapper.FAILED} amount={totalFailed} />
+        <div style={{ height: '100%', borderRight: '1px dashed #dbdde5' }} />
+        <Cell icon={statusIconMapper.ERROR} amount={totalError} />
+        <div style={{ height: '100%', borderRight: '1px dashed #dbdde5' }} />
+        <Cell icon={statusIconMapper.INCOMPLETE} amount={totalIncomplete} />
+        <div style={{ height: '100%', borderRight: '1px dashed #dbdde5' }} />
+        <Cell icon={statusIconMapper.INCOMPLETE} amount={totalSkipped} />
+      </div>
     </div>
   );
 };
 
 const configurationDecorator = (configurationList: string[]) => {
-  if (!configurationList || configurationList.length === 0) return null;
+  // TODO - Uncomment this line and remove the mock data
+  // if (!configurationList || configurationList.length === 0) return null;
 
-  const hashedNumbers: string = configurationList
+  const list = ['112', '143', '254', '367', '409'];
+
+  const maxDisplay = 2;
+
+  const hashedNumbers: string = list
+    .slice(0, maxDisplay)
     .map(configuration => `#${configuration}`)
     .join(', ');
-  return <span>{hashedNumbers}</span>;
+
+  const renderTooltipContent = () => (
+    <div>
+      {list.slice(maxDisplay).map(configuration => (
+        <div style={{ margin: '12px 4px' }}>
+          <span style={{ fontSize: '12px' }}>{`#${configuration}`}</span>
+        </div>
+      ))}
+    </div>
+  );
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+      <span>{hashedNumbers}</span>
+      {list.length > maxDisplay && (
+        <MoreChip
+          amount={list.length - maxDisplay}
+          tooltipContent={renderTooltipContent()}
+        />
+      )}
+    </div>
+  );
 };
 
 const executorDecorator = (executor: any) => {
