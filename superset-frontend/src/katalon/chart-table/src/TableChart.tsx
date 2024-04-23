@@ -1,3 +1,4 @@
+/* eslint-disable theme-colors/no-literal-colors */
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,11 +19,11 @@
  */
 import React, {
   CSSProperties,
+  MouseEvent,
   useCallback,
   useLayoutEffect,
   useMemo,
   useState,
-  MouseEvent,
 } from 'react';
 import {
   ColumnInstance,
@@ -36,6 +37,8 @@ import { FaSortDown as FaSortDesc } from '@react-icons/all-files/fa/FaSortDown';
 import { FaSortUp as FaSortAsc } from '@react-icons/all-files/fa/FaSortUp';
 import cx from 'classnames';
 import {
+  BinaryQueryObjectFilterClause,
+  css,
   DataRecord,
   DataRecordValue,
   DTTM_ALIAS,
@@ -43,27 +46,23 @@ import {
   GenericDataType,
   getSelectedText,
   getTimeFormatterForGranularity,
-  BinaryQueryObjectFilterClause,
   styled,
-  css,
   t,
   tn,
-  isPostProcessingResample,
 } from '@superset-ui/core';
 
 import { makeStyles } from '@mui/styles';
 import { DataGrid, GridColDef } from '@katalon-studio/katalon-ui/v2';
 import { getUrlParam } from 'src/utils/urlUtils';
 import { URL_PARAMS } from 'src/constants';
+import moment from 'moment';
 import { DataColumnMeta, TableChartTransformedProps } from './types';
-import DataTable, {
+import {
   DataTableProps,
   SearchInputProps,
   SelectPageSizeRendererProps,
   SizeOption,
 } from './DataTable';
-
-import Styles from './Styles';
 import { formatColumnValue } from './utils/formatValue';
 import { PAGE_SIZE_OPTIONS } from './consts';
 import { updateExternalFormData } from './DataTable/utils/externalAPIs';
@@ -747,9 +746,68 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   const { width: widthFromState, height: heightFromState } = tableSize;
 
-  console.log('KATALON', data);
+  console.log('data', data);
 
   // TODO: Only use the decorators for test_run_data_table_dataset dataset
+
+  const formatData = (data: any) =>
+    data.map((row: any) => {
+      try {
+        let configuration: string[] = [];
+        let profile: string[] = [];
+        let environment: any[] = [];
+        let name: string[] = [];
+        let executor: any = {};
+        let test_result_status: any = {};
+
+        if (row.configuration) {
+          configuration = JSON.parse(row.configuration);
+        }
+        if (row.profile) {
+          profile = JSON.parse(row.profile);
+        }
+        if (row.environment) {
+          environment = JSON.parse(row.environment);
+        }
+        if (row.executor) {
+          executor = JSON.parse(row.executor);
+        }
+        if (row.test_result_status) {
+          test_result_status = JSON.parse(row.test_result_status);
+        }
+
+        const {
+          run_configuration_name,
+          test_suite_collection_name,
+          test_suite_name,
+        } = row;
+
+        if (run_configuration_name) {
+          name = JSON.parse(run_configuration_name);
+        } else if (test_suite_collection_name) {
+          name = JSON.parse(test_suite_collection_name);
+        } else if (test_suite_name) {
+          name = JSON.parse(test_suite_name);
+        }
+
+        return {
+          ...row,
+          configuration,
+          profile,
+          environment,
+          name,
+          executor,
+          test_result_status,
+        };
+      } catch (error) {
+        console.error(error);
+      }
+      return row;
+    });
+
+  const formattedData = formatData(data);
+
+  console.log('FORMATTED DATA', formattedData);
 
   const classes = useStyles();
 
@@ -823,18 +881,37 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
     return (
       <a
-        style={{ color: '#6464e4', fontWeight: 600, marginLeft: '16px' }}
+        style={{ marginLeft: '16px', color: 'black' }}
         href={`${masterAppHost}/project/${projectId}/executions/${id}`}
         target="_blank"
         rel="noreferrer"
       >
-        #{id}
+        {id}
       </a>
     );
   };
 
-  const nameDecorator = (name: string) => {
-    if (!name) return null;
+  const nameDecorator = (nameList: string[]) => {
+    if (!nameList || nameList.length === 0) return null;
+
+    return (
+      <span
+        style={{
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
+          maxWidth: '240px',
+        }}
+      >
+        {nameList[0]}
+      </span>
+    );
+  };
+
+  const profileDecorator = (profiles: string[]) => {
+    if (!profiles || profiles.length === 0) return null;
+
+    const decoratedProfiles = profiles.join(', ');
     return (
       <div
         style={{
@@ -846,155 +923,111 @@ export default function TableChart<D extends DataRecord = DataRecord>(
           style={{
             width: '16px',
             height: '16px',
+            marginRight: '8px',
           }}
-          src="/static/assets/images/katalon/test-run.svg"
+          src="/static/assets/images/katalon/profile.svg"
           alt="icon"
         />
-        <span
-          style={{
-            marginLeft: '8px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            maxWidth: '200px',
-          }}
-        >
-          {name}
+        <span>{decoratedProfiles}</span>
+      </div>
+    );
+  };
+
+  const durationDecorator = (milliseconds: number) => {
+    let decoratedDuration = moment
+      .utc(milliseconds)
+      .format('HH[h] mm[m] ss[s]');
+    decoratedDuration = decoratedDuration.replace(/00[hms]/g, '').trim();
+
+    return <span>{decoratedDuration}</span>;
+  };
+
+  const environmentDecorator = (environmentList: any[]) => {
+    if (!environmentList || environmentList.length === 0) return null;
+
+    return (
+      <div className="flex">
+        {environmentList.map(environment => {
+          const { os, browser } = environment;
+          return (
+            <div className="flex">
+              {os && (
+                <img
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                    marginRight: '2px',
+                  }}
+                  src={osIconMapper(os)}
+                  alt="icon"
+                />
+              )}
+              {browser && (
+                <img
+                  style={{
+                    width: '16px',
+                    height: '16px',
+                  }}
+                  src={browserIconMapper(browser)}
+                  alt="icon"
+                />
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  };
+
+  const configurationDecorator = (configurationList: string[]) => {
+    if (!configurationList || configurationList.length === 0) return null;
+
+    const hashedNumbers: string = configurationList
+      .map(configuration => `#${configuration}`)
+      .join(', ');
+    return <span>{hashedNumbers}</span>;
+  };
+
+  const timeStartedDecorator = (date: Date) => {
+    const formattedDate = moment(date).format('DD/MM/YYYY HH:mm');
+    return <span>{formattedDate}</span>;
+  };
+
+  const testResultStatusDecorator = (testResultStatus: any) => {
+    const {
+      totalPassed,
+      totalFailed,
+      totalError,
+      totalIncomplete,
+      totalSkipped,
+    } = testResultStatus;
+    return (
+      <div
+        style={{
+          display: 'flex',
+          height: '100%',
+        }}
+      >
+        <span>
+          {totalPassed} / {totalFailed} / {totalError} / {totalIncomplete} /{' '}
+          {totalSkipped}
         </span>
       </div>
     );
   };
 
-  const profileDecorator = (profiles: string) => <span>{profiles}</span>;
+  const executorDecorator = (executor: any) => {
+    if (!executor) return null;
 
-  const durationDecorator = (milliseconds: number) => {
-    if (milliseconds < 1000) {
-      return `${milliseconds}ms`;
-    }
+    const { name, avatar } = executor;
+    const executorAvatar =
+      avatar ||
+      'https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png';
 
-    const seconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    const remainingHours = hours % 24;
-    const remainingMinutes = minutes % 60;
-    const remainingSeconds = seconds % 60;
-
-    let formattedString = '';
-    if (days > 0) {
-      formattedString += `${days}d `;
-    }
-    if (remainingHours > 0) {
-      formattedString += `${remainingHours}h `;
-    }
-    if (remainingMinutes > 0) {
-      formattedString += `${remainingMinutes}m `;
-    }
-    if (remainingSeconds > 0) {
-      formattedString += `${remainingSeconds}s`;
-    }
-
-    return <span>{formattedString.trim()}</span>;
-  };
-
-  const osDecorator = (os: string) => {
-    if (!os) return null;
-    const osList = os?.split(',');
-    return (
-      <div className="flex">
-        {osList?.map((os, index) => (
-          <img
-            key={index}
-            style={{
-              width: '16px',
-              height: '16px',
-              marginRight: '2px',
-            }}
-            src={osIconMapper(os)}
-            alt="icon"
-          />
-        ))}
-      </div>
-    );
-  };
-
-  const browserDecorator = (browser: string) => {
-    if (!browser) return null;
-    const browserList = browser?.split(',');
-    return (
-      <div className="flex">
-        {browserList?.map((browser, index) => (
-          <img
-            key={index}
-            style={{
-              width: '16px',
-              height: '16px',
-              marginRight: '2px',
-            }}
-            src={browserIconMapper(browser)}
-            alt="icon"
-          />
-        ))}
-      </div>
-    );
-  };
-
-  const configurationDecorator = (configuration: string) => {
-    if (!configuration) return null;
-    const numbers: string[] = configuration.split(',');
-
-    const hashedNumbers: string = numbers.map(num => `#${num}`).join(', ');
-    return <span>{hashedNumbers}</span>;
-  };
-
-  const timeStartedDecorator = (date: Date) => {
-    const months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    const year = date.getFullYear();
-    const month = months[date.getMonth()];
-    const day = date.getDate();
-    const formattedDate = `${year} ${month} ${day < 10 ? `0${day}` : day}`;
-
-    return <span>{formattedDate}</span>;
-  };
-
-  const executorDecorator = (executorAvatar: string) => {
-    if (!executorAvatar)
-      return (
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100%',
-            marginRight: '16px',
-          }}
-        >
-          <img
-            style={{ width: '20px', height: '20px' }}
-            src="https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png"
-            alt="avatar"
-          />
-        </div>
-      );
     return (
       <div
         style={{
           display: 'flex',
-          justifyContent: 'center',
           alignItems: 'center',
           height: '100%',
           marginRight: '16px',
@@ -1005,6 +1038,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
           src={executorAvatar}
           alt="avatar"
         />
+        <span style={{ marginLeft: '4px' }}>{name}</span>
       </div>
     );
   };
@@ -1013,7 +1047,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
     {
       field: 'status',
       headerName: 'STATUS',
-      flex: 0.3,
+      flex: 0.2,
       headerAlign: 'center',
       headerClassName: classes.tableHeader,
       renderCell: cell => statusDecorator(cell.value),
@@ -1047,18 +1081,25 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       renderCell: cell => durationDecorator(cell.value),
     },
     {
-      field: 'os',
-      headerName: 'PLATFORM',
-      flex: 0.5,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => osDecorator(cell.value),
-    },
-    {
-      field: 'browser',
+      field: 'environment',
       headerName: 'ENVIRONMENT',
       flex: 0.5,
       headerClassName: classes.tableHeader,
-      renderCell: cell => browserDecorator(cell.value),
+      renderCell: cell => environmentDecorator(cell.value),
+    },
+    {
+      field: 'time_started',
+      headerName: 'TIME STARTED',
+      flex: 0.5,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => timeStartedDecorator(cell.value),
+    },
+    {
+      field: 'test_result_status',
+      headerName: 'TEST RESULT STATUS',
+      flex: 0.7,
+      headerClassName: classes.tableHeader,
+      renderCell: cell => testResultStatusDecorator(cell.value),
     },
     {
       field: 'configuration',
@@ -1068,46 +1109,15 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       renderCell: cell => configurationDecorator(cell.value),
     },
     {
-      field: 'started_time',
-      headerName: 'TIME STARTED',
-      flex: 0.5,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => timeStartedDecorator(cell.value),
-    },
-    {
-      field: 'executor_avatar',
+      field: 'executor',
       headerName: 'EXECUTOR',
       flex: 0.5,
-      headerAlign: 'center',
       headerClassName: classes.lastColumnHeader,
       renderCell: cell => executorDecorator(cell.value),
     },
   ];
 
   return (
-    // <Styles>
-    //   <DataTable<D>
-    //     columns={columns}
-    //     data={data}
-    //     rowCount={rowCount}
-    //     tableClassName="table table-striped table-condensed"
-    //     pageSize={pageSize}
-    //     serverPaginationData={serverPaginationData}
-    //     pageSizeOptions={pageSizeOptions}
-    //     width={widthFromState}
-    //     height={heightFromState}
-    //     serverPagination={serverPagination}
-    //     onServerPaginationChange={handleServerPaginationChange}
-    //     onColumnOrderChange={() => setColumnOrderToggle(!columnOrderToggle)}
-    //     // 9 page items in > 340px works well even for 100+ pages
-    //     maxPageItemCount={width > 340 ? 9 : 7}
-    //     noResults={getNoResultsMessage}
-    //     searchInput={includeSearch && SearchInput}
-    //     selectPageSize={pageSize !== null && SelectPageSize}
-    //     // not in use in Superset, but needed for unit tests
-    //     sticky={sticky}
-    //   />
-    // </Styles>
     <DataGrid
       sx={{
         fontFamily: 'Inter',
@@ -1120,10 +1130,10 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       }}
       rowHeight={40}
       columnHeaderHeight={40}
-      rows={data}
+      rows={formattedData}
       columns={tableColumns}
       pageSizeOptions={[PAGE_SIZE]}
-      hideFooter={data.length <= PAGE_SIZE}
+      hideFooter={formattedData.length <= PAGE_SIZE}
       checkboxSelection
       disableRowSelectionOnClick
     />
