@@ -13,9 +13,9 @@ import { Menu } from 'src/components/Menu';
 import { NoAnimationDropdown } from 'src/components/Dropdown';
 import ModalTrigger from 'src/components/ModalTrigger';
 import ViewQueryModal from 'src/explore/components/controls/ViewQueryModal';
-import { DrillDetailMenuItems } from 'src/components/Chart/DrillDetail';
 import { getFormData } from 'packages/superset-ui-core/src/query/api/legacy';
 import { isEmpty } from 'lodash';
+import DrillDetailMenuItems from './DrillDetailMenuItems';
 
 const MENU_KEYS = {
   VIEW_QUERY: 'view_query',
