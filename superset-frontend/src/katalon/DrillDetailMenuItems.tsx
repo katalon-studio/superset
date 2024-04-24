@@ -89,6 +89,7 @@ const DrillDetailMenuItems = ({
       state.sliceEntities.slices[chartId],
   );
   const projectId = getUrlParam(URL_PARAMS.projectId);
+  const isMetric = getUrlParam(URL_PARAMS.isMetric);
   const masterAppHost = Config.masterApp;
   const openNewMetric = useCallback(
     (filters, event) => {
@@ -226,6 +227,10 @@ const DrillDetailMenuItems = ({
         />
       </DisabledMenuItem>
     );
+  }
+
+  if (isMetric) {
+    return null;
   }
 
   return (
