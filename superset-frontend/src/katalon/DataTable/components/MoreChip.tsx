@@ -21,7 +21,21 @@ interface MoreChipProps {
 }
 
 const MoreChip = ({ amount, tooltipContent }: MoreChipProps) => (
-  <LightTooltip title={tooltipContent}>
+  <LightTooltip
+    title={tooltipContent}
+    slotProps={{
+      popper: {
+        modifiers: [
+          {
+            name: 'offset',
+            options: {
+              offset: [0, -10],
+            },
+          },
+        ],
+      },
+    }}
+  >
     <Chip
       sx={{
         marginLeft: '4px',

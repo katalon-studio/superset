@@ -1,5 +1,4 @@
 /* eslint-disable theme-colors/no-literal-colors */
-
 import React from 'react';
 import { getUrlParam } from 'src/utils/urlUtils';
 import { URL_PARAMS } from 'src/constants';
@@ -7,11 +6,15 @@ import moment from 'moment';
 import Config from '../../../config';
 import MoreChip from './components/MoreChip';
 
+// TODO: icon for TERMINATE
 const statusIconMapper = {
   PASSED: '/static/assets/images/katalon/status-passed.svg',
   FAILED: '/static/assets/images/katalon/status-failed.svg',
   INCOMPLETE: '/static/assets/images/katalon/status-incomplete.svg',
   ERROR: '/static/assets/images/katalon/status-error.svg',
+  IMPORTING: '/static/assets/images/katalon/status-importing.svg',
+  RUNNING: '/static/assets/images/katalon/status-running.svg',
+  TERMINATE: '/static/assets/images/katalon/status-terminate.svg',
 };
 
 const osIconMapper = (name: string) => {
@@ -44,7 +47,7 @@ const browserIconMapper = (name: string) => {
     return '/static/assets/images/katalon/edge.svg';
   }
   if (name.toLowerCase().includes('safari')) {
-    return '/static/assets/images/katalon/edge.svg'; // TODO: icon for Safari
+    return '/static/assets/images/katalon/safari.svg';
   }
   return '';
 };
@@ -75,7 +78,7 @@ const IDDecorator = (id: string) => {
 
   return (
     <a
-      style={{ marginLeft: '16px', color: 'black' }}
+      style={{ color: '#1222a9', fontWeight: 500 }}
       href={`${masterAppHost}/project/${projectId}/executions/${id}`}
       target="_blank"
       rel="noreferrer"
@@ -177,7 +180,7 @@ const environmentDecorator = (environmentList: any[]) => {
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
       {list.slice(0, 2).map((environment, index) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {index === 1 && (
+          {index > 0 && index < maxDisplay && (
             <span style={{ color: '#dbdde5', margin: '0 4px' }}>|</span>
           )}
           <img
@@ -279,16 +282,22 @@ const configurationDecorator = (configurationList: string[]) => {
 
   const maxDisplay = 2;
 
-  const hashedNumbers: string = list
-    .slice(0, maxDisplay)
-    .map(configuration => `#${configuration}`)
-    .join(', ');
+  const projectId = getUrlParam(URL_PARAMS.projectId);
+  const masterAppHost = Config.masterApp;
+  const configurationLink = `${masterAppHost}/project/${projectId}/configuration`;
 
   const renderTooltipContent = () => (
     <div>
       {list.slice(maxDisplay).map(configuration => (
         <div style={{ margin: '12px 4px' }}>
-          <span style={{ fontSize: '12px' }}>{`#${configuration}`}</span>
+          <a
+            style={{ color: '#1222a9', fontWeight: 500, fontSize: '12px' }}
+            href={`${configurationLink}/${configuration}`} // TODO: Update the URL
+            target="_blank"
+            rel="noreferrer"
+          >
+            {`#${configuration}`}
+          </a>
         </div>
       ))}
     </div>
@@ -296,7 +305,19 @@ const configurationDecorator = (configurationList: string[]) => {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-      <span>{hashedNumbers}</span>
+      {list.slice(0, maxDisplay).map((configuration, index) => (
+        <div>
+          {index > 0 && index < maxDisplay && <span>, </span>}
+          <a
+            style={{ color: '#1222a9', fontWeight: 500 }}
+            href={`${configurationLink}/${configuration}`} // TODO: Update the URL
+            target="_blank"
+            rel="noreferrer"
+          >
+            {`#${configuration}`}
+          </a>
+        </div>
+      ))}
       {list.length > maxDisplay && (
         <MoreChip
           amount={list.length - maxDisplay}
@@ -311,9 +332,13 @@ const executorDecorator = (executor: any) => {
   if (!executor) return null;
 
   const { name, avatar } = executor;
-  const executorAvatar = avatar
-    ? `https://katalon-testops-qa-testops-bucket.s3.amazonaws.com/${avatar}` // TODO: Update the URL based on environment
-    : 'https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png';
+  // const executorAvatar = avatar
+  //   ? `https://katalon-testops-qa-testops-bucket.s3.amazonaws.com/${avatar}` // TODO: Update the URL based on environment
+  //   : 'https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png';
+
+  // TODO: Remove this mock data
+  const executorAvatar =
+    'https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png';
 
   return (
     <div
