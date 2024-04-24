@@ -32,7 +32,6 @@ import PartitionChartPlugin from '@superset-ui/legacy-plugin-chart-partition';
 import RoseChartPlugin from '@superset-ui/legacy-plugin-chart-rose';
 import SankeyChartPlugin from '@superset-ui/legacy-plugin-chart-sankey';
 import SunburstChartPlugin from '@superset-ui/legacy-plugin-chart-sunburst';
-// import TableChartPlugin from '@superset-ui/plugin-chart-table';
 import { WordCloudChartPlugin } from '@superset-ui/plugin-chart-word-cloud';
 import WorldMapChartPlugin from '@superset-ui/legacy-plugin-chart-world-map';
 import {
@@ -70,7 +69,9 @@ import {
   EchartsWaterfallChartPlugin,
 } from '@superset-ui/plugin-chart-echarts';
 import {
+  SelectFilterPlugin,
   RangeFilterPlugin,
+  TimeFilterPlugin,
   TimeColumnFilterPlugin,
   TimeGrainFilterPlugin,
   GroupByFilterPlugin,
@@ -81,6 +82,7 @@ import {
 } from 'src/katalon/filters/components';
 import { PivotTableChartPlugin as PivotTableChartPluginV2 } from '@superset-ui/plugin-chart-pivot-table';
 import { HandlebarsChartPlugin } from '@superset-ui/plugin-chart-handlebars';
+import TableChartPlugin from '@superset-ui/plugin-chart-table';
 import FilterBoxChartPlugin from '../FilterBox/FilterBoxChartPlugin';
 import TimeTableChartPlugin from '../TimeTable';
 import KatalonChartTable from '../../katalon/chart-table/src';
@@ -92,6 +94,14 @@ export default class MainPreset extends Preset {
     )
       ? [new GroupByFilterPlugin().configure({ key: 'filter_groupby' })]
       : [];
+
+    // Start define Katalon plugins
+    const katalonPlugins = [
+      new KatalonChartTable().configure({ key: 'table' }),
+      new KatalonSelectFilterPlugin().configure({ key: 'filter_select' }),
+      new KatalonTimeFilterPlugin().configure({ key: 'filter_time' }),
+    ];
+    // End define Katalon plugins
 
     super({
       name: 'Legacy charts',
@@ -132,8 +142,7 @@ export default class MainPreset extends Preset {
         new RoseChartPlugin().configure({ key: 'rose' }),
         new SankeyChartPlugin().configure({ key: 'sankey' }),
         new SunburstChartPlugin().configure({ key: 'sunburst' }),
-        // new TableChartPlugin().configure({ key: 'table' }),
-        new KatalonChartTable().configure({ key: 'table' }),
+        new TableChartPlugin().configure({ key: 'table' }),
         new TimePivotChartPlugin().configure({ key: 'time_pivot' }),
         new TimeTableChartPlugin().configure({ key: 'time_table' }),
         new WordCloudChartPlugin().configure({ key: 'word_cloud' }),
@@ -162,11 +171,9 @@ export default class MainPreset extends Preset {
         new EchartsWaterfallChartPlugin().configure({
           key: 'waterfall',
         }),
-        // new SelectFilterPlugin().configure({ key: 'filter_select' }),
-        new KatalonSelectFilterPlugin().configure({ key: 'filter_select' }),
+        new SelectFilterPlugin().configure({ key: 'filter_select' }),
         new RangeFilterPlugin().configure({ key: 'filter_range' }),
-        // new TimeFilterPlugin().configure({ key: 'filter_time' }),
-        new KatalonTimeFilterPlugin().configure({ key: 'filter_time' }),
+        new TimeFilterPlugin().configure({ key: 'filter_time' }),
         new TimeColumnFilterPlugin().configure({ key: 'filter_timecolumn' }),
         new TimeGrainFilterPlugin().configure({ key: 'filter_timegrain' }),
         new EchartsTreeChartPlugin().configure({ key: 'tree_chart' }),
@@ -174,6 +181,9 @@ export default class MainPreset extends Preset {
         new HandlebarsChartPlugin().configure({ key: 'handlebars' }),
         new EchartsBubbleChartPlugin().configure({ key: 'bubble_v2' }),
         ...experimentalplugins,
+        // Start define Katalon plugins
+        ...katalonPlugins,
+        // End define Katalon plugins
       ],
     });
   }

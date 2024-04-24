@@ -557,7 +557,14 @@ const Select = forwardRef(
       event: React.MouseEvent<HTMLElement>,
       option: any,
     ) => {
-      if (selectLabel === option?.label) {
+      // currently we only support single selection
+      const singleSelectValue = Array.isArray(selectValue)
+        ? selectValue[0]
+        : selectValue;
+      if (
+        selectLabel === option?.label &&
+        singleSelectValue === option?.value
+      ) {
         setSelectValue([]);
         setSelectLabel([]);
       } else {

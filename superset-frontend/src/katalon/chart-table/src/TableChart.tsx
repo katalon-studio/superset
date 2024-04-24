@@ -756,43 +756,43 @@ export default function TableChart<D extends DataRecord = DataRecord>(
   const PAGE_SIZE = 10;
 
   const statusIconMapper = {
-    PASSED: '/static/assets/images/icons/status-passed.svg',
-    FAILED: '/static/assets/images/icons/status-failed.svg',
-    INCOMPLETE: '/static/assets/images/icons/status-incomplete.svg',
-    ERROR: '/static/assets/images/icons/status-error.svg',
+    PASSED: '/static/assets/images/katalon/status-passed.svg',
+    FAILED: '/static/assets/images/katalon/status-failed.svg',
+    INCOMPLETE: '/static/assets/images/katalon/status-incomplete.svg',
+    ERROR: '/static/assets/images/katalon/status-error.svg',
   };
 
   const osIconMapper = (name: string) => {
     if (name.toLowerCase().includes('win')) {
-      return '/static/assets/images/icons/windows.svg';
+      return '/static/assets/images/katalon/windows.svg';
     }
     if (name.toLowerCase().includes('mac')) {
-      return '/static/assets/images/icons/macos.svg';
+      return '/static/assets/images/katalon/macos.svg';
     }
     if (name.toLowerCase().includes('linux')) {
-      return '/static/assets/images/icons/linux.svg';
+      return '/static/assets/images/katalon/linux.svg';
     }
     if (name.toLowerCase().includes('android')) {
-      return '/static/assets/images/icons/macos.svg'; // TODO: icon for Android
+      return '/static/assets/images/katalon/macos.svg'; // TODO: icon for Android
     }
     if (name.toLowerCase().includes('ios')) {
-      return '/static/assets/images/icons/macos.svg'; // TODO: icon for IOS
+      return '/static/assets/images/katalon/macos.svg'; // TODO: icon for IOS
     }
     return '';
   };
 
   const browserIconMapper = (name: string) => {
     if (name.toLowerCase().includes('chrome')) {
-      return '/static/assets/images/icons/chrome.svg';
+      return '/static/assets/images/katalon/chrome.svg';
     }
     if (name.toLowerCase().includes('firefox')) {
-      return '/static/assets/images/icons/firefox.svg';
+      return '/static/assets/images/katalon/firefox.svg';
     }
     if (name.toLowerCase().includes('edge')) {
-      return '/static/assets/images/icons/edge.svg';
+      return '/static/assets/images/katalon/edge.svg';
     }
     if (name.toLowerCase().includes('safari')) {
-      return '/static/assets/images/icons/edge.svg'; // TODO: icon for Safari
+      return '/static/assets/images/katalon/edge.svg'; // TODO: icon for Safari
     }
     return '';
   };
@@ -847,7 +847,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
             width: '16px',
             height: '16px',
           }}
-          src="/static/assets/images/icons/test-run.svg"
+          src="/static/assets/images/katalon/test-run.svg"
           alt="icon"
         />
         <span

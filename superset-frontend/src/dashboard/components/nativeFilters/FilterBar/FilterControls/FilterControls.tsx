@@ -67,11 +67,43 @@ import crossFiltersSelector from '../CrossFilters/selectors';
 import CrossFilter from '../CrossFilters/CrossFilter';
 import { useFilterOutlined } from '../useFilterOutlined';
 import { useChartsVerboseMaps } from '../utils';
+import { getIsKatalonEmbeddedDashboard } from '../../../../../utils/getIsKatalonEmbeddedDashboard';
 
 type FilterControlsProps = {
   dataMaskSelected: DataMaskStateWithId;
   onFilterSelectionChange: (filter: Filter, dataMask: DataMask) => void;
 };
+
+const renderKatalonVersion = (
+  portalNodes: Array<any>,
+  filterIds: any,
+  filtersWithValues: any,
+  filterControlFactory: any,
+  filterBarOrientation: any,
+  overflowedByIndex: any,
+  renderVerticalContent: any,
+  renderHorizontalContent: any,
+  items: any,
+) => (
+  <>
+    {portalNodes
+      .filter((node, index) => filterIds.has(filtersWithValues[index].id))
+      .map((node, index) => (
+        <InPortal node={node} key={filtersWithValues[index].id}>
+          {filterControlFactory(
+            index,
+            filterBarOrientation,
+            overflowedByIndex[index],
+          )}
+        </InPortal>
+      ))}
+    {filterBarOrientation === FilterBarOrientation.VERTICAL &&
+      renderVerticalContent()}
+    {filterBarOrientation === FilterBarOrientation.HORIZONTAL && (
+      <FilterExtension items={items} />
+    )}
+  </>
+);
 
 const FilterControls: FC<FilterControlsProps> = ({
   dataMaskSelected,
@@ -219,7 +251,6 @@ const FilterControls: FC<FilterControlsProps> = ({
     if (isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS)) {
       const nativeFiltersInScope = filtersInScope.map((filter, index) => ({
         id: filter.id,
-        name: filter.name,
         element: (
           <div
             className="filter-item-wrapper"
@@ -322,8 +353,52 @@ const FilterControls: FC<FilterControlsProps> = ({
     }
   }, [outlinedFilterId, lastUpdated, popoverRef, overflowedIds]);
 
-  // @ts-ignore
-  const renderFilterExtension = () => <FilterExtension items={items} />;
+  // Begin code of Katalon custom Horizontal Filter
+  const katalonItems = useMemo(() => {
+    const crossFilters = selectedCrossFilters.map(c => ({
+      // a combination of filter name and chart id to account
+      // for multiple cross filters from the same chart in the future
+      id: `${c.name}${c.emitterId}`,
+      element: rendererCrossFilter(
+        c,
+        FilterBarOrientation.HORIZONTAL,
+        selectedCrossFilters.at(-1),
+      ),
+    }));
+    if (isFeatureEnabled(FeatureFlag.DASHBOARD_NATIVE_FILTERS)) {
+      const nativeFiltersInScope = filtersInScope.map((filter, index) => ({
+        id: filter.id,
+        name: filter.name, // the difference is here
+        element: (
+          <div
+            className="filter-item-wrapper"
+            css={css`
+              flex-shrink: 0;
+            `}
+          >
+            {renderer(filter, index)}
+          </div>
+        ),
+      }));
+      return [...crossFilters, ...nativeFiltersInScope];
+    }
+    return [...crossFilters];
+  }, [filtersInScope, renderer, rendererCrossFilter, selectedCrossFilters]);
+
+  if (getIsKatalonEmbeddedDashboard()) {
+    return renderKatalonVersion(
+      portalNodes,
+      filterIds,
+      filtersWithValues,
+      filterControlFactory,
+      filterBarOrientation,
+      overflowedByIndex,
+      renderVerticalContent,
+      renderHorizontalContent,
+      katalonItems,
+    );
+  }
+  // End code of Katalon custom Horizontal Filter
 
   return (
     <>
@@ -341,9 +416,7 @@ const FilterControls: FC<FilterControlsProps> = ({
       {filterBarOrientation === FilterBarOrientation.VERTICAL &&
         renderVerticalContent()}
       {filterBarOrientation === FilterBarOrientation.HORIZONTAL &&
-        renderFilterExtension()}
-      {/* {filterBarOrientation === FilterBarOrientation.HORIZONTAL &&
-        renderHorizontalContent()} */}
+        renderHorizontalContent()}
     </>
   );
 };

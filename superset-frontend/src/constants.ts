@@ -119,10 +119,6 @@ export const URL_PARAMS = {
     name: 'projectId',
     type: 'string',
   },
-  accessToken: {
-    name: 'accessToken',
-    type: 'string',
-  },
   isMetric: {
     name: 'isMetric',
     type: 'boolean',

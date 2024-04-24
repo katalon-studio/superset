@@ -20,8 +20,7 @@ import React, { ReactNode, ReactElement } from 'react';
 import { css, SupersetTheme, t, useTheme } from '@superset-ui/core';
 import { AntdDropdown, AntdDropdownProps } from 'src/components';
 import { TooltipPlacement } from 'src/components/Tooltip';
-import { getUrlParam } from 'src/utils/urlUtils';
-import { URL_PARAMS } from 'src/constants';
+import { getIsKatalonEmbeddedDashboard } from 'src/utils/getIsKatalonEmbeddedDashboard';
 import {
   DynamicEditableTitle,
   DynamicEditableTitleProps,
@@ -105,6 +104,16 @@ const additionalActionsContainerStyles = (theme: SupersetTheme) => css`
   margin-left: ${theme.gridUnit * 2}px;
 `;
 
+const renderKatalonVersion = (rightPanelAdditionalItems: any) => (
+  <div css={headerStyles} className="header-with-actions">
+    <div className="title-panel" />
+    <div className="right-button-panel">
+      {rightPanelAdditionalItems}
+      <div css={additionalActionsContainerStyles} />
+    </div>
+  </div>
+);
+
 export type PageHeaderWithActionsProps = {
   editableTitleProps: DynamicEditableTitleProps;
   showTitlePanelItems: boolean;
@@ -136,31 +145,31 @@ export const PageHeaderWithActions = ({
   tooltipProps,
 }: PageHeaderWithActionsProps) => {
   const theme = useTheme();
-  const isKatalonEmbeddedDashboard = getUrlParam(
-    URL_PARAMS.isKatalonEmbeddedMode,
-  );
+
+  // Begin code of Katalon hide hamburger icon
+  if (getIsKatalonEmbeddedDashboard()) {
+    return renderKatalonVersion(rightPanelAdditionalItems);
+  }
+  // End code of Katalon hide hamburger icon
+
   return (
     <div css={headerStyles} className="header-with-actions">
       <div className="title-panel">
-        {!isKatalonEmbeddedDashboard && (
-          <>
-            <DynamicEditableTitle {...editableTitleProps} />
-            {showTitlePanelItems && (
-              <div css={buttonsStyles}>
-                {certificatiedBadgeProps?.certifiedBy && (
-                  <CertifiedBadge {...certificatiedBadgeProps} />
-                )}
-                {showFaveStar && <FaveStar {...faveStarProps} />}
-                {titlePanelAdditionalItems}
-              </div>
+        <DynamicEditableTitle {...editableTitleProps} />
+        {showTitlePanelItems && (
+          <div css={buttonsStyles}>
+            {certificatiedBadgeProps?.certifiedBy && (
+              <CertifiedBadge {...certificatiedBadgeProps} />
             )}
-          </>
+            {showFaveStar && <FaveStar {...faveStarProps} />}
+            {titlePanelAdditionalItems}
+          </div>
         )}
       </div>
       <div className="right-button-panel">
         {rightPanelAdditionalItems}
         <div css={additionalActionsContainerStyles}>
-          {!isKatalonEmbeddedDashboard && showMenuDropdown && (
+          {showMenuDropdown && (
             <AntdDropdown
               trigger={['click']}
               overlay={additionalActionsMenu}
