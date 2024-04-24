@@ -6,15 +6,32 @@ import moment from 'moment';
 import Config from '../../../config';
 import MoreChip from './components/MoreChip';
 
-// TODO: icon for TERMINATE
+interface iconProps {
+  src: string;
+  size: string;
+}
+
+const Icon = ({ src, size }: iconProps) => (
+  <img
+    style={{
+      width: size,
+      height: size,
+      marginRight: '2px',
+    }}
+    src={src}
+    alt="icon"
+  />
+);
+
 const statusIconMapper = {
-  PASSED: '/static/assets/images/katalon/status-passed.svg',
-  FAILED: '/static/assets/images/katalon/status-failed.svg',
-  INCOMPLETE: '/static/assets/images/katalon/status-incomplete.svg',
   ERROR: '/static/assets/images/katalon/status-error.svg',
+  FAILED: '/static/assets/images/katalon/status-failed.svg',
   IMPORTING: '/static/assets/images/katalon/status-importing.svg',
+  INCOMPLETE: '/static/assets/images/katalon/status-incomplete.svg',
+  PASSED: '/static/assets/images/katalon/status-passed.svg',
   RUNNING: '/static/assets/images/katalon/status-running.svg',
-  TERMINATE: '/static/assets/images/katalon/status-terminate.svg',
+  SKIPPED: '/static/assets/images/katalon/status-skipped.svg',
+  TERMINATE: '/static/assets/images/katalon/status-terminate.svg', // TODO: icon for TERMINATE
 };
 
 const osIconMapper = (name: string) => {
@@ -61,14 +78,7 @@ const statusDecorator = (value: string) => (
       height: '100%',
     }}
   >
-    <img
-      style={{
-        width: '14px',
-        height: '14px',
-      }}
-      src={statusIconMapper[value]}
-      alt="icon"
-    />
+    <Icon src={statusIconMapper[value]} size="16px" />
   </div>
 );
 
@@ -116,16 +126,8 @@ const profileDecorator = (profiles: string[]) => {
         alignItems: 'center',
       }}
     >
-      <img
-        style={{
-          width: '16px',
-          height: '16px',
-          marginRight: '8px',
-        }}
-        src="/static/assets/images/katalon/profile.svg"
-        alt="icon"
-      />
-      <span>{decoratedProfiles}</span>
+      <Icon src="/static/assets/images/katalon/profile.svg" size="14px" />
+      <span style={{ marginLeft: '4px' }}>{decoratedProfiles}</span>
     </div>
   );
 };
@@ -154,23 +156,8 @@ const environmentDecorator = (environmentList: any[]) => {
     <div>
       {list.slice(maxDisplay).map(environment => (
         <div style={{ margin: '10px 4px' }}>
-          <img
-            style={{
-              width: '16px',
-              height: '16px',
-              marginRight: '2px',
-            }}
-            src={osIconMapper(environment.os)}
-            alt="icon"
-          />
-          <img
-            style={{
-              width: '16px',
-              height: '16px',
-            }}
-            src={browserIconMapper(environment.browser)}
-            alt="icon"
-          />
+          <Icon src={osIconMapper(environment.os)} size="16px" />
+          <Icon src={browserIconMapper(environment.browser)} size="16px" />
         </div>
       ))}
     </div>
@@ -183,23 +170,8 @@ const environmentDecorator = (environmentList: any[]) => {
           {index > 0 && index < maxDisplay && (
             <span style={{ color: '#dbdde5', margin: '0 4px' }}>|</span>
           )}
-          <img
-            style={{
-              width: '16px',
-              height: '16px',
-              marginRight: '2px',
-            }}
-            src={osIconMapper(environment.os)}
-            alt="icon"
-          />
-          <img
-            style={{
-              width: '16px',
-              height: '16px',
-            }}
-            src={browserIconMapper(environment.browser)}
-            alt="icon"
-          />
+          <Icon src={osIconMapper(environment.os)} size="16px" />
+          <Icon src={browserIconMapper(environment.browser)} size="16px" />
         </div>
       ))}
       {list.length > maxDisplay && (
@@ -235,15 +207,7 @@ const testResultStatusDecorator = (testResultStatus: any) => {
         width: '50px',
       }}
     >
-      <img
-        style={{
-          width: '12px',
-          height: '12px',
-          marginRight: '4px',
-        }}
-        src={icon}
-        alt="icon"
-      />
+      <Icon src={icon} size="14px" />
       <span style={{ fontSize: '12px', fontWeight: 500 }}>{amount}</span>
     </div>
   );
@@ -268,7 +232,7 @@ const testResultStatusDecorator = (testResultStatus: any) => {
         <div style={{ height: '100%', borderRight: '1px dashed #dbdde5' }} />
         <Cell icon={statusIconMapper.INCOMPLETE} amount={totalIncomplete} />
         <div style={{ height: '100%', borderRight: '1px dashed #dbdde5' }} />
-        <Cell icon={statusIconMapper.INCOMPLETE} amount={totalSkipped} />
+        <Cell icon={statusIconMapper.SKIPPED} amount={totalSkipped} />
       </div>
     </div>
   );
