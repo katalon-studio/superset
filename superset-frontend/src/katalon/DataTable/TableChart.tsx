@@ -41,6 +41,15 @@ const useStyles = makeStyles(() => ({
 
 const PAGE_SIZE = 10;
 
+const parseJSON = (value: any) => {
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    console.error(error);
+    return value;
+  }
+};
+
 const formatData = (data: any) =>
   data.map((row: any) => {
     const {
@@ -54,15 +63,6 @@ const formatData = (data: any) =>
       test_suite_name,
       ...rest
     } = row;
-
-    const parseJSON = (value: any) => {
-      try {
-        return JSON.parse(value);
-      } catch (error) {
-        console.error(error);
-        return value;
-      }
-    };
 
     const parsedConfiguration = parseJSON(configuration);
     const parsedProfile = parseJSON(profile);
@@ -98,10 +98,8 @@ export default function TableChart<D extends DataRecord = DataRecord>(
   const classes = useStyles();
 
   const { data } = props;
-  console.log('data', data);
 
   const rows = formatData(data);
-  console.log('rows', rows);
 
   const columns: GridColDef[] = [
     {

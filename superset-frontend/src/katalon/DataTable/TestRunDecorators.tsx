@@ -71,20 +71,26 @@ const browserIconMapper = (name: string) => {
   return '';
 };
 
-const statusDecorator = (value: string) => (
-  <div
-    style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: '100%',
-    }}
-  >
-    <Icon src={statusIconMapper[value]} size="16px" />
-  </div>
-);
+const statusDecorator = (value: string) => {
+  if (!value) return <span>N/A</span>;
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100%',
+      }}
+    >
+      <Icon src={statusIconMapper[value]} size="16px" />
+    </div>
+  );
+};
 
 const IDDecorator = (id: string) => {
+  if (!id) return <span>N/A</span>;
+
   const projectId = getUrlParam(URL_PARAMS.projectId);
   const masterAppHost = Config.masterApp;
 
@@ -101,7 +107,7 @@ const IDDecorator = (id: string) => {
 };
 
 const nameDecorator = (nameList: string[]) => {
-  if (!nameList || nameList.length === 0) return null;
+  if (!nameList || nameList.length === 0) return <span>N/A</span>;
 
   return (
     <span
@@ -117,44 +123,63 @@ const nameDecorator = (nameList: string[]) => {
   );
 };
 
-const profileDecorator = (profiles: string[]) => {
-  if (!profiles || profiles.length === 0) return null;
+const profileDecorator = (profileList: string[]) => {
+  if (!profileList || profileList.length === 0) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+        <div style={{ marginRight: '4px' }}>
+          <Icon src="/static/assets/images/katalon/profile.svg" size="16px" />
+        </div>
+        <span>N/A</span>
+      </div>
+    );
+  }
 
-  const decoratedProfiles = profiles.join(', ');
+  const renderTooltipContent = () => (
+    <div>
+      {profileList.slice(MAX_DISPLAY_PER_COLUMN).map(profile => (
+        <div style={{ margin: '12px 4px' }}>
+          <span style={{ fontSize: '12px' }}>{profile}</span>
+        </div>
+      ))}
+    </div>
+  );
+
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-      }}
-    >
-      <Icon src="/static/assets/images/katalon/profile.svg" size="14px" />
-      <span style={{ marginLeft: '4px' }}>{decoratedProfiles}</span>
+    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+      <div style={{ marginRight: '4px' }}>
+        <Icon src="/static/assets/images/katalon/profile.svg" size="16px" />
+      </div>
+      {profileList.slice(0, MAX_DISPLAY_PER_COLUMN).map((profile, index) => (
+        <div>
+          {index > 0 && index < MAX_DISPLAY_PER_COLUMN && <span>, </span>}
+          <span>{profile}</span>
+        </div>
+      ))}
+      {profileList.length > MAX_DISPLAY_PER_COLUMN && (
+        <MoreChip
+          amount={profileList.length - MAX_DISPLAY_PER_COLUMN}
+          tooltipContent={renderTooltipContent()}
+        />
+      )}
     </div>
   );
 };
 
 const durationDecorator = (milliseconds: number) => {
+  if (!milliseconds) return <span>N/A</span>;
+
   let decoratedDuration = moment.utc(milliseconds).format('HH[h] mm[m] ss[s]');
   decoratedDuration = decoratedDuration.replace(/00[hms]/g, '').trim();
-
   return <span>{decoratedDuration}</span>;
 };
 
 const environmentDecorator = (environmentList: any[]) => {
-  // TODO - Uncomment this line and remove the mock data
-  // if (!environmentList || environmentList.length === 0) return null;
-
-  const list = [
-    { os: 'Windows', browser: 'Edge' },
-    { os: 'Windows', browser: 'Chrome' },
-    { os: 'MacOS', browser: 'Chrome' },
-    { os: 'MacOS', browser: 'Edge' },
-  ];
+  if (!environmentList || environmentList.length === 0) return <span>N/A</span>;
 
   const renderTooltipContent = () => (
     <div>
-      {list.slice(MAX_DISPLAY_PER_COLUMN).map(environment => (
+      {environmentList.slice(MAX_DISPLAY_PER_COLUMN).map(environment => (
         <div style={{ margin: '10px 4px' }}>
           <Icon src={osIconMapper(environment.os)} size="16px" />
           <Icon src={browserIconMapper(environment.browser)} size="16px" />
@@ -165,18 +190,22 @@ const environmentDecorator = (environmentList: any[]) => {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-      {list.slice(0, 2).map((environment, index) => (
+      {environmentList.slice(0, 2).map((environment, index) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
           {index > 0 && index < MAX_DISPLAY_PER_COLUMN && (
             <span style={{ color: '#dbdde5', margin: '0 4px' }}>|</span>
           )}
-          <Icon src={osIconMapper(environment.os)} size="16px" />
-          <Icon src={browserIconMapper(environment.browser)} size="16px" />
+          {environment.os && (
+            <Icon src={osIconMapper(environment.os)} size="16px" />
+          )}
+          {environment.browser && (
+            <Icon src={browserIconMapper(environment.browser)} size="16px" />
+          )}
         </div>
       ))}
-      {list.length > MAX_DISPLAY_PER_COLUMN && (
+      {environmentList.length > MAX_DISPLAY_PER_COLUMN && (
         <MoreChip
-          amount={list.length - MAX_DISPLAY_PER_COLUMN}
+          amount={environmentList.length - MAX_DISPLAY_PER_COLUMN}
           tooltipContent={renderTooltipContent()}
         />
       )}
@@ -185,11 +214,15 @@ const environmentDecorator = (environmentList: any[]) => {
 };
 
 const timeStartedDecorator = (date: Date) => {
+  if (!date) return <span>N/A</span>;
+
   const formattedDate = moment(date).format('DD/MM/YYYY HH:mm');
   return <span>{formattedDate}</span>;
 };
 
 const testResultStatusDecorator = (testResultStatus: any) => {
+  if (!testResultStatus) return <span>N/A</span>;
+
   const {
     totalPassed,
     totalFailed,
@@ -239,10 +272,9 @@ const testResultStatusDecorator = (testResultStatus: any) => {
 };
 
 const configurationDecorator = (configurationList: string[]) => {
-  // TODO - Uncomment this line and remove the mock data
-  // if (!configurationList || configurationList.length === 0) return null;
-
-  const list = ['112', '143', '254', '367', '409'];
+  if (!configurationList || configurationList.length === 0) {
+    return <span>N/A</span>;
+  }
 
   const projectId = getUrlParam(URL_PARAMS.projectId);
   const masterAppHost = Config.masterApp;
@@ -250,7 +282,7 @@ const configurationDecorator = (configurationList: string[]) => {
 
   const renderTooltipContent = () => (
     <div>
-      {list.slice(MAX_DISPLAY_PER_COLUMN).map(configuration => (
+      {configurationList.slice(MAX_DISPLAY_PER_COLUMN).map(configuration => (
         <div style={{ margin: '12px 4px' }}>
           <a
             style={{ color: '#1222a9', fontWeight: 500, fontSize: '12px' }}
@@ -267,22 +299,24 @@ const configurationDecorator = (configurationList: string[]) => {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-      {list.slice(0, MAX_DISPLAY_PER_COLUMN).map((configuration, index) => (
-        <div>
-          {index > 0 && index < MAX_DISPLAY_PER_COLUMN && <span>, </span>}
-          <a
-            style={{ color: '#1222a9', fontWeight: 500 }}
-            href={`${configurationLink}/${configuration}`} // TODO: Update the URL
-            target="_blank"
-            rel="noreferrer"
-          >
-            {`#${configuration}`}
-          </a>
-        </div>
-      ))}
-      {list.length > MAX_DISPLAY_PER_COLUMN && (
+      {configurationList
+        .slice(0, MAX_DISPLAY_PER_COLUMN)
+        .map((configuration, index) => (
+          <div>
+            {index > 0 && index < MAX_DISPLAY_PER_COLUMN && <span>, </span>}
+            <a
+              style={{ color: '#1222a9', fontWeight: 500 }}
+              href={`${configurationLink}/${configuration}`} // TODO: Update the URL
+              target="_blank"
+              rel="noreferrer"
+            >
+              {`#${configuration}`}
+            </a>
+          </div>
+        ))}
+      {configurationList.length > MAX_DISPLAY_PER_COLUMN && (
         <MoreChip
-          amount={list.length - MAX_DISPLAY_PER_COLUMN}
+          amount={configurationList.length - MAX_DISPLAY_PER_COLUMN}
           tooltipContent={renderTooltipContent()}
         />
       )}
@@ -291,16 +325,12 @@ const configurationDecorator = (configurationList: string[]) => {
 };
 
 const executorDecorator = (executor: any) => {
-  if (!executor) return null;
+  if (!executor) return <span>N/A</span>;
 
   const { name, avatar } = executor;
-  // const executorAvatar = avatar
-  //   ? `https://katalon-testops-qa-testops-bucket.s3.amazonaws.com/${avatar}` // TODO: Update the URL based on environment
-  //   : 'https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png';
-
-  // TODO: Remove this mock data
-  const executorAvatar =
-    'https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png';
+  const executorAvatar = avatar
+    ? `https://katalon-testops-qa-testops-bucket.s3.amazonaws.com/${avatar}` // TODO: Update the URL based on environment
+    : 'https://katalon-testops.s3.amazonaws.com/image/icon/defaultAvatar.png';
 
   return (
     <div
