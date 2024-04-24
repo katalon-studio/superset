@@ -10,8 +10,6 @@ export type DropdownLabel = {
   onClick?: (event: React.MouseEvent) => void;
 };
 
-const ACTIVE_COLOR = '#1718191A';
-
 const LabelContainer = styled.div<{
   isActive?: boolean;
   isPlaceholder?: boolean;
@@ -24,18 +22,18 @@ const LabelContainer = styled.div<{
     align-items: center;
     flex-wrap: nowrap;
 
-    padding: 0 16px;
+    padding: 0 8px 0 12px;
 
     background-color: #FFFFFF;
 
-    border: 1px solid ${isActive ? ACTIVE_COLOR : '#dbdde5'};
+    border: 1px solid ${isActive ? '#0F1866' : '#dbdde5'};
     border-radius: 4px;
 
     cursor: pointer;
 
     transition: border-color 0.3s cubic-bezier(0.65, 0.05, 0.36, 1);
 
-    background-color: ${isActive && ACTIVE_COLOR};
+    background-color: ${isActive && '#F2F3FA'};
 
     .date-label-content {
       color: ${isPlaceholder ? '#B2B2B2' : '#000000'};
@@ -45,6 +43,10 @@ const LabelContainer = styled.div<{
       flex-shrink: 1;
       white-space: nowrap;
       width: 100%;
+    }
+
+    svg {
+      font-size: 25px;
     }
 
     span[role='img'] {
