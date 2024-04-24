@@ -6,6 +6,8 @@ import moment from 'moment';
 import Config from '../../../config';
 import MoreChip from './components/MoreChip';
 
+const MAX_DISPLAY_PER_COLUMN = 2;
+
 interface iconProps {
   src: string;
   size: string;
@@ -150,11 +152,9 @@ const environmentDecorator = (environmentList: any[]) => {
     { os: 'MacOS', browser: 'Edge' },
   ];
 
-  const maxDisplay = 2;
-
   const renderTooltipContent = () => (
     <div>
-      {list.slice(maxDisplay).map(environment => (
+      {list.slice(MAX_DISPLAY_PER_COLUMN).map(environment => (
         <div style={{ margin: '10px 4px' }}>
           <Icon src={osIconMapper(environment.os)} size="16px" />
           <Icon src={browserIconMapper(environment.browser)} size="16px" />
@@ -167,16 +167,16 @@ const environmentDecorator = (environmentList: any[]) => {
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
       {list.slice(0, 2).map((environment, index) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          {index > 0 && index < maxDisplay && (
+          {index > 0 && index < MAX_DISPLAY_PER_COLUMN && (
             <span style={{ color: '#dbdde5', margin: '0 4px' }}>|</span>
           )}
           <Icon src={osIconMapper(environment.os)} size="16px" />
           <Icon src={browserIconMapper(environment.browser)} size="16px" />
         </div>
       ))}
-      {list.length > maxDisplay && (
+      {list.length > MAX_DISPLAY_PER_COLUMN && (
         <MoreChip
-          amount={list.length - maxDisplay}
+          amount={list.length - MAX_DISPLAY_PER_COLUMN}
           tooltipContent={renderTooltipContent()}
         />
       )}
@@ -244,15 +244,13 @@ const configurationDecorator = (configurationList: string[]) => {
 
   const list = ['112', '143', '254', '367', '409'];
 
-  const maxDisplay = 2;
-
   const projectId = getUrlParam(URL_PARAMS.projectId);
   const masterAppHost = Config.masterApp;
   const configurationLink = `${masterAppHost}/project/${projectId}/configuration`;
 
   const renderTooltipContent = () => (
     <div>
-      {list.slice(maxDisplay).map(configuration => (
+      {list.slice(MAX_DISPLAY_PER_COLUMN).map(configuration => (
         <div style={{ margin: '12px 4px' }}>
           <a
             style={{ color: '#1222a9', fontWeight: 500, fontSize: '12px' }}
@@ -269,9 +267,9 @@ const configurationDecorator = (configurationList: string[]) => {
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
-      {list.slice(0, maxDisplay).map((configuration, index) => (
+      {list.slice(0, MAX_DISPLAY_PER_COLUMN).map((configuration, index) => (
         <div>
-          {index > 0 && index < maxDisplay && <span>, </span>}
+          {index > 0 && index < MAX_DISPLAY_PER_COLUMN && <span>, </span>}
           <a
             style={{ color: '#1222a9', fontWeight: 500 }}
             href={`${configurationLink}/${configuration}`} // TODO: Update the URL
@@ -282,9 +280,9 @@ const configurationDecorator = (configurationList: string[]) => {
           </a>
         </div>
       ))}
-      {list.length > maxDisplay && (
+      {list.length > MAX_DISPLAY_PER_COLUMN && (
         <MoreChip
-          amount={list.length - maxDisplay}
+          amount={list.length - MAX_DISPLAY_PER_COLUMN}
           tooltipContent={renderTooltipContent()}
         />
       )}
