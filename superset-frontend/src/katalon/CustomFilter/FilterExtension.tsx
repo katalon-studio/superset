@@ -131,8 +131,8 @@ function FilterExtension(props: FilterExtensionProps) {
   const renderAddMoreButton = () => {
     // Take the list all filters,
     // then device them into two parts
-    const visibleFilter: FilterItem[] = items.slice(0, 2);
-    const invisbleFilter: FilterItem[] = items.slice(2);
+    const visibleFilter: FilterItem[] = items.slice(0, 4);
+    const invisbleFilter: FilterItem[] = items.slice(4);
 
     return (
       <ContentStyleWrapper>
@@ -152,21 +152,23 @@ function FilterExtension(props: FilterExtensionProps) {
             addFilter.map((item, index) => (
               <div key={index}>{item.element}</div>
             ))}
-          <Button
-            sx={{
-              height: '40px',
-              bgcolor: '#FFFFFF',
-              color: '#0F1866',
-              textTransform: 'none',
-              fontSize: 14,
-              fontWeight: 500,
-              lineHeight: '1.14',
-              whiteSpace: 'nowrap',
-            }}
-            onClick={handleClick}
-          >
-            {t('+ Add more')}
-          </Button>
+          {invisbleFilter.length !== 0 && (
+            <Button
+              sx={{
+                height: '40px',
+                bgcolor: '#FFFFFF',
+                color: '#0F1866',
+                textTransform: 'none',
+                fontSize: 14,
+                fontWeight: 500,
+                lineHeight: '1.14',
+                whiteSpace: 'nowrap',
+              }}
+              onClick={handleClick}
+            >
+              {t('+ Add more')}
+            </Button>
+          )}
           {renderPopperMenu(invisbleFilter)}
         </Stack>
       </ContentStyleWrapper>
