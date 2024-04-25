@@ -85,7 +85,8 @@ import { HandlebarsChartPlugin } from '@superset-ui/plugin-chart-handlebars';
 import TableChartPlugin from '@superset-ui/plugin-chart-table';
 import FilterBoxChartPlugin from '../FilterBox/FilterBoxChartPlugin';
 import TimeTableChartPlugin from '../TimeTable';
-import KatalonChartTable from '../../katalon/DataTable';
+import KatalonChartTable from '../../katalon/CustomDataTable';
+// import KatalonChartTable from '../../katalon/CustomDataTableV2';
 
 export default class MainPreset extends Preset {
   constructor() {
@@ -97,7 +98,7 @@ export default class MainPreset extends Preset {
 
     // Start define Katalon plugins
     const katalonPlugins = [
-      // new KatalonChartTable().configure({ key: 'table' }),
+      new KatalonChartTable().configure({ key: 'table' }),
       new KatalonSelectFilterPlugin().configure({ key: 'filter_select' }),
       new KatalonTimeFilterPlugin().configure({ key: 'filter_time' }),
     ];
