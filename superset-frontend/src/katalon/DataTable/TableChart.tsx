@@ -196,6 +196,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
       initialState={{
         pagination: { paginationModel: { pageSize: PAGE_SIZE } },
       }}
+      getRowId={row => row.execution_id}
       rowHeight={42}
       columnHeaderHeight={42}
       rows={rows}
