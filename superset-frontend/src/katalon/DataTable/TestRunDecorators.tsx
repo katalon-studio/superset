@@ -38,35 +38,35 @@ const statusIconMapper = {
 
 const osIconMapper = (name: string) => {
   if (name.toLowerCase().includes('win')) {
-    return '/static/assets/images/katalon/windows.svg';
+    return '/static/assets/images/katalon/os-windows.svg';
   }
   if (name.toLowerCase().includes('mac')) {
-    return '/static/assets/images/katalon/macos.svg';
+    return '/static/assets/images/katalon/os-macos.svg';
   }
   if (name.toLowerCase().includes('linux')) {
-    return '/static/assets/images/katalon/linux.svg';
+    return '/static/assets/images/katalon/os-linux.svg';
   }
   if (name.toLowerCase().includes('android')) {
-    return '/static/assets/images/katalon/macos.svg'; // TODO: icon for Android
+    return '/static/assets/images/katalon/os-macos.svg'; // TODO: icon for Android
   }
   if (name.toLowerCase().includes('ios')) {
-    return '/static/assets/images/katalon/macos.svg'; // TODO: icon for IOS
+    return '/static/assets/images/katalon/os-macos.svg'; // TODO: icon for IOS
   }
   return '';
 };
 
 const browserIconMapper = (name: string) => {
   if (name.toLowerCase().includes('chrome')) {
-    return '/static/assets/images/katalon/chrome.svg';
+    return '/static/assets/images/katalon/browser-chrome.svg';
   }
   if (name.toLowerCase().includes('firefox')) {
-    return '/static/assets/images/katalon/firefox.svg';
+    return '/static/assets/images/katalon/browser-firefox.svg';
   }
   if (name.toLowerCase().includes('edge')) {
-    return '/static/assets/images/katalon/edge.svg';
+    return '/static/assets/images/katalon/browser-edge.svg';
   }
   if (name.toLowerCase().includes('safari')) {
-    return '/static/assets/images/katalon/safari.svg';
+    return '/static/assets/images/katalon/browser-safari.svg';
   }
   return '';
 };
