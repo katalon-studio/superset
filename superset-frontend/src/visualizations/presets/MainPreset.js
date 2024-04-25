@@ -86,7 +86,6 @@ import TableChartPlugin from '@superset-ui/plugin-chart-table';
 import FilterBoxChartPlugin from '../FilterBox/FilterBoxChartPlugin';
 import TimeTableChartPlugin from '../TimeTable';
 import KatalonChartTable from '../../katalon/CustomDataTable';
-// import KatalonChartTable from '../../katalon/CustomDataTableV2';
 
 export default class MainPreset extends Preset {
   constructor() {
