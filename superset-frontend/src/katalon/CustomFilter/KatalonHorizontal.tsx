@@ -20,10 +20,11 @@ import { HorizontalBarProps } from 'src/dashboard/components/nativeFilters/Filte
 import { DashboardLayout, RootState } from 'src/dashboard/types';
 import { crossFiltersSelector } from 'src/dashboard/components/nativeFilters/FilterBar/CrossFilters/selectors';
 import { getUrlParam } from 'src/utils/urlUtils';
-import { URL_PARAMS } from 'src/constants';
 import FilterConfigurationLink from 'src/dashboard/components/nativeFilters/FilterBar/FilterConfigurationLink';
 import FilterBarSettings from 'src/dashboard/components/nativeFilters/FilterBar/FilterBarSettings';
 import FilterControls from 'src/dashboard/components/nativeFilters/FilterBar/FilterControls/FilterControls';
+import { KATALON_URL_PARAMS } from '../Constant';
+import { getIsKatalonEmbeddedDashboard } from 'src/utils/getIsKatalonEmbeddedDashboard';
 
 const HorizontalBar = styled.div`
   ${({ theme }) => `
@@ -121,7 +122,7 @@ const HorizontalFilterBar: React.FC<HorizontalBarProps> = ({
     [actions],
   );
 
-  const isKatalonEmbeddedMode = getUrlParam(URL_PARAMS.isKatalonEmbeddedMode);
+  const isKatalonEmbeddedMode = getIsKatalonEmbeddedDashboard();
 
   return (
     <HorizontalBar {...getFilterBarTestId()}>

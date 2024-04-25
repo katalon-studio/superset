@@ -53,17 +53,15 @@ import {
 
 import { makeStyles } from '@mui/styles';
 import { DataGrid, GridColDef } from '@katalon-studio/katalon-ui/v2';
-import { getUrlParam } from 'src/utils/urlUtils';
-import { URL_PARAMS } from 'src/constants';
+// eslint-disable-next-line import/no-unresolved
+import { getKatalonProjectId } from 'src/utils/getIsKatalonEmbeddedDashboard';
 import { DataColumnMeta, TableChartTransformedProps } from './types';
-import DataTable, {
+import {
   DataTableProps,
   SearchInputProps,
   SelectPageSizeRendererProps,
   SizeOption,
 } from './DataTable';
-
-import Styles from './Styles';
 import { formatColumnValue } from './utils/formatValue';
 import { PAGE_SIZE_OPTIONS } from './consts';
 import { updateExternalFormData } from './DataTable/utils/externalAPIs';
@@ -818,7 +816,7 @@ export default function TableChart<D extends DataRecord = DataRecord>(
   );
 
   const IDDecorator = (id: string) => {
-    const projectId = getUrlParam(URL_PARAMS.projectId);
+    const projectId = getKatalonProjectId();
     const masterAppHost = Config.masterApp;
 
     return (

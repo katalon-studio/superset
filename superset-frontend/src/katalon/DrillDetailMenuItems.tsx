@@ -19,12 +19,12 @@ import { MenuItemWithTruncation } from 'src/components/Chart/MenuItemWithTruncat
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-unresolved
-import { getUrlParam } from 'src/utils/urlUtils';
-// eslint-disable-next-line import/no-unresolved
-import { URL_PARAMS } from 'src/constants';
-// eslint-disable-next-line import/no-unresolved
 import Config from 'config';
-import { SlugSliceNameMapping } from './Constant';
+import {
+  getKatalonIsMetric,
+  getKatalonProjectId,
+// eslint-disable-next-line import/no-unresolved
+} from 'src/utils/getIsKatalonEmbeddedDashboard';
 
 const DRILL_TO_DETAIL_TEXT = t('Drill to detail by');
 
@@ -88,15 +88,15 @@ const DrillDetailMenuItems = ({
     (state: { sliceEntities: { slices: any[] } }) =>
       state.sliceEntities.slices[chartId],
   );
-  const projectId = getUrlParam(URL_PARAMS.projectId);
-  const isMetric = getUrlParam(URL_PARAMS.isMetric);
+  const projectId = getKatalonProjectId();
+  const isMetric = getKatalonIsMetric();
   const masterAppHost = Config.masterApp;
   const openNewMetric = useCallback(
     (filters, event) => {
       onClick(event);
       onSelection();
       window.open(
-        `${masterAppHost}/project/${projectId}/ra/metric/${SlugSliceNameMapping[chartName]}`,
+        `${masterAppHost}/project/${projectId}/chart/${chartName}/detail`,
         '_blank',
       );
     },
