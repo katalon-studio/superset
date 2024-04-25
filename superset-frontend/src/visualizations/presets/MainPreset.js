@@ -97,7 +97,7 @@ export default class MainPreset extends Preset {
 
     // Start define Katalon plugins
     const katalonPlugins = [
-      new KatalonChartTable().configure({ key: 'table' }),
+      // new KatalonChartTable().configure({ key: 'table' }),
       new KatalonSelectFilterPlugin().configure({ key: 'filter_select' }),
       new KatalonTimeFilterPlugin().configure({ key: 'filter_time' }),
     ];
