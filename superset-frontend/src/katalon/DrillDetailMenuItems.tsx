@@ -96,7 +96,7 @@ const DrillDetailMenuItems = ({
       onClick(event);
       onSelection();
       window.open(
-        `${masterAppHost}/project/${projectId}/chart/${chartName}/detail`,
+        `${masterAppHost}/project/${projectId}/ra/chart/${chartName}/detail`,
         '_blank',
       );
     },
