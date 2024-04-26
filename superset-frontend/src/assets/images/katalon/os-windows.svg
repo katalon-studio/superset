@@ -1,11 +1,11 @@
-<svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g clip-path="url(#s5omxx56va)">
-        <path d="M8.88 16a7.748 7.748 0 1 0 0-15.496A7.748 7.748 0 0 0 8.88 16z" fill="#01A1EE"/>
-        <path fill-rule="evenodd" clip-rule="evenodd" d="m4.62 5.103 3.173-.476.249-.045v3.512H4.44V5.126l.18-.023zm3.92-.589 4.237-.634.25-.046v4.26H8.358V4.537l.181-.023zm4.486 4.123v4.011l-.25-.023-4.236-.635-.18-.045V8.411h4.666v.226zm-5.233 3.217L4.62 11.38l-.181-.023V8.411h3.602V11.9l-.25-.046z" fill="#FEFEFE"/>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#i6ymzys3ta)">
+        <path d="M8.363 16a7.748 7.748 0 1 0 0-15.496 7.748 7.748 0 0 0 0 15.496z" fill="#01A1EE"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" d="m4.104 5.103 3.172-.476.25-.045V8.093H3.922V5.125l.181-.022zm3.92-.59 4.236-.634.25-.045V8.093H7.841V4.536l.181-.022zm4.485 4.124v4.01l-.249-.023-4.237-.634-.18-.045V8.41h4.666v.227zm-5.233 3.217-3.172-.476-.181-.022V8.41h3.602V11.9l-.25-.045z" fill="#FEFEFE"/>
     </g>
     <defs>
-        <clipPath id="s5omxx56va">
-            <path fill="#fff" transform="translate(.517)" d="M0 0h16v16H0z"/>
+        <clipPath id="i6ymzys3ta">
+            <path fill="#fff" d="M0 0h16v16H0z"/>
         </clipPath>
     </defs>
 </svg>

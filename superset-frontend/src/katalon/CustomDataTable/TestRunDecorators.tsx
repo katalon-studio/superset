@@ -29,11 +29,11 @@ const statusIconMapper = {
   ERROR: '/static/assets/images/katalon/status-error.svg',
   FAILED: '/static/assets/images/katalon/status-failed.svg',
   IMPORTING: '/static/assets/images/katalon/status-importing.svg',
-  INCOMPLETE: '/static/assets/images/katalon/status-incomplete.svg',
+  INCOMPLETE: '/static/assets/images/katalon/status-incomplete.svg', // TODO: icon for INCOMPLETE
   PASSED: '/static/assets/images/katalon/status-passed.svg',
   RUNNING: '/static/assets/images/katalon/status-running.svg',
   SKIPPED: '/static/assets/images/katalon/status-skipped.svg',
-  TERMINATE: '/static/assets/images/katalon/status-terminate.svg', // TODO: icon for TERMINATE
+  TERMINATE: '/static/assets/images/katalon/status-terminate.svg',
 };
 
 const osIconMapper = (name: string) => {
@@ -47,12 +47,12 @@ const osIconMapper = (name: string) => {
     return '/static/assets/images/katalon/os-linux.svg';
   }
   if (name.toLowerCase().includes('android')) {
-    return '/static/assets/images/katalon/os-macos.svg'; // TODO: icon for Android
+    return '/static/assets/images/katalon/os-android.svg';
   }
   if (name.toLowerCase().includes('ios')) {
-    return '/static/assets/images/katalon/os-macos.svg'; // TODO: icon for IOS
+    return '/static/assets/images/katalon/os-ios.svg';
   }
-  return '';
+  return '/static/assets/images/katalon/undetected.svg';
 };
 
 const browserIconMapper = (name: string) => {
@@ -68,7 +68,7 @@ const browserIconMapper = (name: string) => {
   if (name.toLowerCase().includes('safari')) {
     return '/static/assets/images/katalon/browser-safari.svg';
   }
-  return '';
+  return '/static/assets/images/katalon/undetected.svg';
 };
 
 const statusDecorator = (value: string) => {
@@ -124,7 +124,11 @@ const nameDecorator = (nameList: string[]) => {
 };
 
 const profileDecorator = (profileList: string[]) => {
-  if (!profileList || profileList.length === 0) {
+  if (
+    !profileList ||
+    profileList.length === 0 ||
+    profileList.every(item => !item)
+  ) {
     return (
       <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
         <div style={{ marginRight: '4px' }}>
@@ -171,11 +175,20 @@ const durationDecorator = (milliseconds: number) => {
 
   let decoratedDuration = moment.utc(milliseconds).format('HH[h] mm[m] ss[s]');
   decoratedDuration = decoratedDuration.replace(/00[hms]/g, '').trim();
+  if (decoratedDuration === '') {
+    decoratedDuration = '0s';
+  }
   return <span>{decoratedDuration}</span>;
 };
 
 const environmentDecorator = (environmentList: any[]) => {
-  if (!environmentList || environmentList.length === 0) return <span>N/A</span>;
+  if (
+    !environmentList ||
+    environmentList.length === 0 ||
+    environmentList.every(item => !item.os && !item.browser)
+  ) {
+    return <span>N/A</span>;
+  }
 
   const renderTooltipContent = () => (
     <div>
@@ -197,6 +210,9 @@ const environmentDecorator = (environmentList: any[]) => {
           )}
           {environment.os && (
             <Icon src={osIconMapper(environment.os)} size="16px" />
+          )}
+          {environment.device && (
+            <Icon src="/static/assets/images/katalon/mobile.svg" size="16px" />
           )}
           {environment.browser && (
             <Icon src={browserIconMapper(environment.browser)} size="16px" />

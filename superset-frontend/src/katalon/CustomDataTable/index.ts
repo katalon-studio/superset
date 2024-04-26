@@ -22,6 +22,8 @@ import thumbnail from './images/thumbnail.png';
 import example1 from './images/Table.jpg';
 import example2 from './images/Table2.jpg';
 import example3 from './images/Table3.jpg';
+import controlPanel from './controlPanel';
+import buildQuery from './buildQuery';
 import { TableChartFormData, TableChartProps } from './types';
 
 // must export something for the module to be exist in dev mode
@@ -63,6 +65,8 @@ export default class TableChartPlugin extends ChartPlugin<
       loadChart: () => import('./TableChart'),
       metadata,
       transformProps,
+      controlPanel,
+      buildQuery,
     });
   }
 }
