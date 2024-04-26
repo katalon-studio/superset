@@ -146,11 +146,15 @@ function FilterExtension(props: FilterExtensionProps) {
         >
           {visibleFilter.length !== 0 &&
             visibleFilter.map((item, index) => (
-              <div key={index}>{item.element}</div>
+              <div id={item.name} key={index}>
+                {item.element}
+              </div>
             ))}
           {addFilter.length !== 0 &&
             addFilter.map((item, index) => (
-              <div key={index}>{item.element}</div>
+              <div id={item.name} key={index}>
+                {item.element}
+              </div>
             ))}
           {invisbleFilter.length !== 0 && (
             <Button

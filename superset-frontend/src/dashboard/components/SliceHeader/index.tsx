@@ -37,7 +37,7 @@ import Icons from 'src/components/Icons';
 import { RootState } from 'src/dashboard/types';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
-import { getIsKatalonEmbeddedDashboard } from 'src/utils/getIsKatalonEmbeddedDashboard';
+import { getIsKatalonEmbeddedDashboard } from 'src/utils/getKatalonParams';
 
 const extensionsRegistry = getExtensionsRegistry();
 
