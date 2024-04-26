@@ -24,7 +24,7 @@ import {
   getKatalonIsMetric,
   getKatalonProjectId,
 // eslint-disable-next-line import/no-unresolved
-} from 'src/utils/getIsKatalonEmbeddedDashboard';
+} from 'src/utils/getKatalonParams';
 
 const DRILL_TO_DETAIL_TEXT = t('Drill to detail by');
 

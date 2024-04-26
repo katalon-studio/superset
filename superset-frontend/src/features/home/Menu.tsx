@@ -34,7 +34,7 @@ import {
   MenuObjectProps,
   MenuData,
 } from 'src/types/bootstrapTypes';
-import { getIsKatalonEmbeddedDashboard } from 'src/utils/getIsKatalonEmbeddedDashboard';
+import { getIsKatalonEmbeddedDashboard } from 'src/utils/getKatalonParams';
 import RightMenu from './RightMenu';
 
 interface MenuProps {

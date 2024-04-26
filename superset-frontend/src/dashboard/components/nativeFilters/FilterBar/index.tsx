@@ -50,7 +50,7 @@ import { FilterBarOrientation, RootState } from 'src/dashboard/types';
 import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
 import KatalonHorizontal from 'src/katalon/CustomFilter/KatalonHorizontal';
 import KatalonActionButtons from 'src/katalon/KatalonActionButtons';
-import { getIsKatalonEmbeddedDashboard } from 'src/utils/getIsKatalonEmbeddedDashboard';
+import { getIsKatalonEmbeddedDashboard } from 'src/utils/getKatalonParams';
 import { checkIsApplyDisabled } from './utils';
 import { FiltersBarProps } from './types';
 import {
