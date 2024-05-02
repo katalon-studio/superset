@@ -248,8 +248,6 @@ const getNoResultsMessage = (filter: string) =>
 //   },
 // }));
 
-const PAGE_SIZE = 6;
-
 const parseJSON = (value: any) => {
   try {
     return JSON.parse(value);
