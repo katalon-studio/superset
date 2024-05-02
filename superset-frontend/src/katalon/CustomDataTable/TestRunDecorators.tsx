@@ -1,8 +1,7 @@
 /* eslint-disable theme-colors/no-literal-colors */
 import React from 'react';
-import { getUrlParam } from 'src/utils/urlUtils';
-import { URL_PARAMS } from 'src/constants';
 import moment from 'moment';
+import { getKatalonProjectId } from 'src/utils/getKatalonParams';
 import Config from '../../../config';
 import MoreChip from './components/MoreChip';
 
@@ -91,7 +90,7 @@ const statusDecorator = (value: string) => {
 const IDDecorator = (id: string) => {
   if (!id) return <span>N/A</span>;
 
-  const projectId = getUrlParam(URL_PARAMS.projectId);
+  const projectId = getKatalonProjectId();
   const masterAppHost = Config.masterApp;
 
   return (
@@ -292,7 +291,7 @@ const configurationDecorator = (configurationList: string[]) => {
     return <span>N/A</span>;
   }
 
-  const projectId = getUrlParam(URL_PARAMS.projectId);
+  const projectId = getKatalonProjectId();
   const masterAppHost = Config.masterApp;
   const configurationLink = `${masterAppHost}/project/${projectId}/configuration`;
 

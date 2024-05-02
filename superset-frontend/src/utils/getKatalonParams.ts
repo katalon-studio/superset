@@ -1,7 +1,7 @@
 import { KATALON_URL_PARAMS } from 'src/katalon/Constant';
 import { getUrlParam } from './urlUtils';
 
-export const getIsKatalonEmbeddedDashboard = () =>
+export const getKatalonUrlParams = () =>
   // @ts-ignore
   getUrlParam(KATALON_URL_PARAMS.isKatalonEmbeddedMode);
 

@@ -37,7 +37,7 @@ import Icons from 'src/components/Icons';
 import { RootState } from 'src/dashboard/types';
 import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
 import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
-import { getIsKatalonEmbeddedDashboard } from 'src/utils/getKatalonParams';
+import { getKatalonUrlParams } from 'src/utils/getKatalonParams';
 
 const extensionsRegistry = getExtensionsRegistry();
 
@@ -281,7 +281,7 @@ const SliceHeader: FC<SliceHeaderProps> = ({
   const exploreUrl = `/explore/?dashboard_page_id=${dashboardPageId}&slice_id=${slice.slice_id}`;
 
   // Begin code of Katalon simplify menu items of hamburger icon in chart
-  if (getIsKatalonEmbeddedDashboard()) {
+  if (getKatalonUrlParams()) {
     return renderKatalonVersion(
       innerRef,
       headerRef,

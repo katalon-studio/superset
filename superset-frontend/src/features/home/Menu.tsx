@@ -34,7 +34,7 @@ import {
   MenuObjectProps,
   MenuData,
 } from 'src/types/bootstrapTypes';
-import { getIsKatalonEmbeddedDashboard } from 'src/utils/getKatalonParams';
+import { getKatalonUrlParams } from 'src/utils/getKatalonParams';
 import RightMenu from './RightMenu';
 
 interface MenuProps {
@@ -297,7 +297,7 @@ export function Menu({
   };
 
   // Begin code of Katalon hide navbar
-  if (getIsKatalonEmbeddedDashboard()) {
+  if (getKatalonUrlParams()) {
     return <></>;
   }
   // End code of Katalon hide navbar
