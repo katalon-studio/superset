@@ -20,7 +20,7 @@ import React, { ReactNode, ReactElement } from 'react';
 import { css, SupersetTheme, t, useTheme } from '@superset-ui/core';
 import { AntdDropdown, AntdDropdownProps } from 'src/components';
 import { TooltipPlacement } from 'src/components/Tooltip';
-import { getKatalonUrlParams } from 'src/utils/getKatalonParams';
+import { getIsKatalonEmbeddedMode } from 'src/utils/getKatalonParams';
 import {
   DynamicEditableTitle,
   DynamicEditableTitleProps,
@@ -147,7 +147,7 @@ export const PageHeaderWithActions = ({
   const theme = useTheme();
 
   // Begin code of Katalon hide hamburger icon
-  if (getKatalonUrlParams()) {
+  if (getIsKatalonEmbeddedMode()) {
     return renderKatalonVersion(rightPanelAdditionalItems);
   }
   // End code of Katalon hide hamburger icon

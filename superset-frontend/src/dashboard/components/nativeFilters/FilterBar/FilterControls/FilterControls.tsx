@@ -67,7 +67,7 @@ import crossFiltersSelector from '../CrossFilters/selectors';
 import CrossFilter from '../CrossFilters/CrossFilter';
 import { useFilterOutlined } from '../useFilterOutlined';
 import { useChartsVerboseMaps } from '../utils';
-import { getKatalonUrlParams } from '../../../../../utils/getKatalonParams';
+import { getIsKatalonEmbeddedMode } from '../../../../../utils/getKatalonParams';
 
 type FilterControlsProps = {
   dataMaskSelected: DataMaskStateWithId;
@@ -385,7 +385,7 @@ const FilterControls: FC<FilterControlsProps> = ({
     return [...crossFilters];
   }, [filtersInScope, renderer, rendererCrossFilter, selectedCrossFilters]);
 
-  if (getKatalonUrlParams()) {
+  if (getIsKatalonEmbeddedMode()) {
     return renderKatalonVersion(
       portalNodes,
       filterIds,
