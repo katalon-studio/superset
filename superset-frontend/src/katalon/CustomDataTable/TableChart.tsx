@@ -53,7 +53,8 @@ import {
 } from '@superset-ui/core';
 
 import { makeStyles } from '@mui/styles';
-import { DataGrid, GridColDef } from '@katalon-studio/katalon-ui/v2';
+import { DataGrid } from '@katalon-studio/katalon-ui/v2';
+import { GridColDef } from '@mui/x-data-grid';
 import { DataColumnMeta, TableChartTransformedProps } from './types';
 import DataTable, {
   DataTableProps,

@@ -24,7 +24,7 @@ import FilterConfigurationLink from 'src/dashboard/components/nativeFilters/Filt
 import FilterBarSettings from 'src/dashboard/components/nativeFilters/FilterBar/FilterBarSettings';
 import FilterControls from 'src/dashboard/components/nativeFilters/FilterBar/FilterControls/FilterControls';
 import { KATALON_URL_PARAMS } from '../Constant';
-import { getIsKatalonEmbeddedDashboard } from 'src/utils/getKatalonParams';
+import { getIsKatalonEmbeddedMode } from 'src/utils/getKatalonParams';
 
 const HorizontalBar = styled.div`
   ${({ theme }) => `
@@ -122,7 +122,7 @@ const HorizontalFilterBar: React.FC<HorizontalBarProps> = ({
     [actions],
   );
 
-  const isKatalonEmbeddedMode = getIsKatalonEmbeddedDashboard();
+  const isKatalonEmbeddedMode = getIsKatalonEmbeddedMode();
 
   return (
     <HorizontalBar {...getFilterBarTestId()}>
