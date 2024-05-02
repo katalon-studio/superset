@@ -26,7 +26,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
-    "@katalon-studio/katalon-ui": "^0.1.8",
+    "@katalon-studio/katalon-ui": "0.1.9-develop.8918735798",
     "@mui/icons-material": "^5.15.15",
     "@mui/lab": "^5.0.0-alpha.65",
     "@mui/material": "^5.15.14",
@@ -48,8 +48,6 @@
     "xss": "^1.0.10"
   },
   "peerDependencies": {
-    "@superset-ui/chart-controls": "*",
-    "@superset-ui/core": "*",
     "@testing-library/dom": "^7.29.4",
     "@testing-library/jest-dom": "^5.11.6",
     "@testing-library/react": "^11.2.0",

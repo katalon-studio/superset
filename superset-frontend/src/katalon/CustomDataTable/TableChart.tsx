@@ -52,9 +52,9 @@ import {
   DataRecord,
 } from '@superset-ui/core';
 
-import { makeStyles } from '@mui/styles';
+import { theme } from '@katalon-studio/katalon-ui/Theme';
+import { ThemeProvider } from '@mui/material/styles';
 import { DataGrid } from '@katalon-studio/katalon-ui/v2';
-import { GridColDef } from '@mui/x-data-grid';
 import { DataColumnMeta, TableChartTransformedProps } from './types';
 import DataTable, {
   DataTableProps,
@@ -227,28 +227,28 @@ function SelectPageSize({
 const getNoResultsMessage = (filter: string) =>
   filter ? t('No matching records found') : t('No records found');
 
-const useStyles = makeStyles(() => ({
-  tableHeader: {
-    backgroundColor: '#f7f9fb',
-    '& .MuiDataGrid-columnHeaderTitle': {
-      color: '#46474d',
-      fontSize: '11px',
-      fontWeight: 700,
-    },
-  },
-  lastColumnHeader: {
-    backgroundColor: '#f7f9fb',
-    width: '100%',
-    '& .MuiDataGrid-columnHeaderTitle': {
-      color: '#46474d',
-      fontSize: '11px',
-      fontWeight: 700,
-      paddingRight: '16px',
-    },
-  },
-}));
+// const useStyles = makeStyles(() => ({
+//   tableHeader: {
+//     backgroundColor: '#f7f9fb',
+//     '& .MuiDataGrid-columnHeaderTitle': {
+//       color: '#46474d',
+//       fontSize: '11px',
+//       fontWeight: 700,
+//     },
+//   },
+//   lastColumnHeader: {
+//     backgroundColor: '#f7f9fb',
+//     width: '100%',
+//     '& .MuiDataGrid-columnHeaderTitle': {
+//       color: '#46474d',
+//       fontSize: '11px',
+//       fontWeight: 700,
+//       paddingRight: '16px',
+//     },
+//   },
+// }));
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 6;
 
 const parseJSON = (value: any) => {
   try {
@@ -802,118 +802,92 @@ export default function TableChart<D extends DataRecord = DataRecord>(
 
   const { width: widthFromState, height: heightFromState } = tableSize;
 
-  const classes = useStyles();
-
   const rows = formatData(data);
 
   console.log('rows', rows);
 
-  const customColumns: GridColDef[] = [
+  const customColumns: any[] = [
     {
       field: 'status',
       headerName: 'STATUS',
-      minWidth: 60,
+      minWidth: 70,
       flex: 0.8,
       headerAlign: 'center',
-      headerClassName: classes.tableHeader,
-      renderCell: cell => statusDecorator(cell.value),
+      renderCell: (cell: any) => statusDecorator(cell.value),
     },
     {
       field: 'id',
       headerName: 'ID',
       minWidth: 80,
       flex: 0.7,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => IDDecorator(cell.value),
+      renderCell: (cell: any) => IDDecorator(cell.value),
     },
     {
       field: 'name',
       headerName: 'NAME',
       minWidth: 320,
       flex: 1,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => nameDecorator(cell.value),
+      renderCell: (cell: any) => nameDecorator(cell.value),
     },
     {
       field: 'profile',
       headerName: 'PROFILE',
       minWidth: 150,
       flex: 1,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => profileDecorator(cell.value),
+      renderCell: (cell: any) => profileDecorator(cell.value),
     },
     {
       field: 'duration',
       headerName: 'DURATION',
       minWidth: 100,
       flex: 1,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => durationDecorator(cell.value),
+      renderCell: (cell: any) => durationDecorator(cell.value),
     },
     {
       field: 'environment',
       headerName: 'ENVIRONMENT',
       minWidth: 150,
       flex: 1,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => environmentDecorator(cell.value),
+      renderCell: (cell: any) => environmentDecorator(cell.value),
     },
     {
       field: 'time_started',
       headerName: 'TIME STARTED',
       minWidth: 150,
       flex: 1,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => timeStartedDecorator(cell.value),
+      renderCell: (cell: any) => timeStartedDecorator(cell.value),
     },
     {
       field: 'test_result_status',
       headerName: 'TEST RESULT STATUS',
       minWidth: 280,
       flex: 1,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => testResultStatusDecorator(cell.value),
+      renderCell: (cell: any) => testResultStatusDecorator(cell.value),
     },
     {
       field: 'configuration',
       headerName: 'CONFIGURATION',
       minWidth: 150,
       flex: 1,
-      headerClassName: classes.tableHeader,
-      renderCell: cell => configurationDecorator(cell.value),
+      renderCell: (cell: any) => configurationDecorator(cell.value),
     },
     {
       field: 'executor',
       headerName: 'EXECUTOR',
       minWidth: 200,
       flex: 1,
-      headerClassName: classes.lastColumnHeader,
-      renderCell: cell => executorDecorator(cell.value),
+      renderCell: (cell: any) => executorDecorator(cell.value),
     },
   ];
 
   return (
-    <Styles>
+    <ThemeProvider theme={theme}>
       <DataGrid
-        sx={{
-          fontFamily: 'Inter',
-          '.MuiDataGrid-columnHeaderTitleContainer': {
-            backgroundColor: '#f7f9fb',
-          },
-        }}
-        initialState={{
-          pagination: { paginationModel: { pageSize: PAGE_SIZE } },
-        }}
         getRowId={row => row.execution_id}
-        rowHeight={42}
-        columnHeaderHeight={42}
         rows={rows}
         columns={customColumns}
-        pageSizeOptions={[PAGE_SIZE]}
-        hideFooter={rows.length <= PAGE_SIZE}
         checkboxSelection
-        disableRowSelectionOnClick
       />
-    </Styles>
+    </ThemeProvider>
   );
 }
