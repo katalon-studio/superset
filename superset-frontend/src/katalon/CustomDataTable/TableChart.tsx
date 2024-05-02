@@ -227,27 +227,6 @@ function SelectPageSize({
 const getNoResultsMessage = (filter: string) =>
   filter ? t('No matching records found') : t('No records found');
 
-// const useStyles = makeStyles(() => ({
-//   tableHeader: {
-//     backgroundColor: '#f7f9fb',
-//     '& .MuiDataGrid-columnHeaderTitle': {
-//       color: '#46474d',
-//       fontSize: '11px',
-//       fontWeight: 700,
-//     },
-//   },
-//   lastColumnHeader: {
-//     backgroundColor: '#f7f9fb',
-//     width: '100%',
-//     '& .MuiDataGrid-columnHeaderTitle': {
-//       color: '#46474d',
-//       fontSize: '11px',
-//       fontWeight: 700,
-//       paddingRight: '16px',
-//     },
-//   },
-// }));
-
 const parseJSON = (value: any) => {
   try {
     return JSON.parse(value);
