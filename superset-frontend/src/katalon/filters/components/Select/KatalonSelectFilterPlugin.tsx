@@ -16,15 +16,18 @@ import {
   tn,
 } from '@superset-ui/core';
 import debounce from 'lodash/debounce';
+// @ts-ignore
 import { useImmerReducer } from 'use-immer';
 import { SLOW_DEBOUNCE } from 'src/constants';
 import { hasOption, propertyComparator } from 'src/components/Select/utils';
 import { FilterBarOrientation } from 'src/dashboard/types';
 import { PluginFilterSelectProps, SelectValue } from 'src/filters/components/Select/types';
 import { getDataRecordFormatter, getSelectExtraFormData } from 'src/filters/utils';
-import { FilterPluginStyle, StatusMessage, StyledFormItem } from 'src/filters/components/common';
+import { StatusMessage, StyledFormItem } from 'src/filters/components/common';
 import { LabeledValue as AntdLabeledValue } from 'antd/lib/select';
+import styled from 'styled-components';
 import Select from './Select';
+import { PluginFilterStylesProps } from '../types';
 
 type DataMaskAction =
   | { type: 'ownState'; ownState: JsonObject }
@@ -33,6 +36,12 @@ type DataMaskAction =
       extraFormData: ExtraFormData;
       filterState: { value: SelectValue; label?: string };
     };
+
+export const FilterPluginStyle = styled.div<PluginFilterStylesProps>`
+  min-height: ${({ height }) => height}px;
+  width: 100%;
+  margin-top: -8px;
+`;
 
 function reducer(draft: DataMask, action: DataMaskAction) {
   switch (action.type) {

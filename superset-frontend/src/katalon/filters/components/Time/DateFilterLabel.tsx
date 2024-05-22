@@ -19,6 +19,8 @@ import {
   guessFrame,
   useDefaultTimeFilter,
 } from 'src/explore/components/controls/DateFilterControl';
+import styled from 'styled-components';
+// @ts-ignore
 import moment from 'moment';
 import PopoverDateRangePicker from './PopoverDateRangePicker';
 
@@ -43,6 +45,22 @@ const getTooltipTitle = (
   ) : (
     range || null
   );
+
+const LabelContainer = styled.span<{}>`
+  ${() => `
+    margin-top: -8px;
+    width: 100%;
+    .MuiInputBase-input {
+      width: 80%;
+    }
+    fieldset {
+      top: 0px;
+      legend {
+        display: none;
+      }
+    }
+  `}
+`;
 
 export default function DateFilterLabel(props: any) {
   const { onChange, onClosePopover = noOp } = props;
@@ -177,9 +195,9 @@ export default function DateFilterLabel(props: any) {
   );
 
   return (
-    <>
+    <LabelContainer>
       <ControlHeader {...props} />
       {popoverContent}
-    </>
+    </LabelContainer>
   );
 }

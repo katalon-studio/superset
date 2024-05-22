@@ -5,9 +5,8 @@ import Button from '@mui/material/Button';
 import moment from 'moment';
 import { Grid, ListItemButton, ListItemText } from '@mui/material';
 import { find, values } from 'lodash';
-import Popover from '@mui/material/Popover';
+import { PopoverFilter } from '@katalon-studio/katalon-ui/v2';
 import { DateRangePickerComponent } from './DateRangePickerComponent';
-import { DropdownLabel } from './DropdownLabel';
 
 // eslint-disable-next-line theme-colors/no-literal-colors
 const ContentStyleWrapper = styled.div`
@@ -54,11 +53,8 @@ export default function PopoverDateRangePicker(
   const [localTimeRange, setLocalTimeRange] = useState<
     moment.Moment[] | null[]
   >(timeRange);
+  const [open, setOpen] = useState<boolean>(false);
   const [localGroupByTime, setLocalGroupByTime] = useState<string>(groupByTime);
-
-  const handleClickKatalonPopover = (event: React.MouseEvent<Element>) => {
-    setAnchorEl(event.currentTarget);
-  };
 
   const handleCloseKatalonPopover = () => {
     setAnchorEl(null);
@@ -153,30 +149,13 @@ export default function PopoverDateRangePicker(
       )} to ${timeRange[1]!.format('YYYY-MM-DD')}`
     : 'No filter';
 
-  const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-
   const popoverContent = (
-    <>
-      <DropdownLabel
-        onClick={handleClickKatalonPopover}
-        label={label}
-        isActive={anchorEl !== null}
-        isPlaceholder={!resonableTimeRange}
-      />
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleCloseKatalonPopover}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'right',
-        }}
-      >
-        {overlayContent}
-      </Popover>
-    </>
+    <PopoverFilter
+      label={label}
+      overlayContent={overlayContent}
+      open={open}
+      setOpen={setOpen}
+    />
   );
 
   return <>{popoverContent}</>;
